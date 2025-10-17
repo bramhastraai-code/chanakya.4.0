@@ -27,6 +27,6 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
   app.use(cookieParser());
   app.useGlobalInterceptors(new ResponseInterceptor());
-  await app.listen(3333);
+  await app.listen(4000);
 }
 bootstrap();
