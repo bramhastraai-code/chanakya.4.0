@@ -1,0 +1,40 @@
+import { LeadStatus, UserStatus, UserType, VerificationStatus } from '../enum/usertype.enum';
+export declare class CreateCustomerDto {
+    name?: string;
+    userImage?: string;
+    contactStatus?: LeadStatus;
+    fcmToken?: string;
+    email?: string;
+    userType?: UserType;
+    phoneNumber: string;
+    assignAgent?: string;
+    builders?: string[];
+    projectsApplied?: string[];
+    responseTime?: string;
+    serviceAreas?: string[];
+    verificationStatus?: VerificationStatus;
+    verificationDocuments?: string[];
+    licenseNumber?: string;
+    licenseExpiry?: string;
+    yearsOfExperience?: number;
+    agencyName?: string;
+    agencyLicense?: string;
+    agencyFoundedYear?: number;
+    teamSize?: number;
+    rating?: number;
+    reviewCount?: number;
+    closedDeals?: number;
+    socialMedia?: {
+        facebook?: string;
+        linkedin?: string;
+        instagram?: string;
+    };
+    latitude?: string;
+    longitude?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    pinCode?: string;
+    status?: UserStatus;
+}
