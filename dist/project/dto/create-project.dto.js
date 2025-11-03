@@ -19,6 +19,7 @@ const project_enum_1 = require("../enum/project.enum");
 const create_property_dto_1 = require("../../property/dto/create-property.dto");
 const status_enum_1 = require("../../common/enum/status.enum");
 const property_enum_1 = require("../../property/enum/property.enum");
+const project_enum_2 = require("../project.enum");
 class NearbyDto {
 }
 __decorate([
@@ -133,10 +134,10 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'The status of the project',
-        example: 'Active',
+        example: 'Ready to move',
         required: false,
     }),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsEnum)(project_enum_2.ProjectStatus),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "projectStatus", void 0);
