@@ -41,7 +41,7 @@ export class PropertyService {
           { propertyDescription: { $regex: searchQuery, $options: 'i' } },
         ];
       }
-      if (status !== 'all') {
+      if (status && status !== 'all') {
         query.status = status;
       }
 

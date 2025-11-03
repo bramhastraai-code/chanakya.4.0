@@ -24,7 +24,7 @@ async function bootstrap() {
     swagger_1.SwaggerModule.setup('api', app, document);
     app.use(cookieParser());
     app.useGlobalInterceptors(new response_interceptor_1.ResponseInterceptor());
-    await app.listen(3333);
+    await app.listen(4000);
 }
 bootstrap();
 //# sourceMappingURL=main.js.map
