@@ -24,10 +24,12 @@
 /// <reference types="mongoose/types/inferschematype" />
 import { Document, Types } from 'mongoose';
 export declare class Inquiry extends Document {
-    userId: Types.ObjectId | null;
-    contactNumber?: string;
+    email?: string;
+    name?: string;
+    phone?: string;
+    companyname?: string;
     title?: string;
-    inquiryType: 'common' | 'groupBuy' | 'agentSelection' | 'quickBuy' | 'siteVisit';
+    inquiryType: 'common' | 'groupBuy' | 'agentSelection' | 'quickBuy' | 'siteVisit' | 'loan' | 'advisory';
     projectId?: Types.ObjectId | null;
     propertyId?: Types.ObjectId | null;
     message: string;

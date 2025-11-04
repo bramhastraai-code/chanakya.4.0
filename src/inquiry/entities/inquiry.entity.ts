@@ -3,16 +3,17 @@ import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Inquiry extends Document {
-  @Prop({
-    type: Types.ObjectId,
-    ref: 'Customer',
-    required: true,
-    default: null,
-  })
-  userId: Types.ObjectId | null;
+  @Prop({ type: String })
+  email?: string;
 
   @Prop({ type: String })
-  contactNumber?: string;
+  name?: string;
+
+  @Prop({ type: String })
+  phone?: string;
+
+  @Prop({ type: String })
+  companyname?: string;
 
   @Prop({ type: String })
   title?: string;
@@ -27,7 +28,9 @@ export class Inquiry extends Document {
     | 'groupBuy'
     | 'agentSelection'
     | 'quickBuy'
-    | 'siteVisit';
+    | 'siteVisit'
+    | 'loan'
+    | 'advisory';
 
   @Prop({ type: Types.ObjectId, ref: 'Project', default: null })
   projectId?: Types.ObjectId | null;

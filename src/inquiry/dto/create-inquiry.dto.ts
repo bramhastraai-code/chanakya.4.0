@@ -1,22 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsOptional } from 'class-validator';
-import { Types } from 'mongoose';
+import { IsString, IsOptional, IsEmail, IsEnum, IsDate } from 'class-validator';
 import { Transform } from 'class-transformer';
+
 export class CreateInquiryDto {
-  @ApiProperty({ description: 'Customer ID who made the inquiry' })
+  @ApiProperty({
+    description: 'Email of the person making the inquiry',
+    required: false,
+  })
+  @IsEmail()
   @IsOptional()
-  userId: string | Types.ObjectId; // Accept as string
+  email?: string;
 
   @ApiProperty({
-    description: 'Contact number of the customer',
+    description: 'Name of the person making the inquiry',
     required: false,
   })
   @IsString()
   @IsOptional()
-  contactNumber?: string;
+  name?: string;
 
   @ApiProperty({
-    description: 'title of the customer',
+    description: 'Phone number of the customer',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  phone?: string;
+
+  @ApiProperty({
+    description: 'Company name',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  companyname?: string;
+
+  @ApiProperty({
+    description: 'Title of the inquiry',
     required: false,
   })
   @IsString()
@@ -25,10 +45,27 @@ export class CreateInquiryDto {
 
   @ApiProperty({
     description: 'Type of the inquiry',
-    enum: ['common', 'groupBuy', 'agentSelection', 'quickBuy', 'siteVisit'],
+    enum: [
+      'common',
+      'groupBuy',
+      'agentSelection',
+      'quickBuy',
+      'siteVisit',
+      'loan',
+      'advisory',
+    ],
     default: 'common',
     required: false,
   })
+  @IsEnum([
+    'common',
+    'groupBuy',
+    'agentSelection',
+    'quickBuy',
+    'siteVisit',
+    'loan',
+    'advisory',
+  ])
   @IsString()
   @IsOptional()
   inquiryType?:
@@ -36,24 +73,9 @@ export class CreateInquiryDto {
     | 'groupBuy'
     | 'agentSelection'
     | 'quickBuy'
-    | 'siteVisit';
-
-  @ApiProperty({
-    description: 'Date of the site visit',
-    required: false,
-    type: String,
-    format: 'date-time',
-  })
-  @IsOptional()
-  siteVisitDate?: Date;
-
-  @ApiProperty({
-    description: 'Time of the site visit',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  siteVisitTime?: string;
+    | 'siteVisit'
+    | 'loan'
+    | 'advisory';
 
   @ApiProperty({
     description: 'Project ID related to the inquiry',
@@ -73,19 +95,46 @@ export class CreateInquiryDto {
   @Transform(({ value }) => (value === '' ? null : value))
   propertyId?: string;
 
-  @ApiProperty({ description: 'Message related to the inquiry' })
+  @ApiProperty({
+    description: 'Detailed message of the inquiry',
+    required: true,
+  })
   @IsString()
   message: string;
 
-  @ApiProperty({ description: 'about related to the inquiry' })
+  @ApiProperty({
+    description: 'About what the inquiry is regarding',
+    required: true,
+  })
   @IsString()
   about: string;
+
+  @ApiProperty({
+    description: 'Date of the site visit',
+    required: false,
+    type: String,
+    format: 'date-time',
+  })
+  @IsDate()
+  @Transform(({ value }) => (value ? new Date(value) : value))
+  @IsOptional()
+  siteVisitDate?: Date;
+
+  @ApiProperty({
+    description: 'Time of the site visit',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  siteVisitTime?: string;
 
   @ApiProperty({
     description: 'Status of the inquiry',
     enum: ['PENDING', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'],
     default: 'PENDING',
+    required: false,
   })
+  @IsEnum(['PENDING', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'])
   @IsString()
   @IsOptional()
   status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';

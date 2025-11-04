@@ -10,8 +10,6 @@ import {
   NotFoundException,
   InternalServerErrorException,
   Patch,
-  UseGuards,
-  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,7 +17,6 @@ import {
   ApiResponse,
   ApiQuery,
   ApiOkResponse,
-  ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { InquiryService } from './inquiry.service';
@@ -27,9 +24,6 @@ import { Inquiry } from './entities/inquiry.entity';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { UpdateInquiryDto } from './dto/update-inquiry.dto';
 import { Response } from 'src/common/interceptor/response.interface';
-import { AuthGuard } from '@nestjs/passport';
-import { CreateBrokerInquiryDto } from './dto/create-agent-inquiry.dto';
-import { Types } from 'mongoose';
 
 @ApiTags('inquiries')
 @Controller('inquiries')
@@ -48,9 +42,6 @@ export class InquiryController {
     @Body() createInquiryDto: CreateInquiryDto,
   ): Promise<Response<Inquiry>> {
     try {
-      createInquiryDto.userId = Types.ObjectId.isValid(createInquiryDto.userId)
-        ? new Types.ObjectId(createInquiryDto.userId)
-        : createInquiryDto.userId;
       const data = await this.inquiryService.create(createInquiryDto);
       return { data, message: 'Inquiry created successfully' };
     } catch (error) {
@@ -75,9 +66,6 @@ export class InquiryController {
     @Body() updateInquiryDto: UpdateInquiryDto,
   ): Promise<Inquiry> {
     try {
-      updateInquiryDto.userId = Types.ObjectId.isValid(updateInquiryDto.userId)
-        ? new Types.ObjectId(updateInquiryDto.userId)
-        : updateInquiryDto.userId;
       const updatedInquiry = await this.inquiryService.update(
         id,
         updateInquiryDto,
@@ -234,140 +222,6 @@ export class InquiryController {
         throw new NotFoundException('Inquiry not found');
       }
       return { data: 'DELETE successfully', message: 'delete successful' };
-    } catch (error) {
-      throw error;
-    }
-  }
-  @Get('customer-inquiry/:customerId')
-  @ApiOperation({
-    summary: 'Retrieve inquiries by customer ID with pagination and sorting',
-  })
-  @ApiQuery({
-    name: 'pageSize',
-    type: Number,
-    required: false,
-    description: 'Number of inquiries per page',
-  })
-  @ApiQuery({
-    name: 'pageNumber',
-    type: Number,
-    required: false,
-    description: 'Page number to retrieve',
-  })
-  @ApiQuery({
-    name: 'sortBy',
-    type: String,
-    required: false,
-    enum: ['createdAt', 'updatedAt', 'status'],
-    description: 'Field to sort by',
-  })
-  @ApiQuery({
-    name: 'sortOrder',
-    type: String,
-    required: false,
-    enum: ['asc', 'desc'],
-    description: 'Sort order',
-  })
-  @ApiOkResponse({
-    description: 'List of inquiries for the customer retrieved successfully',
-    type: [Inquiry],
-  })
-  @ApiNotFoundResponse({
-    description: 'No inquiries found for the customer',
-  })
-  @ApiInternalServerErrorResponse({
-    description: 'Internal server error',
-  })
-  async findByCustomerId(
-    @Param('customerId') customerId: string,
-    @Query('pageSize') pageSize: string = '10',
-    @Query('pageNumber') pageNumber: string = '1',
-    @Query('sortBy') sortBy: string = 'createdAt',
-    @Query('sortOrder') sortOrder: 'asc' | 'desc' = 'desc',
-  ): Promise<
-    Response<{
-      inquiries: Inquiry[];
-      totalPages: number;
-      totalInquiries: number;
-      pageSize: number;
-      pageNumber: number;
-    }>
-  > {
-    try {
-      const data = await this.inquiryService.findByCustomerId(
-        customerId,
-        pageSize,
-        pageNumber,
-        sortBy,
-        sortOrder,
-      );
-      if (!data.inquiries || data.inquiries.length === 0) {
-        throw new NotFoundException('No inquiries found for the customer');
-      }
-      return { data, message: 'Retrieve successfully' };
-    } catch (error) {
-      throw error;
-    }
-  }
-  // inquiry from agent app
-  @Post('by-agent')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({ summary: 'Create a new inquiry by agent' })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: 'Inquiry created successfully by agent',
-    type: Inquiry,
-  })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input' })
-  async createByAgent(
-    @Body() createInquiryDto: CreateBrokerInquiryDto,
-    @Req() req: any,
-  ) {
-    try {
-      const agent = req.user._id; // Assuming the agent's information is stored in req.user
-      // const agent = '67626f1b6178dd67fffa9ad3';
-      const data = await this.inquiryService.createInquiry(
-        createInquiryDto,
-        agent,
-      );
-      return {
-        data,
-        message: 'Inquiry created successfully by agent',
-      };
-    } catch (error) {
-      throw error;
-    }
-  }
-  @Patch('by-agent/:id')
-  @UseGuards(AuthGuard('jwt'))
-  @ApiOperation({ summary: 'Update an inquiry by agent' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Inquiry updated successfully by agent',
-    type: Inquiry,
-  })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input' })
-  @ApiResponse({
-    status: HttpStatus.NOT_FOUND,
-    description: 'Inquiry not found',
-  })
-  async updateByAgent(
-    @Param('id') id: string,
-    @Body() updateInquiryDto: UpdateInquiryDto,
-    @Req() req: any,
-  ) {
-    try {
-      const agent = req.user._id;
-      // const agent = '67626f1b6178dd67fffa9ad3';
-      const data = await this.inquiryService.updateInquiry(
-        id,
-        updateInquiryDto,
-        agent,
-      );
-      return {
-        data,
-        message: 'Inquiry updated successfully by agent',
-      };
     } catch (error) {
       throw error;
     }

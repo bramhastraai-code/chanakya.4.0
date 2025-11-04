@@ -19,18 +19,12 @@ const inquiry_service_1 = require("./inquiry.service");
 const inquiry_entity_1 = require("./entities/inquiry.entity");
 const create_inquiry_dto_1 = require("./dto/create-inquiry.dto");
 const update_inquiry_dto_1 = require("./dto/update-inquiry.dto");
-const passport_1 = require("@nestjs/passport");
-const create_agent_inquiry_dto_1 = require("./dto/create-agent-inquiry.dto");
-const mongoose_1 = require("mongoose");
 let InquiryController = class InquiryController {
     constructor(inquiryService) {
         this.inquiryService = inquiryService;
     }
     async create(createInquiryDto) {
         try {
-            createInquiryDto.userId = mongoose_1.Types.ObjectId.isValid(createInquiryDto.userId)
-                ? new mongoose_1.Types.ObjectId(createInquiryDto.userId)
-                : createInquiryDto.userId;
             const data = await this.inquiryService.create(createInquiryDto);
             return { data, message: 'Inquiry created successfully' };
         }
@@ -40,9 +34,6 @@ let InquiryController = class InquiryController {
     }
     async update(id, updateInquiryDto) {
         try {
-            updateInquiryDto.userId = mongoose_1.Types.ObjectId.isValid(updateInquiryDto.userId)
-                ? new mongoose_1.Types.ObjectId(updateInquiryDto.userId)
-                : updateInquiryDto.userId;
             const updatedInquiry = await this.inquiryService.update(id, updateInquiryDto);
             if (!updatedInquiry) {
                 throw new common_1.NotFoundException('Inquiry not found');
@@ -81,44 +72,6 @@ let InquiryController = class InquiryController {
                 throw new common_1.NotFoundException('Inquiry not found');
             }
             return { data: 'DELETE successfully', message: 'delete successful' };
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    async findByCustomerId(customerId, pageSize = '10', pageNumber = '1', sortBy = 'createdAt', sortOrder = 'desc') {
-        try {
-            const data = await this.inquiryService.findByCustomerId(customerId, pageSize, pageNumber, sortBy, sortOrder);
-            if (!data.inquiries || data.inquiries.length === 0) {
-                throw new common_1.NotFoundException('No inquiries found for the customer');
-            }
-            return { data, message: 'Retrieve successfully' };
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    async createByAgent(createInquiryDto, req) {
-        try {
-            const agent = req.user._id;
-            const data = await this.inquiryService.createInquiry(createInquiryDto, agent);
-            return {
-                data,
-                message: 'Inquiry created successfully by agent',
-            };
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    async updateByAgent(id, updateInquiryDto, req) {
-        try {
-            const agent = req.user._id;
-            const data = await this.inquiryService.updateInquiry(id, updateInquiryDto, agent);
-            return {
-                data,
-                message: 'Inquiry updated successfully by agent',
-            };
         }
         catch (error) {
             throw error;
@@ -261,93 +214,6 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], InquiryController.prototype, "remove", null);
-__decorate([
-    (0, common_1.Get)('customer-inquiry/:customerId'),
-    (0, swagger_1.ApiOperation)({
-        summary: 'Retrieve inquiries by customer ID with pagination and sorting',
-    }),
-    (0, swagger_1.ApiQuery)({
-        name: 'pageSize',
-        type: Number,
-        required: false,
-        description: 'Number of inquiries per page',
-    }),
-    (0, swagger_1.ApiQuery)({
-        name: 'pageNumber',
-        type: Number,
-        required: false,
-        description: 'Page number to retrieve',
-    }),
-    (0, swagger_1.ApiQuery)({
-        name: 'sortBy',
-        type: String,
-        required: false,
-        enum: ['createdAt', 'updatedAt', 'status'],
-        description: 'Field to sort by',
-    }),
-    (0, swagger_1.ApiQuery)({
-        name: 'sortOrder',
-        type: String,
-        required: false,
-        enum: ['asc', 'desc'],
-        description: 'Sort order',
-    }),
-    (0, swagger_1.ApiOkResponse)({
-        description: 'List of inquiries for the customer retrieved successfully',
-        type: [inquiry_entity_1.Inquiry],
-    }),
-    (0, swagger_1.ApiNotFoundResponse)({
-        description: 'No inquiries found for the customer',
-    }),
-    (0, swagger_1.ApiInternalServerErrorResponse)({
-        description: 'Internal server error',
-    }),
-    __param(0, (0, common_1.Param)('customerId')),
-    __param(1, (0, common_1.Query)('pageSize')),
-    __param(2, (0, common_1.Query)('pageNumber')),
-    __param(3, (0, common_1.Query)('sortBy')),
-    __param(4, (0, common_1.Query)('sortOrder')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String]),
-    __metadata("design:returntype", Promise)
-], InquiryController.prototype, "findByCustomerId", null);
-__decorate([
-    (0, common_1.Post)('by-agent'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new inquiry by agent' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.CREATED,
-        description: 'Inquiry created successfully by agent',
-        type: inquiry_entity_1.Inquiry,
-    }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid input' }),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_agent_inquiry_dto_1.CreateBrokerInquiryDto, Object]),
-    __metadata("design:returntype", Promise)
-], InquiryController.prototype, "createByAgent", null);
-__decorate([
-    (0, common_1.Patch)('by-agent/:id'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
-    (0, swagger_1.ApiOperation)({ summary: 'Update an inquiry by agent' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.OK,
-        description: 'Inquiry updated successfully by agent',
-        type: inquiry_entity_1.Inquiry,
-    }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid input' }),
-    (0, swagger_1.ApiResponse)({
-        status: common_1.HttpStatus.NOT_FOUND,
-        description: 'Inquiry not found',
-    }),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Req)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_inquiry_dto_1.UpdateInquiryDto, Object]),
-    __metadata("design:returntype", Promise)
-], InquiryController.prototype, "updateByAgent", null);
 exports.InquiryController = InquiryController = __decorate([
     (0, swagger_1.ApiTags)('inquiries'),
     (0, common_1.Controller)('inquiries'),

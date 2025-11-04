@@ -1,1 +1,1 @@
-{"version":3,"file":"update-inquiry.dto.js","sourceRoot":"","sources":["../../../src/inquiry/dto/update-inquiry.dto.ts"],"names":[],"mappings":";;;AAAA,6CAA8C;AAC9C,6DAAwD;AACxD,yEAAoE;AAEpE,MAAa,gBAAiB,SAAQ,IAAA,qBAAW,EAAC,qCAAgB,CAAC;CAAG;AAAtE,4CAAsE;AAEtE,MAAa,sBAAuB,SAAQ,IAAA,qBAAW,EACrD,iDAAsB,CACvB;CAAG;AAFJ,wDAEI"}
+{"version":3,"file":"update-inquiry.dto.js","sourceRoot":"","sources":["../../../src/inquiry/dto/update-inquiry.dto.ts"],"names":[],"mappings":";;;AAAA,6CAA8C;AAC9C,6DAAwD;AAExD,MAAa,gBAAiB,SAAQ,IAAA,qBAAW,EAAC,qCAAgB,CAAC;CAAG;AAAtE,4CAAsE"}

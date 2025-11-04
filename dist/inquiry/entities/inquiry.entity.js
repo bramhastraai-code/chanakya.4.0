@@ -16,18 +16,21 @@ let Inquiry = class Inquiry extends mongoose_2.Document {
 };
 exports.Inquiry = Inquiry;
 __decorate([
-    (0, mongoose_1.Prop)({
-        type: mongoose_2.Types.ObjectId,
-        ref: 'Customer',
-        required: true,
-        default: null,
-    }),
-    __metadata("design:type", mongoose_2.Types.ObjectId)
-], Inquiry.prototype, "userId", void 0);
+    (0, mongoose_1.Prop)({ type: String }),
+    __metadata("design:type", String)
+], Inquiry.prototype, "email", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: String }),
     __metadata("design:type", String)
-], Inquiry.prototype, "contactNumber", void 0);
+], Inquiry.prototype, "name", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: String }),
+    __metadata("design:type", String)
+], Inquiry.prototype, "phone", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: String }),
+    __metadata("design:type", String)
+], Inquiry.prototype, "companyname", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: String }),
     __metadata("design:type", String)
