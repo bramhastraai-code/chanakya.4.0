@@ -157,6 +157,7 @@ __decorate([
         example: 20000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "priceAverage", void 0);
 __decorate([
@@ -165,6 +166,7 @@ __decorate([
         example: 20000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "priceMin", void 0);
 __decorate([
@@ -173,6 +175,7 @@ __decorate([
         example: 1000000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "minCarpetArea", void 0);
 __decorate([
@@ -189,6 +192,7 @@ __decorate([
         example: 1000000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "priceMax", void 0);
 __decorate([
@@ -197,6 +201,7 @@ __decorate([
         example: 2022,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "since", void 0);
 __decorate([
@@ -256,6 +261,7 @@ __decorate([
         example: 100,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "roadDistance", void 0);
 __decorate([
@@ -265,6 +271,7 @@ __decorate([
         example: '40.712776',
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "latitude", void 0);
 __decorate([
@@ -274,6 +281,7 @@ __decorate([
         example: '-74.005974',
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "longitude", void 0);
 __decorate([

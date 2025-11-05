@@ -6,6 +6,7 @@ import {
   IsEnum,
   IsMongoId,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   ValidateIf,
@@ -247,6 +248,7 @@ export class CreatePropertyDto {
     description: 'Age of the property in years',
     example: 5,
   })
+  @IsNumber()
   @IsOptional()
   propertyAge: number;
 
@@ -256,6 +258,7 @@ export class CreatePropertyDto {
     example: 6,
   })
   @IsOptional()
+  @IsNumber()
   propertyAgeMonth: number;
 
   @ApiProperty({
@@ -272,6 +275,7 @@ export class CreatePropertyDto {
     example: 1200,
   })
   @IsOptional()
+  @IsNumber()
   carpetArea: number;
 
   @ApiProperty({
@@ -280,6 +284,7 @@ export class CreatePropertyDto {
     example: 2,
   })
   @IsOptional()
+  @IsNumber()
   balconyCount: number;
 
   @ApiProperty({
@@ -288,6 +293,7 @@ export class CreatePropertyDto {
     example: 3,
   })
   @IsOptional()
+  @IsNumber()
   bathroomCount: number;
 
   @ApiProperty({
@@ -296,6 +302,7 @@ export class CreatePropertyDto {
     example: 3,
   })
   @IsOptional()
+  @IsNumber()
   bedCount: number;
 
   @ApiProperty({
@@ -304,6 +311,7 @@ export class CreatePropertyDto {
     example: 1,
   })
   @IsOptional()
+  @IsNumber()
   parkingCount: number;
 
   @ApiProperty({
@@ -312,6 +320,7 @@ export class CreatePropertyDto {
     example: 3,
   })
   @IsOptional()
+  @IsNumber()
   floorNumber: number;
 
   @ApiProperty({
@@ -320,6 +329,7 @@ export class CreatePropertyDto {
     example: 10,
   })
   @IsOptional()
+  @IsNumber()
   totalFloors: number;
 
   @ApiProperty({
@@ -411,6 +421,7 @@ export class CreatePropertyDto {
     example: 100,
   })
   @IsOptional()
+  @IsNumber()
   roadDistance: number;
 
   @ApiProperty({
@@ -419,6 +430,7 @@ export class CreatePropertyDto {
     example: '40.712776',
   })
   @IsOptional()
+  @IsNumber()
   latitude: number;
 
   @ApiProperty({
@@ -427,6 +439,7 @@ export class CreatePropertyDto {
     example: '-74.005974',
   })
   @IsOptional()
+  @IsNumber()
   longitude: number;
 
   @ApiProperty({
@@ -454,6 +467,7 @@ export class CreatePropertyDto {
     example: 1000000,
   })
   @IsOptional()
+  @IsNumber()
   price: number;
 
   @ApiProperty({
@@ -462,6 +476,7 @@ export class CreatePropertyDto {
     example: 500,
   })
   @IsOptional()
+  @IsNumber()
   pricePerUnit: number;
 
   @ApiProperty({
@@ -470,6 +485,7 @@ export class CreatePropertyDto {
     example: 5000,
   })
   @IsOptional()
+  @IsNumber()
   maintenanceCharge: number;
 
   @ApiProperty({
@@ -478,6 +494,7 @@ export class CreatePropertyDto {
     example: 20000,
   })
   @IsOptional()
+  @IsNumber()
   deposit: number;
 
   @ApiProperty({
@@ -486,6 +503,7 @@ export class CreatePropertyDto {
     example: 1200000,
   })
   @IsOptional()
+  @IsNumber()
   totalPrice: number;
 
   @ApiProperty({

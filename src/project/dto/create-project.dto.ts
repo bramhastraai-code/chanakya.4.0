@@ -141,6 +141,7 @@ export class CreateProjectDto {
     example: 20000,
   })
   @IsOptional()
+  @IsNumber()
   priceAverage?: number;
 
   @ApiPropertyOptional({
@@ -148,6 +149,7 @@ export class CreateProjectDto {
     example: 20000,
   })
   @IsOptional()
+  @IsNumber()
   priceMin?: number;
 
   @ApiPropertyOptional({
@@ -155,6 +157,7 @@ export class CreateProjectDto {
     example: 1000000,
   })
   @IsOptional()
+  @IsNumber()
   minCarpetArea?: number;
 
   @ApiPropertyOptional({
@@ -169,6 +172,7 @@ export class CreateProjectDto {
     example: 1000000,
   })
   @IsOptional()
+  @IsNumber()
   priceMax?: number;
 
   @ApiPropertyOptional({
@@ -176,6 +180,7 @@ export class CreateProjectDto {
     example: 2022,
   })
   @IsOptional()
+  @IsNumber()
   since?: number;
 
   // Address details
@@ -230,6 +235,7 @@ export class CreateProjectDto {
     example: 100,
   })
   @IsOptional()
+  @IsNumber()
   roadDistance: number;
 
   @ApiProperty({
@@ -238,6 +244,7 @@ export class CreateProjectDto {
     example: '40.712776',
   })
   @IsOptional()
+  @IsNumber()
   latitude: number;
 
   @ApiProperty({
@@ -246,6 +253,7 @@ export class CreateProjectDto {
     example: '-74.005974',
   })
   @IsOptional()
+  @IsNumber()
   longitude: number;
 
   @ApiProperty({

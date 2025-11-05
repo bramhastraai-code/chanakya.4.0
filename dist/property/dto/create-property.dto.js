@@ -262,6 +262,7 @@ __decorate([
         description: 'Age of the property in years',
         example: 5,
     }),
+    (0, class_validator_1.IsNumber)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "propertyAge", void 0);
@@ -272,6 +273,7 @@ __decorate([
         example: 6,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "propertyAgeMonth", void 0);
 __decorate([
@@ -290,6 +292,7 @@ __decorate([
         example: 1200,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "carpetArea", void 0);
 __decorate([
@@ -299,6 +302,7 @@ __decorate([
         example: 2,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "balconyCount", void 0);
 __decorate([
@@ -308,6 +312,7 @@ __decorate([
         example: 3,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "bathroomCount", void 0);
 __decorate([
@@ -317,6 +322,7 @@ __decorate([
         example: 3,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "bedCount", void 0);
 __decorate([
@@ -326,6 +332,7 @@ __decorate([
         example: 1,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "parkingCount", void 0);
 __decorate([
@@ -335,6 +342,7 @@ __decorate([
         example: 3,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "floorNumber", void 0);
 __decorate([
@@ -344,6 +352,7 @@ __decorate([
         example: 10,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "totalFloors", void 0);
 __decorate([
@@ -442,6 +451,7 @@ __decorate([
         example: 100,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "roadDistance", void 0);
 __decorate([
@@ -451,6 +461,7 @@ __decorate([
         example: '40.712776',
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "latitude", void 0);
 __decorate([
@@ -460,6 +471,7 @@ __decorate([
         example: '-74.005974',
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "longitude", void 0);
 __decorate([
@@ -489,6 +501,7 @@ __decorate([
         example: 1000000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "price", void 0);
 __decorate([
@@ -498,6 +511,7 @@ __decorate([
         example: 500,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "pricePerUnit", void 0);
 __decorate([
@@ -507,6 +521,7 @@ __decorate([
         example: 5000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "maintenanceCharge", void 0);
 __decorate([
@@ -516,6 +531,7 @@ __decorate([
         example: 20000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "deposit", void 0);
 __decorate([
@@ -525,6 +541,7 @@ __decorate([
         example: 1200000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreatePropertyDto.prototype, "totalPrice", void 0);
 __decorate([
