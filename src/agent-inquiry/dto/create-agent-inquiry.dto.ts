@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsEmail, IsOptional, IsString, IsNotEmpty } from 'class-validator';
 
 export class CreateAgentInquiryDto {
@@ -9,6 +10,7 @@ export class CreateAgentInquiryDto {
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   email?: string;
 

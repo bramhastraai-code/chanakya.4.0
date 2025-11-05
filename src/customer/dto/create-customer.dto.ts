@@ -14,6 +14,7 @@ import {
   VerificationStatus,
 } from '../enum/usertype.enum';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 
 export class CreateCustomerDto {
   // introduction
@@ -56,6 +57,7 @@ export class CreateCustomerDto {
     example: 'john.doe@example.com',
   })
   @IsOptional()
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   email?: string;
 

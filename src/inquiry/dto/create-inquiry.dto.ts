@@ -8,6 +8,7 @@ export class CreateInquiryDto {
     required: false,
   })
   @IsEmail()
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsOptional()
   email?: string;
 

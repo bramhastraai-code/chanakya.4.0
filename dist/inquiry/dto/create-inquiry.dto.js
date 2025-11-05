@@ -22,6 +22,7 @@ __decorate([
         required: false,
     }),
     (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateInquiryDto.prototype, "email", void 0);

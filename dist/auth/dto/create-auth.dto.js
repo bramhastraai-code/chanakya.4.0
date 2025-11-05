@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateAuthDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
+const class_transformer_1 = require("class-transformer");
 class CreateAuthDto {
 }
 exports.CreateAuthDto = CreateAuthDto;
@@ -22,6 +23,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
     __metadata("design:type", String)
 ], CreateAuthDto.prototype, "email", void 0);
 __decorate([

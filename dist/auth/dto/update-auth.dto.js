@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UpdateAuthDto = void 0;
 const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
+const class_transformer_1 = require("class-transformer");
 class UpdateAuthDto {
 }
 exports.UpdateAuthDto = UpdateAuthDto;
@@ -21,6 +22,7 @@ __decorate([
     }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], UpdateAuthDto.prototype, "email", void 0);

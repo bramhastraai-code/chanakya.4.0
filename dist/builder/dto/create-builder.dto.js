@@ -46,6 +46,7 @@ __decorate([
         example: 'builder@example.com',
     }),
     (0, class_validator_1.IsEmail)(),
+    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
     __metadata("design:type", String)
 ], CreateBuilderDto.prototype, "email", void 0);
 __decorate([

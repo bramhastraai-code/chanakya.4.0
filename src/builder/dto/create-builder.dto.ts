@@ -7,7 +7,7 @@ import {
   IsNumber,
   IsMongoId,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 
 export class CreateBuilderDto {
   @ApiProperty({
@@ -36,6 +36,7 @@ export class CreateBuilderDto {
     example: 'builder@example.com',
   })
   @IsEmail()
+  @Transform(({ value }) => value?.toLowerCase().trim())
   email: string;
 
   @ApiPropertyOptional({

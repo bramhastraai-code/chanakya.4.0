@@ -13,6 +13,7 @@ exports.CreateCustomerDto = void 0;
 const class_validator_1 = require("class-validator");
 const usertype_enum_1 = require("../enum/usertype.enum");
 const swagger_1 = require("@nestjs/swagger");
+const class_transformer_1 = require("class-transformer");
 class CreateCustomerDto {
     constructor() {
         this.status = usertype_enum_1.UserStatus.ACTIVE;
@@ -63,6 +64,7 @@ __decorate([
         example: 'john.doe@example.com',
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
 ], CreateCustomerDto.prototype, "email", void 0);
