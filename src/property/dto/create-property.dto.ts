@@ -662,6 +662,7 @@ export class CreatePropertyDto {
   @ValidateIf((object, value) => value !== null && value !== undefined)
   @IsOptional()
   @IsArray()
+  @ValidateNested({ each: true })
   offers?: OfferDto[];
 
   @ApiProperty({

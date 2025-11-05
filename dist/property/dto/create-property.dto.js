@@ -701,6 +701,7 @@ __decorate([
     (0, class_validator_1.ValidateIf)((object, value) => value !== null && value !== undefined),
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
     __metadata("design:type", Array)
 ], CreatePropertyDto.prototype, "offers", void 0);
 __decorate([
