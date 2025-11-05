@@ -185,16 +185,18 @@ export class Project extends Document {
   offers: { text: string; variant: OfferVariant; description: string }[];
 
   @Prop({
+    default: null,
     type: () => MongooseSchema.Types.ObjectId,
     ref: () => User.name,
-    required: true,
+    required: false,
   })
   createdBy?: User;
 
   @Prop({
+    default: null,
     type: () => MongooseSchema.Types.ObjectId,
     ref: () => User.name,
-    required: true,
+    required: false,
   })
   updatedBy?: User;
 
@@ -205,9 +207,10 @@ export class Project extends Document {
   exclusive?: boolean;
 
   @Prop({
+    default: null,
     type: () => MongooseSchema.Types.ObjectId,
     ref: () => User.name,
-    required: true,
+    required: false,
   })
   executiveUser?: User;
 

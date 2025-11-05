@@ -231,17 +231,19 @@ __decorate([
 ], Project.prototype, "offers", void 0);
 __decorate([
     (0, mongoose_1.Prop)({
+        default: null,
         type: () => mongoose_2.Schema.Types.ObjectId,
         ref: () => user_entity_1.User.name,
-        required: true,
+        required: false,
     }),
     __metadata("design:type", user_entity_1.User)
 ], Project.prototype, "createdBy", void 0);
 __decorate([
     (0, mongoose_1.Prop)({
+        default: null,
         type: () => mongoose_2.Schema.Types.ObjectId,
         ref: () => user_entity_1.User.name,
-        required: true,
+        required: false,
     }),
     __metadata("design:type", user_entity_1.User)
 ], Project.prototype, "updatedBy", void 0);
@@ -255,9 +257,10 @@ __decorate([
 ], Project.prototype, "exclusive", void 0);
 __decorate([
     (0, mongoose_1.Prop)({
+        default: null,
         type: () => mongoose_2.Schema.Types.ObjectId,
         ref: () => user_entity_1.User.name,
-        required: true,
+        required: false,
     }),
     __metadata("design:type", user_entity_1.User)
 ], Project.prototype, "executiveUser", void 0);
