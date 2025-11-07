@@ -24,7 +24,7 @@ export class AuthService {
   async login(dto: UpdateAuthDto, res: Response) {
     const user = await this.userModel
       .findOne({ email: dto.email })
-      .populate('role');
+      .populate('role', { strictPopulate: false });
     if (!user) {
       throw new ForbiddenException('Unauthorized User');
     }

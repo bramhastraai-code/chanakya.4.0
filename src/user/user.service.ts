@@ -101,7 +101,7 @@ export class UserService {
 
       const populatedUserQuery = this.userModel.findById(id);
       if (user.role) {
-        populatedUserQuery.populate('role');
+        populatedUserQuery.populate('role', { strictPopulate: false });
       }
 
       const populatedUser = await populatedUserQuery.exec();

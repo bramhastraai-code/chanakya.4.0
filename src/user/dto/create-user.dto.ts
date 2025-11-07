@@ -57,17 +57,41 @@ export class CreateUserDto {
   @IsOptional()
   pinCode?: string;
 
-  @ApiProperty({ required: false, type: String })
   @IsOptional()
-  role?: Types.ObjectId;
+  @Transform(({ value }) => {
+    if (!value) return null;
+    if (value instanceof Types.ObjectId) return value.toString();
+    if (typeof value === 'string' && Types.ObjectId.isValid(value)) {
+      return value; // Return as string for DTO, convert to ObjectId in service
+    }
+    return null;
+  })
+  @ApiProperty({ required: false, type: String })
+  role?: string | null;
 
-  @ApiProperty({ required: false, type: String })
   @IsOptional()
-  createdBy?: Types.ObjectId;
+  @Transform(({ value }) => {
+    if (!value) return null;
+    if (value instanceof Types.ObjectId) return value.toString();
+    if (typeof value === 'string' && Types.ObjectId.isValid(value)) {
+      return value;
+    }
+    return null;
+  })
+  @ApiProperty({ required: false, type: String })
+  createdBy?: string | null;
 
-  @ApiProperty({ required: false, type: String })
   @IsOptional()
-  updatedBy?: Types.ObjectId;
+  @Transform(({ value }) => {
+    if (!value) return null;
+    if (value instanceof Types.ObjectId) return value.toString();
+    if (typeof value === 'string' && Types.ObjectId.isValid(value)) {
+      return value;
+    }
+    return null;
+  })
+  @ApiProperty({ required: false, type: String })
+  updatedBy?: string | null;
 
   @ApiProperty({ required: false })
   @IsString()

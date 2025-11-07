@@ -81,19 +81,49 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "pinCode", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false, type: String }),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", mongoose_1.Types.ObjectId)
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (!value)
+            return null;
+        if (value instanceof mongoose_1.Types.ObjectId)
+            return value.toString();
+        if (typeof value === 'string' && mongoose_1.Types.ObjectId.isValid(value)) {
+            return value;
+        }
+        return null;
+    }),
+    (0, swagger_1.ApiProperty)({ required: false, type: String }),
+    __metadata("design:type", String)
 ], CreateUserDto.prototype, "role", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false, type: String }),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", mongoose_1.Types.ObjectId)
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (!value)
+            return null;
+        if (value instanceof mongoose_1.Types.ObjectId)
+            return value.toString();
+        if (typeof value === 'string' && mongoose_1.Types.ObjectId.isValid(value)) {
+            return value;
+        }
+        return null;
+    }),
+    (0, swagger_1.ApiProperty)({ required: false, type: String }),
+    __metadata("design:type", String)
 ], CreateUserDto.prototype, "createdBy", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false, type: String }),
     (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", mongoose_1.Types.ObjectId)
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (!value)
+            return null;
+        if (value instanceof mongoose_1.Types.ObjectId)
+            return value.toString();
+        if (typeof value === 'string' && mongoose_1.Types.ObjectId.isValid(value)) {
+            return value;
+        }
+        return null;
+    }),
+    (0, swagger_1.ApiProperty)({ required: false, type: String }),
+    __metadata("design:type", String)
 ], CreateUserDto.prototype, "updatedBy", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false }),
