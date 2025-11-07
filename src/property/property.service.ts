@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { Property } from './entities/property.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { PropertyFilterDto } from './dto/PropertyFilter.Dto';
 import { Customer } from 'src/customer/entities/customer.entity';
 import { Amenity } from 'src/amenity/entities/amenity.entity';
 import { Status } from 'src/common/enum/status.enum';
@@ -133,81 +132,6 @@ export class PropertyService {
     return properties;
   }
   // PropertyCardList
-  async PropertyCardList(filterDto: PropertyFilterDto) {
-    const { page, limit, city, search } = filterDto;
-
-    // Create query object
-    const query: any = {};
-
-    // Add city filter
-    if (city) {
-      query.city = { $regex: city, $options: 'i' }; // Case-insensitive regex search for city
-    }
-
-    // Add search filter for title, description, and address
-    if (search) {
-      query.$or = [
-        { propertyTitle: { $regex: search, $options: 'i' } },
-        { propertyDescription: { $regex: search, $options: 'i' } },
-        { address: { $regex: search, $options: 'i' } },
-      ];
-    }
-
-    // Pagination logic
-    const skip = (page - 1) * limit;
-
-    // Projection: return only the required fields
-    const projection = {
-      _id: 1,
-      propertyTitle: 1,
-      address: 1, // This can be used for location
-      price: 1,
-      thumbnail: 1, // Use for imageUrl
-      tags: 1,
-      amenities: 1,
-      featured: 1,
-      crmDetails: 1, // Assuming this field is stored in the Property entity
-    };
-
-    // Fetch results and total count with customer details populated in crmDetails
-    const [results, total] = await Promise.all([
-      this.propertyModel
-        .find(query)
-        .skip(skip)
-        .limit(limit)
-        .select(projection) // Select only the required fields
-        .populate({
-          path: 'customer', // Assuming crmDetails references the Customer model
-          select: 'name userImage responseTime phoneNumber userType', // Select specific fields from the Customer model
-          model: Customer.name, // Reference to the Customer model
-        })
-        .populate({
-          strictPopulate: false,
-          path: 'amenities',
-          model: Amenity.name,
-        })
-        .exec(),
-      this.propertyModel.countDocuments(query).exec(),
-    ]);
-
-    // Format the response
-    return {
-      total,
-      page,
-      limit,
-      results: results.map((property) => ({
-        property,
-        crmDetails: {
-          crmName: property.customer.name,
-          crmProfileImageUrl: property.customer.userImage,
-          crmResponseTime: property.customer.responseTime,
-          crmMobile: property.customer.phoneNumber,
-          crmRole: property.customer.userType,
-        },
-        // Handle case where crmDetails is not available
-      })),
-    };
-  }
 
   async getPropertyById(id: string): Promise<any> {
     const property = await this.propertyModel

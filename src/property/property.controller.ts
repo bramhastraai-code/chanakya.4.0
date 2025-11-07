@@ -33,7 +33,6 @@ import { S3Service } from 'src/s3/s3.service'; // Import your S3 service
 import { Response } from 'src/common/interceptor/response.interface';
 import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PropertySummaryDto } from './dto/recommondedProperty.dto';
-import { PropertyFilterDto } from './dto/PropertyFilter.Dto';
 import { PropertyDetailDto } from './dto/property-detail.dto';
 import { Status } from 'src/common/enum/status.enum';
 
@@ -202,15 +201,6 @@ export class PropertyController {
     } catch (error) {
       throw error;
     }
-  }
-
-  @Get('PropertyCardList')
-  async PropertyCardList(
-    @Query() filterDto: PropertyFilterDto,
-  ): Promise<Response<any>> {
-    const data = await this.propertyService.PropertyCardList(filterDto);
-
-    return { data, message: 'retrieve successfully' };
   }
 
   @Get('property-by-id/:id')

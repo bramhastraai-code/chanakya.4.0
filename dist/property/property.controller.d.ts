@@ -4,7 +4,6 @@ import { Property } from './entities/property.entity';
 import { S3Service } from 'src/s3/s3.service';
 import { Response } from 'src/common/interceptor/response.interface';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { PropertyFilterDto } from './dto/PropertyFilter.Dto';
 import { Status } from 'src/common/enum/status.enum';
 export declare class PropertyController {
     private readonly propertyService;
@@ -33,7 +32,6 @@ export declare class PropertyController {
         message: string;
     }>;
     getPropertySummaries(): Promise<Response<Property[]>>;
-    PropertyCardList(filterDto: PropertyFilterDto): Promise<Response<any>>;
     getPropertyById(id: string): Promise<Response<any>>;
     getPropertyByCity(city: string): Promise<Response<any>>;
     getFormattedProperties(res: any): Promise<any>;

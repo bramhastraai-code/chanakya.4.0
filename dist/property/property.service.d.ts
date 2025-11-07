@@ -26,7 +26,6 @@ import { Model } from 'mongoose';
 import { Property } from './entities/property.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { PropertyFilterDto } from './dto/PropertyFilter.Dto';
 import { Status } from 'src/common/enum/status.enum';
 export declare class PropertyService {
     private propertyModel;
@@ -43,23 +42,6 @@ export declare class PropertyService {
     update(id: string, updatePropertyDto: UpdatePropertyDto): Promise<Property>;
     remove(id: string): Promise<void>;
     getPropertySummaries(): Promise<Property[]>;
-    PropertyCardList(filterDto: PropertyFilterDto): Promise<{
-        total: number;
-        page: number;
-        limit: number;
-        results: {
-            property: Omit<Omit<import("mongoose").Document<unknown, {}, Property> & Property & {
-                _id: import("mongoose").Types.ObjectId;
-            }, never>, never>;
-            crmDetails: {
-                crmName: string;
-                crmProfileImageUrl: string;
-                crmResponseTime: string;
-                crmMobile: string;
-                crmRole: import("../customer/enum/usertype.enum").UserType;
-            };
-        }[];
-    }>;
     getPropertyById(id: string): Promise<any>;
     getPropertiesByProjectId(projectId: string): Promise<Property[]>;
     getPropertiesByCity(city: string): Promise<Property[]>;
