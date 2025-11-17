@@ -36,21 +36,11 @@ export class SearchFilterService {
     if (type === EntityType.PROPERTY) {
       const query: any = this.buildPropertyQuery(city, search);
 
-      const projection = {
-        title: 1,
-        address: 1,
-        price: 1,
-        thumbnail: 1,
-        tags: 1,
-        amenities: 1,
-      };
-
       [results, total] = await Promise.all([
         this.propertyModel
           .find(query)
           .skip(skip)
           .limit(limit)
-          .select(projection)
           .populate({ path: 'amenities', model: Amenity.name })
           .exec(),
         this.propertyModel.countDocuments(query).exec(),
@@ -65,7 +55,6 @@ export class SearchFilterService {
             .find(fallbackQuery)
             .skip(skip)
             .limit(limit)
-            .select(projection)
             .populate({ path: 'amenities', model: Amenity.name })
             .exec(),
           this.propertyModel.countDocuments(fallbackQuery).exec(),
@@ -76,25 +65,11 @@ export class SearchFilterService {
     } else if (type === EntityType.PROJECT) {
       const query: any = this.buildProjectQuery(city, search);
 
-      const projectProjection = {
-        projectName: 1,
-        address: 1,
-        priceMin: 1,
-        priceMax: 1,
-        minCarpetArea: 1,
-        maxCarpetArea: 1,
-        thumbnail: 1,
-        tags: 1,
-        amenities: 1,
-        readyToPossessDate: 1,
-      };
-
       [results, total] = await Promise.all([
         this.projectModel
           .find(query)
           .skip(skip)
           .limit(limit)
-          .select(projectProjection)
           .populate({ path: 'amenities', model: Amenity.name })
           .exec(),
         this.projectModel.countDocuments(query).exec(),
@@ -109,7 +84,6 @@ export class SearchFilterService {
             .find(fallbackQuery)
             .skip(skip)
             .limit(limit)
-            .select(projectProjection)
             .populate({ path: 'amenities', model: Amenity.name })
             .exec(),
           this.projectModel.countDocuments(fallbackQuery).exec(),
@@ -491,35 +465,11 @@ export class SearchFilterService {
   }
 
   private formatProperty_V2(property: any) {
-    return {
-      _id: property._id,
-      title: property.title,
-      location: property.address,
-      price: property.price,
-      area: property.area,
-      propertyType: property.propertyType,
-      propertyConfig: property.propertyConfig,
-      imageUrl: property.thumbnail,
-      tags: property.tags,
-      amenities: property.amenities,
-    };
+    return property;
   }
 
   private formatProject_V2(project: any) {
-    return {
-      _id: project._id,
-      title: project.projectName,
-      location: project.address,
-      priceMin: project.priceMin,
-      priceMax: project.priceMax,
-      minCarpetArea: project.minCarpetArea,
-      maxCarpetArea: project.maxCarpetArea,
-      propertyType: project.propertyType,
-      propertyConfig: project.propertyConfig,
-      imageUrl: project.thumbnail,
-      tags: project.tags,
-      amenities: project.amenities,
-    };
+    return project;
   }
   // auto complere search
   async getSuggestions(query: string): Promise<string[]> {
@@ -545,50 +495,6 @@ export class SearchFilterService {
     );
   }
 
-  // async search(term: string, paginationDto: PaginationDto): Promise<any> {
-  //   try {
-  //     const { page, limit } = paginationDto;
-  //     const skip = (page - 1) * limit;
-
-  //     // Find projects, returning only the title field (renamed to 'title')
-  //     const projects = await this.projectModel
-  //       .find({ $text: { $search: term } })
-  //       .skip(skip)
-  //       .limit(limit)
-  //       .select('projectName') // Only include the projectName field
-  //       .exec();
-
-  //     // Find properties, returning only the title field (renamed to 'title')
-  //     const properties = await this.propertyModel
-  //       .find({ $text: { $search: term } })
-  //       .skip(skip)
-  //       .limit(limit)
-  //       .select('propertyTitle') // Only include the propertyTitle field
-  //       .exec();
-
-  //     // Rename projectName and propertyTitle to 'title'
-  //     const projectsWithTitle = projects.map((project) => ({
-  //       title: project.projectName,
-  //     }));
-
-  //     const propertiesWithTitle = properties.map((property) => ({
-  //       title: property.propertyTitle,
-  //     }));
-
-  //     // Combine the results
-  //     const combinedResults = [...projectsWithTitle, ...propertiesWithTitle];
-
-  //     return {
-  //       status: 200,
-  //       message: 'retrieve successfully',
-  //       count: combinedResults.length,
-  //       data: combinedResults,
-  //     };
-  //   } catch (error) {
-  //     throw new Error('Error fetching search results: ' + error.message);
-  //   }
-  // }
-
   async search(term: string, paginationDto: PaginationDto): Promise<any> {
     try {
       const { page, limit } = paginationDto;
@@ -598,8 +504,7 @@ export class SearchFilterService {
       const projects = await this.projectModel
         .find({ projectName: { $regex: term, $options: 'i' } }) // case-insensitive search
         .skip(skip)
-        .limit(limit)
-        .select('projectName address city state region') // Only include the projectName field
+        .limit(limit) // Only include the projectName field
         .exec();
 
       // Find properties, matching the term in propertyTitle (title)
@@ -607,24 +512,17 @@ export class SearchFilterService {
         .find({ propertyTitle: { $regex: term, $options: 'i' } }) // case-insensitive search
         .skip(skip)
         .limit(limit)
-        .select('propertyTitle address city state region') // Only include the propertyTitle field
         .exec();
 
       // Rename projectName and propertyTitle to 'title'
       const projectsWithTitle = projects.map((project) => ({
-        title: project.projectName,
-        address: project.address,
-        city: project.city,
-        state: project.state,
-        region: project.region,
+        ...project,
+        itsTypeIs: 'PROJECT',
       }));
 
       const propertiesWithTitle = properties.map((property) => ({
-        title: property.propertyTitle,
-        address: property.address,
-        city: property.city,
-        state: property.state,
-        region: property.region,
+        ...property,
+        itsTypeIs: 'PROPERTY',
       }));
 
       // Combine the results

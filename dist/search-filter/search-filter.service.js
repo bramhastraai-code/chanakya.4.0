@@ -33,20 +33,11 @@ let SearchFilterService = class SearchFilterService {
         const skip = (page - 1) * limit;
         if (type === search_enum_1.EntityType.PROPERTY) {
             const query = this.buildPropertyQuery(city, search);
-            const projection = {
-                title: 1,
-                address: 1,
-                price: 1,
-                thumbnail: 1,
-                tags: 1,
-                amenities: 1,
-            };
             [results, total] = await Promise.all([
                 this.propertyModel
                     .find(query)
                     .skip(skip)
                     .limit(limit)
-                    .select(projection)
                     .populate({ path: 'amenities', model: amenity_entity_1.Amenity.name })
                     .exec(),
                 this.propertyModel.countDocuments(query).exec(),
@@ -58,7 +49,6 @@ let SearchFilterService = class SearchFilterService {
                         .find(fallbackQuery)
                         .skip(skip)
                         .limit(limit)
-                        .select(projection)
                         .populate({ path: 'amenities', model: amenity_entity_1.Amenity.name })
                         .exec(),
                     this.propertyModel.countDocuments(fallbackQuery).exec(),
@@ -68,24 +58,11 @@ let SearchFilterService = class SearchFilterService {
         }
         else if (type === search_enum_1.EntityType.PROJECT) {
             const query = this.buildProjectQuery(city, search);
-            const projectProjection = {
-                projectName: 1,
-                address: 1,
-                priceMin: 1,
-                priceMax: 1,
-                minCarpetArea: 1,
-                maxCarpetArea: 1,
-                thumbnail: 1,
-                tags: 1,
-                amenities: 1,
-                readyToPossessDate: 1,
-            };
             [results, total] = await Promise.all([
                 this.projectModel
                     .find(query)
                     .skip(skip)
                     .limit(limit)
-                    .select(projectProjection)
                     .populate({ path: 'amenities', model: amenity_entity_1.Amenity.name })
                     .exec(),
                 this.projectModel.countDocuments(query).exec(),
@@ -97,7 +74,6 @@ let SearchFilterService = class SearchFilterService {
                         .find(fallbackQuery)
                         .skip(skip)
                         .limit(limit)
-                        .select(projectProjection)
                         .populate({ path: 'amenities', model: amenity_entity_1.Amenity.name })
                         .exec(),
                     this.projectModel.countDocuments(fallbackQuery).exec(),
@@ -375,34 +351,10 @@ let SearchFilterService = class SearchFilterService {
         }
     }
     formatProperty_V2(property) {
-        return {
-            _id: property._id,
-            title: property.title,
-            location: property.address,
-            price: property.price,
-            area: property.area,
-            propertyType: property.propertyType,
-            propertyConfig: property.propertyConfig,
-            imageUrl: property.thumbnail,
-            tags: property.tags,
-            amenities: property.amenities,
-        };
+        return property;
     }
     formatProject_V2(project) {
-        return {
-            _id: project._id,
-            title: project.projectName,
-            location: project.address,
-            priceMin: project.priceMin,
-            priceMax: project.priceMax,
-            minCarpetArea: project.minCarpetArea,
-            maxCarpetArea: project.maxCarpetArea,
-            propertyType: project.propertyType,
-            propertyConfig: project.propertyConfig,
-            imageUrl: project.thumbnail,
-            tags: project.tags,
-            amenities: project.amenities,
-        };
+        return project;
     }
     async getSuggestions(query) {
         return this.searchRecordModel
@@ -425,27 +377,19 @@ let SearchFilterService = class SearchFilterService {
                 .find({ projectName: { $regex: term, $options: 'i' } })
                 .skip(skip)
                 .limit(limit)
-                .select('projectName address city state region')
                 .exec();
             const properties = await this.propertyModel
                 .find({ propertyTitle: { $regex: term, $options: 'i' } })
                 .skip(skip)
                 .limit(limit)
-                .select('propertyTitle address city state region')
                 .exec();
             const projectsWithTitle = projects.map((project) => ({
-                title: project.projectName,
-                address: project.address,
-                city: project.city,
-                state: project.state,
-                region: project.region,
+                ...project,
+                itsTypeIs: 'PROJECT',
             }));
             const propertiesWithTitle = properties.map((property) => ({
-                title: property.propertyTitle,
-                address: property.address,
-                city: property.city,
-                state: property.state,
-                region: property.region,
+                ...property,
+                itsTypeIs: 'PROPERTY',
             }));
             const combinedResults = [...projectsWithTitle, ...propertiesWithTitle];
             return {

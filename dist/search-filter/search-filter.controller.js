@@ -101,6 +101,7 @@ __decorate([
 ], SearchFilterController.prototype, "searchSuggestions", null);
 exports.SearchFilterController = SearchFilterController = __decorate([
     (0, common_1.Controller)('search'),
+    (0, swagger_1.ApiTags)('search-filter'),
     __metadata("design:paramtypes", [search_filter_service_1.SearchFilterService])
 ], SearchFilterController);
 //# sourceMappingURL=search-filter.controller.js.map

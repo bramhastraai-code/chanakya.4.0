@@ -60,7 +60,10 @@ let PropertyService = class PropertyService {
     }
     async findOne(id) {
         try {
-            const property = await this.propertyModel.findById(id).exec();
+            const property = await this.propertyModel
+                .findById(id)
+                .populate('amenities', { strictPopulate: false })
+                .exec();
             if (!property) {
                 throw new common_1.NotFoundException('Property not found');
             }

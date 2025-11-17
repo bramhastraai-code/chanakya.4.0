@@ -68,7 +68,10 @@ export class PropertyService {
 
   async findOne(id: string): Promise<Property> {
     try {
-      const property = await this.propertyModel.findById(id).exec();
+      const property = await this.propertyModel
+        .findById(id)
+        .populate('amenities', { strictPopulate: false })
+        .exec();
       if (!property) {
         throw new NotFoundException('Property not found');
       }
