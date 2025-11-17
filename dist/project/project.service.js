@@ -52,7 +52,7 @@ let ProjectService = class ProjectService {
                 .skip(skip)
                 .limit(size)
                 .sort({ [sortBy]: sortOrder ? -1 : -1 })
-                .populate('builder')
+                .populate('builder', { strictPopulate: false })
                 .exec();
             return {
                 projects: projects,
@@ -69,13 +69,10 @@ let ProjectService = class ProjectService {
     async findOne(id) {
         const project = await this.projectModel
             .findById(id)
-            .populate('builder')
-            .populate('amenities')
-            .populate('facilities')
-            .populate({
-            path: 'projectGroup.customer',
-            strictPopulate: false,
-        })
+            .populate({ path: 'builder', strictPopulate: false })
+            .populate({ path: 'amenities', strictPopulate: false })
+            .populate({ path: 'facilities', strictPopulate: false })
+            .populate({ path: 'projectGroup.customer', strictPopulate: false })
             .exec();
         if (!project) {
             throw new common_1.NotFoundException(`Project with ID ${id} not found`);

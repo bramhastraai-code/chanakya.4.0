@@ -44,6 +44,7 @@ let PropertyService = class PropertyService {
                 .find(query)
                 .skip(skip)
                 .limit(size)
+                .populate('amenities', { strictPopulate: false })
                 .sort({ [sortBy]: sortOrder ? -1 : -1 });
             return {
                 properties,
@@ -143,7 +144,10 @@ let PropertyService = class PropertyService {
         };
     }
     async getPropertiesByProjectId(projectId) {
-        const properties = await this.propertyModel.find({ projectId }).exec();
+        const properties = await this.propertyModel
+            .find({ projectId })
+            .populate('amenities', { strictPopulate: false })
+            .exec();
         console.log('getPropertiesByProjectId', projectId, properties);
         if (!properties || properties.length === 0) {
             return [];
@@ -151,7 +155,10 @@ let PropertyService = class PropertyService {
         return properties;
     }
     async getPropertiesByCity(city) {
-        const properties = await this.propertyModel.find({ city }).exec();
+        const properties = await this.propertyModel
+            .find({ city })
+            .populate('amenities', { strictPopulate: false })
+            .exec();
         console.log('getPropertiesByProjectId', city, properties);
         if (!properties || properties.length === 0) {
             return [];

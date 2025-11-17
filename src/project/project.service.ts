@@ -64,7 +64,7 @@ export class ProjectService {
         .skip(skip)
         .limit(size)
         .sort({ [sortBy]: sortOrder ? -1 : -1 })
-        .populate('builder') // Populating the builder field
+        .populate('builder', { strictPopulate: false }) // Populating the builder field
         .exec();
 
       return {
@@ -84,13 +84,10 @@ export class ProjectService {
   async findOne(id: string): Promise<Project> {
     const project = await this.projectModel
       .findById(id)
-      .populate('builder') // Correct population of builder
-      .populate('amenities')
-      .populate('facilities')
-      .populate({
-        path: 'projectGroup.customer',
-        strictPopulate: false, // Ensures population even if empty
-      })
+      .populate({ path: 'builder', strictPopulate: false })
+      .populate({ path: 'amenities', strictPopulate: false })
+      .populate({ path: 'facilities', strictPopulate: false })
+      .populate({ path: 'projectGroup.customer', strictPopulate: false })
       .exec();
 
     if (!project) {
