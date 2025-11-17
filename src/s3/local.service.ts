@@ -1,6 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { promises as fsPromises } from 'fs';
-import { v4 as uuidv4 } from 'uuid';
 import * as path from 'path';
 
 @Injectable()
@@ -28,7 +27,7 @@ export class FileService {
   ): Promise<{ url: string; filename: string }> {
     await this.ensureUploadDirectoryExists();
 
-    const filename = `${uuidv4()}-${file.originalname}`;
+    const filename = `${file.originalname}`;
     const filePath = path.join(this.uploadPath, filename);
 
     try {

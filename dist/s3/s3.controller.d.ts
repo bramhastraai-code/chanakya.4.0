@@ -1,4 +1,3 @@
-/// <reference types="multer" />
 import { S3Service } from './s3.service';
 import { UploadFileDto } from './dto/uploadfile.s3.dto';
 import { UploadFilesDto } from './dto/UploadFiles.s3.dto';

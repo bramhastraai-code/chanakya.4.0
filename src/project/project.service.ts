@@ -122,7 +122,7 @@ export class ProjectService {
     }
   }
 
-  async ProjectList(): Promise<{ value: string; label: string }[]> {
+  async ProjectList() {
     const builders = await this.projectModel.find().exec();
     const data = builders.map((project) => ({
       value: project._id, // assuming name is the value you want

@@ -60,9 +60,9 @@ export class CreateUserDto {
   @IsOptional()
   @Transform(({ value }) => {
     if (!value) return null;
-    if (value instanceof Types.ObjectId) return value.toString();
+    if (value instanceof Types.ObjectId) return value;
     if (typeof value === 'string' && Types.ObjectId.isValid(value)) {
-      return value; // Return as string for DTO, convert to ObjectId in service
+      return new Types.ObjectId(value); // Return as string for DTO, convert to ObjectId in service
     }
     return null;
   })
@@ -72,9 +72,9 @@ export class CreateUserDto {
   @IsOptional()
   @Transform(({ value }) => {
     if (!value) return null;
-    if (value instanceof Types.ObjectId) return value.toString();
+    if (value instanceof Types.ObjectId) return value;
     if (typeof value === 'string' && Types.ObjectId.isValid(value)) {
-      return value;
+      return new Types.ObjectId(value);
     }
     return null;
   })

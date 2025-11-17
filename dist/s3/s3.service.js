@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Service = void 0;
 const common_1 = require("@nestjs/common");
 const AWS = require("aws-sdk");
-const uuid_1 = require("uuid");
 const sharp = require("sharp");
 let S3Service = class S3Service {
     constructor() {
@@ -50,7 +49,7 @@ let S3Service = class S3Service {
             .toBuffer();
     }
     async uploadFile(file, folder) {
-        const key = `${folder}/${(0, uuid_1.v4)()}-${file.originalname}`;
+        const key = `${folder}/${file.originalname}`;
         try {
             const watermarkedBuffer = await this.addWatermark(file.buffer);
             const params = {
@@ -89,7 +88,7 @@ let S3Service = class S3Service {
         }
     }
     async uploadVideo(file, folder) {
-        const key = `${folder}/${(0, uuid_1.v4)()}-${file.originalname}`;
+        const key = `${folder}/${file.originalname}`;
         try {
             const params = {
                 Bucket: this.bucketName,
@@ -106,7 +105,7 @@ let S3Service = class S3Service {
         }
     }
     async uploadPDF(file, folder) {
-        const key = `${folder}/${(0, uuid_1.v4)()}-${file.originalname}`;
+        const key = `${folder}/${file.originalname}`;
         try {
             const params = {
                 Bucket: this.bucketName,

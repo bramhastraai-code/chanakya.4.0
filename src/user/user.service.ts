@@ -126,11 +126,14 @@ export class UserService {
       console.log('user cr4ate', createUserDto);
 
       const { refreshToken } = await this.auth.generateTokens(
-        createdUser._id,
+        createdUser._id as Types.ObjectId,
         createdUser.email,
       );
 
-      await this.auth.updateRefreshToken(createdUser._id, refreshToken);
+      await this.auth.updateRefreshToken(
+        createdUser._id as Types.ObjectId,
+        refreshToken,
+      );
       return response;
     } catch (error) {
       if (error instanceof ConflictException) {

@@ -1,6 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
-import { v4 as uuidv4 } from 'uuid';
 import { S3 } from 'aws-sdk';
 import * as sharp from 'sharp';
 
@@ -56,7 +55,7 @@ export class S3Service {
     file: Express.Multer.File,
     folder: string,
   ): Promise<{ url: string; key: string }> {
-    const key = `${folder}/${uuidv4()}-${file.originalname}`;
+    const key = `${folder}/${file.originalname}`;
 
     try {
       // Add watermark to the image
@@ -114,7 +113,7 @@ export class S3Service {
     file: Express.Multer.File,
     folder: string,
   ): Promise<{ url: string; key: string }> {
-    const key = `${folder}/${uuidv4()}-${file.originalname}`;
+    const key = `${folder}/${file.originalname}`;
 
     try {
       const params = {
@@ -139,7 +138,7 @@ export class S3Service {
     file: Express.Multer.File,
     folder: string,
   ): Promise<{ url: string; key: string }> {
-    const key = `${folder}/${uuidv4()}-${file.originalname}`;
+    const key = `${folder}/${file.originalname}`;
 
     try {
       const params = {

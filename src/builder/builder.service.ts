@@ -139,10 +139,10 @@ export class BuilderService {
 
       // Step 3: Generate Tokens
       const { accessToken, refreshToken } = await this.generateTokens(
-        user._id,
+        user._id as Types.ObjectId,
         user.phone,
       );
-      await this.updateRefreshToken(user._id, refreshToken);
+      await this.updateRefreshToken(user._id as Types.ObjectId, refreshToken);
 
       // Step 4: Return Response
       return {
@@ -199,8 +199,8 @@ export class BuilderService {
     }
 
     const { accessToken, refreshToken: newRefreshToken } =
-      await this.generateTokens(user._id, user.phone);
-    await this.updateRefreshToken(user._id, newRefreshToken);
+      await this.generateTokens(user._id as Types.ObjectId, user.phone);
+    await this.updateRefreshToken(user._id as Types.ObjectId, newRefreshToken);
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
@@ -321,7 +321,7 @@ export class BuilderService {
     return result ? true : false;
   }
 
-  async BuilderList(): Promise<{ value: string; label: string }[]> {
+  async BuilderList() {
     const builders = await this.builderModel.find().exec();
     const data = builders.map((builder) => ({
       value: builder._id, // assuming name is the value you want

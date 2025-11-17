@@ -18,7 +18,7 @@ export declare class AmenityController {
     findOne(id: string): Promise<Response<Amenity>>;
     remove(id: string): Promise<void>;
     amenityList(): Promise<Response<{
-        value: string;
+        value: unknown;
         label: string;
     }[]>>;
 }

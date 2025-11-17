@@ -321,7 +321,7 @@ export class BuilderController {
   })
   @ApiNotFoundResponse({ description: 'No builders found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-  async builderList(): Promise<Response<{ value: string; label: string }[]>> {
+  async builderList() {
     try {
       const data = await this.builderService.BuilderList();
       if (!data || data.length === 0) {

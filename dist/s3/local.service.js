@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileService = void 0;
 const common_1 = require("@nestjs/common");
 const fs_1 = require("fs");
-const uuid_1 = require("uuid");
 const path = require("path");
 let FileService = class FileService {
     constructor() {
@@ -28,7 +27,7 @@ let FileService = class FileService {
     }
     async uploadFile(file) {
         await this.ensureUploadDirectoryExists();
-        const filename = `${(0, uuid_1.v4)()}-${file.originalname}`;
+        const filename = `${file.originalname}`;
         const filePath = path.join(this.uploadPath, filename);
         try {
             await fs_1.promises.writeFile(filePath, file.buffer);

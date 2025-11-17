@@ -228,7 +228,7 @@ export class ProjectController {
   })
   @ApiNotFoundResponse({ description: 'No Project found' })
   @ApiInternalServerErrorResponse({ description: 'Internal server error' })
-  async projectList(): Promise<Response<{ value: string; label: string }[]>> {
+  async projectList() {
     try {
       const data = await this.projectService.ProjectList();
       if (!data || data.length === 0) {

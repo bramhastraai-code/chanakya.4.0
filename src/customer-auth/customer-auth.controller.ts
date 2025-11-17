@@ -7,7 +7,6 @@ import {
 } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Response as CustomResponse } from 'src/common/interceptor/response.interface';
-import { Types } from 'mongoose';
 import { Response } from 'express';
 
 import { CustomerAuthService } from './customer-auth.service';
@@ -135,12 +134,7 @@ export class CustomerAuthController {
   async register(
     @Body() dto: CreateCustomerAuthDto,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<
-    CustomResponse<{
-      email: string;
-      _id: Types.ObjectId;
-    }>
-  > {
+  ) {
     const data = await this.authCustomerService.register(dto, res);
     return { data, message: 'Customer logged in successfully' };
   }

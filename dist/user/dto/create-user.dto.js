@@ -86,9 +86,9 @@ __decorate([
         if (!value)
             return null;
         if (value instanceof mongoose_1.Types.ObjectId)
-            return value.toString();
-        if (typeof value === 'string' && mongoose_1.Types.ObjectId.isValid(value)) {
             return value;
+        if (typeof value === 'string' && mongoose_1.Types.ObjectId.isValid(value)) {
+            return new mongoose_1.Types.ObjectId(value);
         }
         return null;
     }),
@@ -101,9 +101,9 @@ __decorate([
         if (!value)
             return null;
         if (value instanceof mongoose_1.Types.ObjectId)
-            return value.toString();
-        if (typeof value === 'string' && mongoose_1.Types.ObjectId.isValid(value)) {
             return value;
+        if (typeof value === 'string' && mongoose_1.Types.ObjectId.isValid(value)) {
+            return new mongoose_1.Types.ObjectId(value);
         }
         return null;
     }),

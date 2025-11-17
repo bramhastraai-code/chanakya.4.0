@@ -132,7 +132,7 @@ export class AmenityService {
       );
     }
   }
-  async AmenityList(): Promise<{ value: string; label: string }[]> {
+  async AmenityList() {
     const amenities = await this.amenityModel.find().exec();
     const data = amenities.map((amenity) => ({
       value: amenity._id, // assuming name is the value you want

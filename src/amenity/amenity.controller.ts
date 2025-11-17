@@ -227,7 +227,7 @@ export class AmenityController {
   @ApiInternalServerErrorResponse({
     description: 'Internal server error',
   })
-  async amenityList(): Promise<Response<{ value: string; label: string }[]>> {
+  async amenityList(): Promise<Response<{ value: unknown; label: string }[]>> {
     try {
       const data = await this.amenityService.AmenityList();
 

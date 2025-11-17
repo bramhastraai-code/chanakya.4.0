@@ -142,7 +142,7 @@ export class CustomerAuthService {
     otp: string,
   ): Promise<{
     phoneNumber: string;
-    _id: string;
+    _id: Types.ObjectId;
     newUser: boolean;
     accessToken: string;
     refreshToken: string;
@@ -153,7 +153,7 @@ export class CustomerAuthService {
       .findOne({ phoneNumber })
       .sort({ createdAt: -1 })
       .exec();
-    console.log('otpRecord', otpRecord), otpRecord;
+    (console.log('otpRecord', otpRecord), otpRecord);
 
     if (!otpRecord) {
       throw new BadRequestException('OTP not found');
@@ -178,15 +178,15 @@ export class CustomerAuthService {
     }
 
     const { accessToken, refreshToken } = await this.generateTokens(
-      user._id,
+      user._id as Types.ObjectId,
       user.phoneNumber,
     );
-    await this.updateRefreshToken(user._id, refreshToken);
+    await this.updateRefreshToken(user._id as Types.ObjectId, refreshToken);
 
     // Authentication is successful at this point
     return {
       phoneNumber: user.phoneNumber,
-      _id: user._id,
+      _id: user._id as Types.ObjectId,
       newUser,
       accessToken,
       refreshToken,
@@ -239,10 +239,10 @@ export class CustomerAuthService {
 
       // Step 3: Generate Tokens
       const { accessToken, refreshToken } = await this.generateTokens(
-        user._id,
+        user._id as Types.ObjectId,
         user.phoneNumber,
       );
-      await this.updateRefreshToken(user._id, refreshToken);
+      await this.updateRefreshToken(user._id as Types.ObjectId, refreshToken);
 
       // Step 4: Return Response
       return {
@@ -272,7 +272,7 @@ export class CustomerAuthService {
     const user = await new this.customerModel(dto).save();
 
     const { accessToken, refreshToken } = await this.generateTokens(
-      user._id,
+      user._id as Types.ObjectId,
       user.phoneNumber,
     );
     await this.updateRefreshToken(user.id, refreshToken);
@@ -342,8 +342,8 @@ export class CustomerAuthService {
     }
 
     const { accessToken, refreshToken: newRefreshToken } =
-      await this.generateTokens(user._id, user.phoneNumber);
-    await this.updateRefreshToken(user._id, newRefreshToken);
+      await this.generateTokens(user._id as Types.ObjectId, user.phoneNumber);
+    await this.updateRefreshToken(user._id as Types.ObjectId, newRefreshToken);
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,

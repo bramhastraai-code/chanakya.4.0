@@ -45,7 +45,7 @@ export class User {
   pinCode: string;
 
   @Prop({ type: Types.ObjectId, ref: 'Role' })
-  role: Role;
+  role: Role ;
 
   @Prop({ type: String, default: 'active' })
   status: string;

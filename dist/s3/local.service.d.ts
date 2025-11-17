@@ -1,4 +1,3 @@
-/// <reference types="multer" />
 export declare class FileService {
     private readonly uploadPath;
     constructor();
