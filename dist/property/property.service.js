@@ -62,7 +62,16 @@ let PropertyService = class PropertyService {
         try {
             const property = await this.propertyModel
                 .findById(id)
-                .populate('amenities', { strictPopulate: false })
+                .populate({
+                path: 'amenities',
+                model: amenity_entity_1.Amenity.name,
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'facilities',
+                model: amenity_entity_1.Amenity.name,
+                strictPopulate: false,
+            })
                 .exec();
             if (!property) {
                 throw new common_1.NotFoundException('Property not found');

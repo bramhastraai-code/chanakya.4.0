@@ -70,7 +70,16 @@ export class PropertyService {
     try {
       const property = await this.propertyModel
         .findById(id)
-        .populate('amenities', { strictPopulate: false })
+        .populate({
+          path: 'amenities',
+          model: Amenity.name,
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'facilities',
+          model: Amenity.name,
+          strictPopulate: false,
+        })
         .exec();
       if (!property) {
         throw new NotFoundException('Property not found');
