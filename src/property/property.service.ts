@@ -51,7 +51,36 @@ export class PropertyService {
         .find(query)
         .skip(skip)
         .limit(size)
-        .populate('amenities', { strictPopulate: false }) // Populate amenities if available
+        .populate({
+          path: 'amenities',
+          model: Amenity.name,
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'facilities',
+          model: Amenity.name,
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'builderId',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'projectId',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'customer',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'createdBy',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'updatedBy',
+          strictPopulate: false,
+        })
         .sort({ [sortBy]: sortOrder ? -1 : -1 });
 
       return {
@@ -70,6 +99,7 @@ export class PropertyService {
     try {
       const property = await this.propertyModel
         .findById(id)
+        // Populate all relevant refs with strictPopulate disabled
         .populate({
           path: 'amenities',
           model: Amenity.name,
@@ -78,6 +108,26 @@ export class PropertyService {
         .populate({
           path: 'facilities',
           model: Amenity.name,
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'builderId',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'projectId',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'customer',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'createdBy',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'updatedBy',
           strictPopulate: false,
         })
         .exec();
@@ -136,7 +186,18 @@ export class PropertyService {
         {},
         'thumbnail propertyTitle address price propertyStatus totalArea bedCount pricePerUnit tags featured amenities',
       )
-      .populate('amenities') // Populate amenities if available
+      .populate({
+        path: 'amenities',
+        model: Amenity.name,
+        select: 'name iconImage',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'facilities',
+        model: Amenity.name,
+        select: 'name iconImage',
+        strictPopulate: false,
+      })
       .exec();
 
     if (!properties.length) {
@@ -151,13 +212,33 @@ export class PropertyService {
       .findById(id)
       .populate({
         path: 'customer', // Assuming crmDetails references a Customer model
-        select: 'name userImage responseTime phoneNumber userType', // Select specific fields
         model: Customer.name, // Reference the Customer model
       })
       .populate({
         strictPopulate: false,
         path: 'amenities',
         model: Amenity.name,
+      })
+      .populate({
+        strictPopulate: false,
+        path: 'facilities',
+        model: Amenity.name,
+      })
+      .populate({
+        path: 'builderId',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'projectId',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'createdBy',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'updatedBy',
+        strictPopulate: false,
       }) // Populate other fields as needed
       .exec();
 
@@ -181,7 +262,28 @@ export class PropertyService {
   async getPropertiesByProjectId(projectId: string): Promise<Property[]> {
     const properties = await this.propertyModel
       .find({ projectId })
-      .populate('amenities', { strictPopulate: false })
+      .populate({
+        path: 'amenities',
+        model: Amenity.name,
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'facilities',
+        model: Amenity.name,
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'builderId',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'projectId',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'customer',
+        strictPopulate: false,
+      })
       .exec();
     console.log('getPropertiesByProjectId', projectId, properties);
     if (!properties || properties.length === 0) {
@@ -193,7 +295,28 @@ export class PropertyService {
   async getPropertiesByCity(city: string): Promise<Property[]> {
     const properties = await this.propertyModel
       .find({ city })
-      .populate('amenities', { strictPopulate: false })
+      .populate({
+        path: 'amenities',
+        model: Amenity.name,
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'facilities',
+        model: Amenity.name,
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'builderId',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'projectId',
+        strictPopulate: false,
+      })
+      .populate({
+        path: 'customer',
+        strictPopulate: false,
+      })
       .exec();
     console.log('getPropertiesByProjectId', city, properties);
     if (!properties || properties.length === 0) {

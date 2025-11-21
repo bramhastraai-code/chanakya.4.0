@@ -64,7 +64,12 @@ export class ProjectService {
         .skip(skip)
         .limit(size)
         .sort({ [sortBy]: sortOrder ? -1 : -1 })
-        .populate('builder', { strictPopulate: false }) // Populating the builder field
+        .populate({ path: 'builder', strictPopulate: false })
+        .populate({ path: 'amenities', strictPopulate: false })
+        .populate({ path: 'facilities', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
+        .populate({ path: 'executiveUser', strictPopulate: false })
         .exec();
 
       return {
@@ -103,6 +108,12 @@ export class ProjectService {
   ): Promise<Project> {
     const project = await this.projectModel
       .findByIdAndUpdate(id, updateProjectDto, { new: true })
+      .populate({ path: 'builder', strictPopulate: false })
+      .populate({ path: 'amenities', strictPopulate: false })
+      .populate({ path: 'facilities', strictPopulate: false })
+      .populate({ path: 'createdBy', strictPopulate: false })
+      .populate({ path: 'updatedBy', strictPopulate: false })
+      .populate({ path: 'executiveUser', strictPopulate: false })
       .exec();
     if (!project) {
       throw new NotFoundException(`Project with ID ${id} not found`);
@@ -137,8 +148,13 @@ export class ProjectService {
         : { status: Status.ACTIVE };
       const projects = await this.projectModel
         .find(filter)
-        .populate('builder')
-        .sort({ featured: -1 }) // Correct population of builder in category filter
+        .populate({ path: 'builder', strictPopulate: false })
+        .populate({ path: 'amenities', strictPopulate: false })
+        .populate({ path: 'facilities', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
+        .populate({ path: 'executiveUser', strictPopulate: false })
+        .sort({ featured: -1 })
         .exec();
 
       if (!projects.length) {
@@ -168,7 +184,12 @@ export class ProjectService {
 
       const projects = await this.projectModel
         .find(filter)
-        .populate('builder')
+        .populate({ path: 'builder', strictPopulate: false })
+        .populate({ path: 'amenities', strictPopulate: false })
+        .populate({ path: 'facilities', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
+        .populate({ path: 'executiveUser', strictPopulate: false })
         .sort({ featured: -1 })
         .exec();
       console.log('getProjectsByAffordability', projects);
@@ -186,9 +207,12 @@ export class ProjectService {
   async getProjectDetail(projectId: string): Promise<any> {
     const project = await this.projectModel
       .findById(projectId)
-      .populate('builder')
-      .populate({ path: 'amenities' })
-      .populate({ path: 'facilities' })
+      .populate({ path: 'builder', strictPopulate: false })
+      .populate({ path: 'amenities', strictPopulate: false })
+      .populate({ path: 'facilities', strictPopulate: false })
+      .populate({ path: 'createdBy', strictPopulate: false })
+      .populate({ path: 'updatedBy', strictPopulate: false })
+      .populate({ path: 'executiveUser', strictPopulate: false })
       .exec();
 
     if (!project) {
@@ -208,12 +232,14 @@ export class ProjectService {
 
   async getProjectsByCity(city: string): Promise<Project[]> {
     const projects = await this.projectModel
-      .find({ city, status: Status.ACTIVE }) // Only ACTIVE projects in the specified city
-      .populate({
-        path: 'builder',
-        select: 'name logo', // Include specific builder fields
-      })
-      .sort({ featured: -1 }) // Ensure featured projects appear first
+      .find({ city, status: Status.ACTIVE })
+      .populate({ path: 'builder', strictPopulate: false })
+      .populate({ path: 'amenities', strictPopulate: false })
+      .populate({ path: 'facilities', strictPopulate: false })
+      .populate({ path: 'createdBy', strictPopulate: false })
+      .populate({ path: 'updatedBy', strictPopulate: false })
+      .populate({ path: 'executiveUser', strictPopulate: false })
+      .sort({ featured: -1 })
       .exec();
 
     // If no projects are found, return an empty array
@@ -337,6 +363,12 @@ export class ProjectService {
   async getProjectsByBuilder(builderId: string) {
     const projects = await this.projectModel
       .find({ builder: builderId })
+      .populate({ path: 'builder', strictPopulate: false })
+      .populate({ path: 'amenities', strictPopulate: false })
+      .populate({ path: 'facilities', strictPopulate: false })
+      .populate({ path: 'createdBy', strictPopulate: false })
+      .populate({ path: 'updatedBy', strictPopulate: false })
+      .populate({ path: 'executiveUser', strictPopulate: false })
       .exec();
 
     if (!projects.length) {
@@ -407,7 +439,12 @@ export class ProjectService {
           ],
           status: Status.ACTIVE,
         })
-        .populate('builder')
+        .populate({ path: 'builder', strictPopulate: false })
+        .populate({ path: 'amenities', strictPopulate: false })
+        .populate({ path: 'facilities', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
+        .populate({ path: 'executiveUser', strictPopulate: false })
         .exec();
 
       if (!projects.length) {
@@ -444,7 +481,12 @@ export class ProjectService {
   async getBuilderProjects(builderId: string): Promise<Project[]> {
     const projects = await this.projectModel
       .find({ builder: builderId, status: Status.ACTIVE })
-      .populate('builder')
+      .populate({ path: 'builder', strictPopulate: false })
+      .populate({ path: 'amenities', strictPopulate: false })
+      .populate({ path: 'facilities', strictPopulate: false })
+      .populate({ path: 'createdBy', strictPopulate: false })
+      .populate({ path: 'updatedBy', strictPopulate: false })
+      .populate({ path: 'executiveUser', strictPopulate: false })
       .exec();
 
     if (!projects.length) {

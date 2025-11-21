@@ -52,7 +52,12 @@ let ProjectService = class ProjectService {
                 .skip(skip)
                 .limit(size)
                 .sort({ [sortBy]: sortOrder ? -1 : -1 })
-                .populate('builder', { strictPopulate: false })
+                .populate({ path: 'builder', strictPopulate: false })
+                .populate({ path: 'amenities', strictPopulate: false })
+                .populate({ path: 'facilities', strictPopulate: false })
+                .populate({ path: 'createdBy', strictPopulate: false })
+                .populate({ path: 'updatedBy', strictPopulate: false })
+                .populate({ path: 'executiveUser', strictPopulate: false })
                 .exec();
             return {
                 projects: projects,
@@ -82,6 +87,12 @@ let ProjectService = class ProjectService {
     async update(id, updateProjectDto) {
         const project = await this.projectModel
             .findByIdAndUpdate(id, updateProjectDto, { new: true })
+            .populate({ path: 'builder', strictPopulate: false })
+            .populate({ path: 'amenities', strictPopulate: false })
+            .populate({ path: 'facilities', strictPopulate: false })
+            .populate({ path: 'createdBy', strictPopulate: false })
+            .populate({ path: 'updatedBy', strictPopulate: false })
+            .populate({ path: 'executiveUser', strictPopulate: false })
             .exec();
         if (!project) {
             throw new common_1.NotFoundException(`Project with ID ${id} not found`);
@@ -110,7 +121,12 @@ let ProjectService = class ProjectService {
                 : { status: status_enum_1.Status.ACTIVE };
             const projects = await this.projectModel
                 .find(filter)
-                .populate('builder')
+                .populate({ path: 'builder', strictPopulate: false })
+                .populate({ path: 'amenities', strictPopulate: false })
+                .populate({ path: 'facilities', strictPopulate: false })
+                .populate({ path: 'createdBy', strictPopulate: false })
+                .populate({ path: 'updatedBy', strictPopulate: false })
+                .populate({ path: 'executiveUser', strictPopulate: false })
                 .sort({ featured: -1 })
                 .exec();
             if (!projects.length) {
@@ -135,7 +151,12 @@ let ProjectService = class ProjectService {
             }
             const projects = await this.projectModel
                 .find(filter)
-                .populate('builder')
+                .populate({ path: 'builder', strictPopulate: false })
+                .populate({ path: 'amenities', strictPopulate: false })
+                .populate({ path: 'facilities', strictPopulate: false })
+                .populate({ path: 'createdBy', strictPopulate: false })
+                .populate({ path: 'updatedBy', strictPopulate: false })
+                .populate({ path: 'executiveUser', strictPopulate: false })
                 .sort({ featured: -1 })
                 .exec();
             console.log('getProjectsByAffordability', projects);
@@ -151,9 +172,12 @@ let ProjectService = class ProjectService {
     async getProjectDetail(projectId) {
         const project = await this.projectModel
             .findById(projectId)
-            .populate('builder')
-            .populate({ path: 'amenities' })
-            .populate({ path: 'facilities' })
+            .populate({ path: 'builder', strictPopulate: false })
+            .populate({ path: 'amenities', strictPopulate: false })
+            .populate({ path: 'facilities', strictPopulate: false })
+            .populate({ path: 'createdBy', strictPopulate: false })
+            .populate({ path: 'updatedBy', strictPopulate: false })
+            .populate({ path: 'executiveUser', strictPopulate: false })
             .exec();
         if (!project) {
             throw new common_1.NotFoundException(`Project with ID ${projectId} not found`);
@@ -168,10 +192,12 @@ let ProjectService = class ProjectService {
     async getProjectsByCity(city) {
         const projects = await this.projectModel
             .find({ city, status: status_enum_1.Status.ACTIVE })
-            .populate({
-            path: 'builder',
-            select: 'name logo',
-        })
+            .populate({ path: 'builder', strictPopulate: false })
+            .populate({ path: 'amenities', strictPopulate: false })
+            .populate({ path: 'facilities', strictPopulate: false })
+            .populate({ path: 'createdBy', strictPopulate: false })
+            .populate({ path: 'updatedBy', strictPopulate: false })
+            .populate({ path: 'executiveUser', strictPopulate: false })
             .sort({ featured: -1 })
             .exec();
         if (!projects.length) {
@@ -283,6 +309,12 @@ let ProjectService = class ProjectService {
     async getProjectsByBuilder(builderId) {
         const projects = await this.projectModel
             .find({ builder: builderId })
+            .populate({ path: 'builder', strictPopulate: false })
+            .populate({ path: 'amenities', strictPopulate: false })
+            .populate({ path: 'facilities', strictPopulate: false })
+            .populate({ path: 'createdBy', strictPopulate: false })
+            .populate({ path: 'updatedBy', strictPopulate: false })
+            .populate({ path: 'executiveUser', strictPopulate: false })
             .exec();
         if (!projects.length) {
             throw new common_1.NotFoundException('No projects found for this builder');
@@ -345,7 +377,12 @@ let ProjectService = class ProjectService {
                 ],
                 status: status_enum_1.Status.ACTIVE,
             })
-                .populate('builder')
+                .populate({ path: 'builder', strictPopulate: false })
+                .populate({ path: 'amenities', strictPopulate: false })
+                .populate({ path: 'facilities', strictPopulate: false })
+                .populate({ path: 'createdBy', strictPopulate: false })
+                .populate({ path: 'updatedBy', strictPopulate: false })
+                .populate({ path: 'executiveUser', strictPopulate: false })
                 .exec();
             if (!projects.length) {
                 throw new common_1.NotFoundException('No projects found for the given keyword');
@@ -368,7 +405,12 @@ let ProjectService = class ProjectService {
     async getBuilderProjects(builderId) {
         const projects = await this.projectModel
             .find({ builder: builderId, status: status_enum_1.Status.ACTIVE })
-            .populate('builder')
+            .populate({ path: 'builder', strictPopulate: false })
+            .populate({ path: 'amenities', strictPopulate: false })
+            .populate({ path: 'facilities', strictPopulate: false })
+            .populate({ path: 'createdBy', strictPopulate: false })
+            .populate({ path: 'updatedBy', strictPopulate: false })
+            .populate({ path: 'executiveUser', strictPopulate: false })
             .exec();
         if (!projects.length) {
             throw new common_1.NotFoundException('No active projects found for this builder');

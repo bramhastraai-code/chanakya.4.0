@@ -44,7 +44,36 @@ let PropertyService = class PropertyService {
                 .find(query)
                 .skip(skip)
                 .limit(size)
-                .populate('amenities', { strictPopulate: false })
+                .populate({
+                path: 'amenities',
+                model: amenity_entity_1.Amenity.name,
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'facilities',
+                model: amenity_entity_1.Amenity.name,
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'builderId',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'projectId',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'customer',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'createdBy',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'updatedBy',
+                strictPopulate: false,
+            })
                 .sort({ [sortBy]: sortOrder ? -1 : -1 });
             return {
                 properties,
@@ -70,6 +99,26 @@ let PropertyService = class PropertyService {
                 .populate({
                 path: 'facilities',
                 model: amenity_entity_1.Amenity.name,
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'builderId',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'projectId',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'customer',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'createdBy',
+                strictPopulate: false,
+            })
+                .populate({
+                path: 'updatedBy',
                 strictPopulate: false,
             })
                 .exec();
@@ -120,7 +169,18 @@ let PropertyService = class PropertyService {
     async getPropertySummaries() {
         const properties = await this.propertyModel
             .find({}, 'thumbnail propertyTitle address price propertyStatus totalArea bedCount pricePerUnit tags featured amenities')
-            .populate('amenities')
+            .populate({
+            path: 'amenities',
+            model: amenity_entity_1.Amenity.name,
+            select: 'name iconImage',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'facilities',
+            model: amenity_entity_1.Amenity.name,
+            select: 'name iconImage',
+            strictPopulate: false,
+        })
             .exec();
         if (!properties.length) {
             throw new common_1.NotFoundException('No properties found.');
@@ -132,13 +192,33 @@ let PropertyService = class PropertyService {
             .findById(id)
             .populate({
             path: 'customer',
-            select: 'name userImage responseTime phoneNumber userType',
             model: customer_entity_1.Customer.name,
         })
             .populate({
             strictPopulate: false,
             path: 'amenities',
             model: amenity_entity_1.Amenity.name,
+        })
+            .populate({
+            strictPopulate: false,
+            path: 'facilities',
+            model: amenity_entity_1.Amenity.name,
+        })
+            .populate({
+            path: 'builderId',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'projectId',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'createdBy',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'updatedBy',
+            strictPopulate: false,
         })
             .exec();
         if (!property) {
@@ -158,7 +238,28 @@ let PropertyService = class PropertyService {
     async getPropertiesByProjectId(projectId) {
         const properties = await this.propertyModel
             .find({ projectId })
-            .populate('amenities', { strictPopulate: false })
+            .populate({
+            path: 'amenities',
+            model: amenity_entity_1.Amenity.name,
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'facilities',
+            model: amenity_entity_1.Amenity.name,
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'builderId',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'projectId',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'customer',
+            strictPopulate: false,
+        })
             .exec();
         console.log('getPropertiesByProjectId', projectId, properties);
         if (!properties || properties.length === 0) {
@@ -169,7 +270,28 @@ let PropertyService = class PropertyService {
     async getPropertiesByCity(city) {
         const properties = await this.propertyModel
             .find({ city })
-            .populate('amenities', { strictPopulate: false })
+            .populate({
+            path: 'amenities',
+            model: amenity_entity_1.Amenity.name,
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'facilities',
+            model: amenity_entity_1.Amenity.name,
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'builderId',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'projectId',
+            strictPopulate: false,
+        })
+            .populate({
+            path: 'customer',
+            strictPopulate: false,
+        })
             .exec();
         console.log('getPropertiesByProjectId', city, properties);
         if (!properties || properties.length === 0) {
