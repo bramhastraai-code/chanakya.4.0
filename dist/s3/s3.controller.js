@@ -39,6 +39,7 @@ let S3Controller = class S3Controller {
     }
     async deleteFile(key) {
         await this.s3Service.deleteFile(key);
+        return { message: 'File deleted successfully' };
     }
     async uploadVideo(file, folder) {
         if (!file) {

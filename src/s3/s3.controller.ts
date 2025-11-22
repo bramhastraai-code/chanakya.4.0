@@ -121,6 +121,7 @@ export class S3Controller {
   @HttpCode(204)
   async deleteFile(@Param('key') key: string) {
     await this.s3Service.deleteFile(key);
+    return { message: 'File deleted successfully' };
   }
   @Post('upload-video')
   @ApiOperation({ summary: 'Upload a video file to S3' })
