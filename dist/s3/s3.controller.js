@@ -38,6 +38,7 @@ let S3Controller = class S3Controller {
         return { data, message: 'Uploaded multiple images successfully' };
     }
     async deleteFile(key) {
+        console.log('Received key:', key);
         await this.s3Service.deleteFile(key);
         return { message: 'File deleted successfully' };
     }
@@ -120,12 +121,15 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], S3Controller.prototype, "uploadFiles", null);
 __decorate([
-    (0, common_1.Delete)(':key'),
+    (0, common_1.Delete)(':key(*)'),
     (0, swagger_1.ApiOperation)({
         summary: 'Delete a file from S3',
         description: 'Deletes a file from S3 based on the provided key.',
     }),
-    (0, swagger_1.ApiParam)({ name: 'key', description: 'S3 file key' }),
+    (0, swagger_1.ApiParam)({
+        name: 'key',
+        description: 'S3 file key (e.g., documents/filename.jpg)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 204,
         description: 'The file has been successfully deleted from S3.',

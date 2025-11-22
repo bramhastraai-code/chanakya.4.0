@@ -108,18 +108,24 @@ export class S3Controller {
     return { data, message: 'Uploaded multiple images successfully' };
   }
 
-  @Delete(':key')
+  @Delete(':key(*)')
   @ApiOperation({
     summary: 'Delete a file from S3',
     description: 'Deletes a file from S3 based on the provided key.',
   })
-  @ApiParam({ name: 'key', description: 'S3 file key' })
+  @ApiParam({
+    name: 'key',
+    description: 'S3 file key (e.g., documents/filename.jpg)',
+  })
   @ApiResponse({
     status: 204,
     description: 'The file has been successfully deleted from S3.',
   })
   @HttpCode(204)
   async deleteFile(@Param('key') key: string) {
+    // NestJS automatically decodes URL parameters, so key should already be decoded
+    // Just use the key directly
+    console.log('Received key:', key);
     await this.s3Service.deleteFile(key);
     return { message: 'File deleted successfully' };
   }
