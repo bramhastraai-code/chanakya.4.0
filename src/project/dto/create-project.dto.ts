@@ -141,6 +141,11 @@ export class CreateProjectDto {
     example: 20000,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   priceAverage?: number;
 
@@ -149,6 +154,11 @@ export class CreateProjectDto {
     example: 20000,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   priceMin?: number;
 
@@ -157,6 +167,11 @@ export class CreateProjectDto {
     example: 1000000,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   minCarpetArea?: number;
 
@@ -165,6 +180,11 @@ export class CreateProjectDto {
     example: 20000,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   maxCarpetArea?: number;
 
   @ApiPropertyOptional({
@@ -172,6 +192,11 @@ export class CreateProjectDto {
     example: 1000000,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   priceMax?: number;
 
@@ -180,6 +205,11 @@ export class CreateProjectDto {
     example: 2022,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   since?: number;
 
@@ -235,6 +265,11 @@ export class CreateProjectDto {
     example: 100,
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   roadDistance: number;
 
@@ -244,6 +279,11 @@ export class CreateProjectDto {
     example: '40.712776',
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   latitude: number;
 
@@ -253,6 +293,11 @@ export class CreateProjectDto {
     example: '-74.005974',
   })
   @IsOptional()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsNumber()
   longitude: number;
 
@@ -442,6 +487,11 @@ export class CreateProjectDto {
 
   @ApiProperty({ description: 'View count', example: 100, required: false })
   @IsNumber()
+  @Transform(({ value }) => {
+    if (value === '' || value === null || value === undefined) return undefined;
+    const num = Number(value);
+    return isNaN(num) ? value : num;
+  })
   @IsOptional()
   view?: number;
 

@@ -157,6 +157,12 @@ __decorate([
         example: 20000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "priceAverage", void 0);
@@ -166,6 +172,12 @@ __decorate([
         example: 20000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "priceMin", void 0);
@@ -175,6 +187,12 @@ __decorate([
         example: 1000000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "minCarpetArea", void 0);
@@ -184,6 +202,12 @@ __decorate([
         example: 20000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "maxCarpetArea", void 0);
 __decorate([
@@ -192,6 +216,12 @@ __decorate([
         example: 1000000,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "priceMax", void 0);
@@ -201,6 +231,12 @@ __decorate([
         example: 2022,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "since", void 0);
@@ -261,6 +297,12 @@ __decorate([
         example: 100,
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "roadDistance", void 0);
@@ -271,6 +313,12 @@ __decorate([
         example: '40.712776',
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "latitude", void 0);
@@ -281,6 +329,12 @@ __decorate([
         example: '-74.005974',
     }),
     (0, class_validator_1.IsOptional)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "longitude", void 0);
@@ -491,6 +545,12 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({ description: 'View count', example: 100, required: false }),
     (0, class_validator_1.IsNumber)(),
+    (0, class_transformer_1.Transform)(({ value }) => {
+        if (value === '' || value === null || value === undefined)
+            return undefined;
+        const num = Number(value);
+        return isNaN(num) ? value : num;
+    }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Number)
 ], CreateProjectDto.prototype, "view", void 0);
