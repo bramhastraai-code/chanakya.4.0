@@ -69,7 +69,6 @@ export class ProjectService {
         .populate({ path: 'facilities', strictPopulate: false })
         .populate({ path: 'createdBy', strictPopulate: false })
         .populate({ path: 'updatedBy', strictPopulate: false })
-        .populate({ path: 'executiveUser', strictPopulate: false })
         .exec();
 
       return {
@@ -80,9 +79,7 @@ export class ProjectService {
         pageNumber: page,
       };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving projects.',
-      );
+      throw error;
     }
   }
 

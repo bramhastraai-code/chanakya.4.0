@@ -39,7 +39,7 @@ let ProjectController = class ProjectController {
             return { data, message: 'project retrive sucessfullly' };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while retrieving projects.');
+            throw error;
         }
     }
     async findOne(id) {
@@ -191,6 +191,12 @@ __decorate([
         required: false,
         type: String,
         description: 'Search query for filtering projects',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'status',
+        required: false,
+        enum: status_enum_1.Status,
+        description: 'Filter projects by status',
     }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,

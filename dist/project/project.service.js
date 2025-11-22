@@ -57,7 +57,6 @@ let ProjectService = class ProjectService {
                 .populate({ path: 'facilities', strictPopulate: false })
                 .populate({ path: 'createdBy', strictPopulate: false })
                 .populate({ path: 'updatedBy', strictPopulate: false })
-                .populate({ path: 'executiveUser', strictPopulate: false })
                 .exec();
             return {
                 projects: projects,
@@ -68,7 +67,7 @@ let ProjectService = class ProjectService {
             };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while retrieving projects.');
+            throw error;
         }
     }
     async findOne(id) {

@@ -94,6 +94,12 @@ export class ProjectController {
     type: String,
     description: 'Search query for filtering projects',
   })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: Status,
+    description: 'Filter projects by status',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'The list of projects with pagination, sorting, and searching',
@@ -143,9 +149,7 @@ export class ProjectController {
       );
       return { data, message: 'project retrive sucessfullly' };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving projects.',
-      );
+      throw error;
     }
   }
 
