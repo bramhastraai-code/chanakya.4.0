@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { Role } from 'src/role/entity/role.entity';
+import { Status } from 'src/common/enum/status.enum';
 
 export type UserDocument = User & Document;
 
@@ -47,8 +48,8 @@ export class User {
   @Prop({ type: Types.ObjectId, ref: 'Role' })
   role: Role ;
 
-  @Prop({ type: String, default: 'active' })
-  status: string;
+  @Prop({ type: String, enum: Status, default: Status.ACTIVE })
+  status: Status;
 
   @Prop()
   createdAt: Date;

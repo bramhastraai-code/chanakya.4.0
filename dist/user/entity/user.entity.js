@@ -13,6 +13,7 @@ exports.UserSchema = exports.User = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const role_entity_1 = require("../../role/entity/role.entity");
+const status_enum_1 = require("../../common/enum/status.enum");
 let User = class User {
 };
 exports.User = User;
@@ -69,7 +70,7 @@ __decorate([
     __metadata("design:type", role_entity_1.Role)
 ], User.prototype, "role", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: String, default: 'active' }),
+    (0, mongoose_1.Prop)({ type: String, enum: status_enum_1.Status, default: status_enum_1.Status.ACTIVE }),
     __metadata("design:type", String)
 ], User.prototype, "status", void 0);
 __decorate([

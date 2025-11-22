@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator';
 import { Types } from 'mongoose';
+import { Status } from 'src/common/enum/status.enum';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -93,8 +94,8 @@ export class CreateUserDto {
   @ApiProperty({ required: false, type: String })
   updatedBy?: string | null;
 
-  @ApiProperty({ required: false })
-  @IsString()
+  @ApiProperty({ required: false, enum: Status, default: Status.ACTIVE })
+  @IsEnum(Status)
   @IsOptional()
-  status?: string;
+  status?: Status;
 }

@@ -41,7 +41,7 @@ export class UserController {
   })
   @ApiQuery({ name: 'pageSize', type: Number, required: true })
   @ApiQuery({ name: 'pageNumber', type: Number, required: true })
-  @ApiQuery({ name: 'status', type: String, required: false })
+  @ApiQuery({ name: 'status', enum: Status, required: false })
   @ApiQuery({ name: 'role', type: Types.ObjectId, required: false })
   @ApiQuery({
     name: 'sortBy',

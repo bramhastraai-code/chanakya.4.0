@@ -1,3 +1,4 @@
+import { Status } from 'src/common/enum/status.enum';
 export declare class CreateUserDto {
     userImage?: any;
     password: string;
@@ -12,5 +13,5 @@ export declare class CreateUserDto {
     role?: string | null;
     createdBy?: string | null;
     updatedBy?: string | null;
-    status?: string;
+    status?: Status;
 }

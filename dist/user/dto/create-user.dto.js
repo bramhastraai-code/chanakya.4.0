@@ -14,6 +14,7 @@ const swagger_1 = require("@nestjs/swagger");
 const class_transformer_1 = require("class-transformer");
 const class_validator_1 = require("class-validator");
 const mongoose_1 = require("mongoose");
+const status_enum_1 = require("../../common/enum/status.enum");
 class CreateUserDto {
 }
 exports.CreateUserDto = CreateUserDto;
@@ -126,8 +127,8 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "updatedBy", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false }),
-    (0, class_validator_1.IsString)(),
+    (0, swagger_1.ApiProperty)({ required: false, enum: status_enum_1.Status, default: status_enum_1.Status.ACTIVE }),
+    (0, class_validator_1.IsEnum)(status_enum_1.Status),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "status", void 0);

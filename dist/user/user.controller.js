@@ -82,7 +82,7 @@ __decorate([
     }),
     (0, swagger_1.ApiQuery)({ name: 'pageSize', type: Number, required: true }),
     (0, swagger_1.ApiQuery)({ name: 'pageNumber', type: Number, required: true }),
-    (0, swagger_1.ApiQuery)({ name: 'status', type: String, required: false }),
+    (0, swagger_1.ApiQuery)({ name: 'status', enum: status_enum_1.Status, required: false }),
     (0, swagger_1.ApiQuery)({ name: 'role', type: mongoose_1.Types.ObjectId, required: false }),
     (0, swagger_1.ApiQuery)({
         name: 'sortBy',

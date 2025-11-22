@@ -1,5 +1,6 @@
 import { Document, Types } from 'mongoose';
 import { Role } from 'src/role/entity/role.entity';
+import { Status } from 'src/common/enum/status.enum';
 export type UserDocument = User & Document;
 export declare class User {
     userId: string;
@@ -15,7 +16,7 @@ export declare class User {
     country: string;
     pinCode: string;
     role: Role;
-    status: string;
+    status: Status;
     createdAt: Date;
     updatedAt: Date;
     createdBy: User;

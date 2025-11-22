@@ -54,12 +54,12 @@ export class UserService {
       // If a role filter is provided, add it to the search filter
       console.log('role', role);
 
-      console.log('status', status);
-      if (status !== undefined && role !== 'all') {
+      if (role && role !== 'all') {
         searchFilter.role = role;
       }
+
       console.log('status', status);
-      if (status !== undefined && status !== 'all') {
+      if (status && status !== Status.ALL) {
         searchFilter.status = status;
       }
 
@@ -74,8 +74,8 @@ export class UserService {
         .skip(skip)
         .limit(limit)
         .populate({ path: 'role', strictPopulate: false })
-        .populate({ path: 'createdBy', strictPopulate: false })
-        .populate({ path: 'updatedBy', strictPopulate: false })
+        // .populate({ path: 'createdBy', strictPopulate: false })
+        // .populate({ path: 'updatedBy', strictPopulate: false })
         .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 }) // Sort by the specified field and order
         .exec();
 

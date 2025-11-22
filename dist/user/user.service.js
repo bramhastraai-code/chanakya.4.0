@@ -19,6 +19,7 @@ const mongoose_2 = require("mongoose");
 const user_entity_1 = require("./entity/user.entity");
 const argon = require("argon2");
 const auth_service_1 = require("../auth/auth.service");
+const status_enum_1 = require("../common/enum/status.enum");
 let UserService = class UserService {
     constructor(userModel, auth) {
         this.userModel = userModel;
@@ -36,12 +37,11 @@ let UserService = class UserService {
                 ];
             }
             console.log('role', role);
-            console.log('status', status);
-            if (status !== undefined && role !== 'all') {
+            if (role && role !== 'all') {
                 searchFilter.role = role;
             }
             console.log('status', status);
-            if (status !== undefined && status !== 'all') {
+            if (status && status !== status_enum_1.Status.ALL) {
                 searchFilter.status = status;
             }
             const totalUsers = await this.userModel
@@ -52,8 +52,6 @@ let UserService = class UserService {
                 .skip(skip)
                 .limit(limit)
                 .populate({ path: 'role', strictPopulate: false })
-                .populate({ path: 'createdBy', strictPopulate: false })
-                .populate({ path: 'updatedBy', strictPopulate: false })
                 .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 })
                 .exec();
             const totalPages = Math.ceil(totalUsers / limit);
