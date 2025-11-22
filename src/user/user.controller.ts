@@ -27,19 +27,13 @@ import { User } from './entity/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { S3Service } from 'src/s3/s3.service'; // Import your S3 service
-import { FileService } from 'src/s3/local.service';
 import { Types } from 'mongoose';
 import { Status } from 'src/common/enum/status.enum';
 
 @ApiTags('Users')
 @Controller('users')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly s3Service: S3Service, // Inject the S3 service
-    private readonly fileService: FileService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   @ApiOperation({
@@ -101,9 +95,6 @@ export class UserController {
         role,
         status,
       );
-      if (!data.users || data.users.length === 0) {
-        throw new NotFoundException('No users found');
-      }
 
       return { data: data, message: 'Successfully retrieved users' };
     } catch (error) {

@@ -20,22 +20,15 @@ const create_user_dto_1 = require("./dto/create-user.dto");
 const user_entity_1 = require("./entity/user.entity");
 const update_user_dto_1 = require("./dto/update-user.dto");
 const platform_express_1 = require("@nestjs/platform-express");
-const s3_service_1 = require("../s3/s3.service");
-const local_service_1 = require("../s3/local.service");
 const mongoose_1 = require("mongoose");
 const status_enum_1 = require("../common/enum/status.enum");
 let UserController = class UserController {
-    constructor(userService, s3Service, fileService) {
+    constructor(userService) {
         this.userService = userService;
-        this.s3Service = s3Service;
-        this.fileService = fileService;
     }
     async findAll(pageSize, pageNumber, sortBy = 'createdAt', sortOrder = 'asc', searchQuery, role, status) {
         try {
             const data = await this.userService.findAll(pageSize, pageNumber, sortBy, sortOrder, searchQuery, role, status);
-            if (!data.users || data.users.length === 0) {
-                throw new common_1.NotFoundException('No users found');
-            }
             return { data: data, message: 'Successfully retrieved users' };
         }
         catch (error) {
@@ -185,8 +178,6 @@ __decorate([
 exports.UserController = UserController = __decorate([
     (0, swagger_1.ApiTags)('Users'),
     (0, common_1.Controller)('users'),
-    __metadata("design:paramtypes", [user_service_1.UserService,
-        s3_service_1.S3Service,
-        local_service_1.FileService])
+    __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);
 //# sourceMappingURL=user.controller.js.map

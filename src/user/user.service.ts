@@ -54,10 +54,12 @@ export class UserService {
       // If a role filter is provided, add it to the search filter
       console.log('role', role);
 
-      if (role !== 'all') {
+      console.log('status', status);
+      if (status !== undefined && role !== 'all') {
         searchFilter.role = role;
       }
-      if (status !== 'all') {
+      console.log('status', status);
+      if (status !== undefined && status !== 'all') {
         searchFilter.status = status;
       }
 
@@ -71,7 +73,9 @@ export class UserService {
         .find(searchFilter) // Apply search filter
         .skip(skip)
         .limit(limit)
-        .populate('role') // Populate the role field
+        .populate({ path: 'role', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
         .sort({ [sortBy]: sortOrder === 'desc' ? -1 : 1 }) // Sort by the specified field and order
         .exec();
 
@@ -94,19 +98,17 @@ export class UserService {
 
   async findOne(id: string): Promise<User> {
     try {
-      const user = await this.userModel.findById(id).exec();
+      const user = await this.userModel
+        .findById(id)
+        .populate({ path: 'role', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
+        .exec();
       if (!user) {
         throw new NotFoundException(`User with ID ${id} not found.`);
       }
 
-      const populatedUserQuery = this.userModel.findById(id);
-      if (user.role) {
-        populatedUserQuery.populate('role', { strictPopulate: false });
-      }
-
-      const populatedUser = await populatedUserQuery.exec();
-
-      return populatedUser;
+      return user;
     } catch (error) {
       throw error;
     }
@@ -147,7 +149,9 @@ export class UserService {
     try {
       const updatedUser = await this.userModel
         .findByIdAndUpdate(id, updateUserDto, { new: true })
-        .populate('role')
+        .populate({ path: 'role', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
         .exec();
       if (!updatedUser) {
         throw new NotFoundException(`User with ID ${id} not found.`);
@@ -165,7 +169,9 @@ export class UserService {
     try {
       const deletedUser = await this.userModel
         .findByIdAndDelete(id)
-        .populate('role')
+        .populate({ path: 'role', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
         .exec();
       if (!deletedUser) {
         throw new NotFoundException(`User with ID ${id} not found.`);
