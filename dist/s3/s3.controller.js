@@ -39,8 +39,8 @@ let S3Controller = class S3Controller {
     }
     async deleteFile(key) {
         console.log('Received key:', key);
-        await this.s3Service.deleteFile(key);
-        return { message: 'File deleted successfully' };
+        const data = await this.s3Service.deleteFile(key);
+        return { data, message: 'File deleted successfully' };
     }
     async uploadVideo(file, folder) {
         if (!file) {
@@ -121,7 +121,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], S3Controller.prototype, "uploadFiles", null);
 __decorate([
-    (0, common_1.Delete)(':key(*)'),
+    (0, common_1.Delete)('s3-delete/:key(*)'),
     (0, swagger_1.ApiOperation)({
         summary: 'Delete a file from S3',
         description: 'Deletes a file from S3 based on the provided key.',

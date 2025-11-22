@@ -14,6 +14,7 @@ export declare class S3Controller {
         key: string;
     }[]>>;
     deleteFile(key: string): Promise<{
+        data: void;
         message: string;
     }>;
     uploadVideo(file: Express.Multer.File, folder: string): Promise<{

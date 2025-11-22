@@ -80,6 +80,7 @@ let S3Service = class S3Service {
             Bucket: this.bucketName,
             Key: key,
         };
+        console.log('delete s3 file params', params);
         try {
             await this.s3.deleteObject(params).promise();
         }
