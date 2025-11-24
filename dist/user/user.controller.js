@@ -22,6 +22,7 @@ const update_user_dto_1 = require("./dto/update-user.dto");
 const platform_express_1 = require("@nestjs/platform-express");
 const mongoose_1 = require("mongoose");
 const status_enum_1 = require("../common/enum/status.enum");
+const passport_1 = require("@nestjs/passport");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -50,6 +51,15 @@ let UserController = class UserController {
         catch (error) {
             throw error;
         }
+    }
+    async getMe(req) {
+        const id = req.user._id;
+        console.log('req.user._id:', id);
+        const user = await this.userService.findOne(id);
+        if (!user) {
+            throw new common_1.NotFoundException('User not found');
+        }
+        return { data: user, message: 'Successfully retrieved current user' };
     }
     async update(id, updateUserDto) {
         try {
@@ -146,6 +156,17 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('current-user/me'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt')),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get current authenticated user profile' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Current user profile', type: user_entity_1.User }),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "getMe", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, swagger_1.ApiOperation)({ summary: 'Update user by ID' }),

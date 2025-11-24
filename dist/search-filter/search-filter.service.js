@@ -377,18 +377,40 @@ let SearchFilterService = class SearchFilterService {
                 .find({ projectName: { $regex: term, $options: 'i' } })
                 .skip(skip)
                 .limit(limit)
+                .lean()
                 .exec();
             const properties = await this.propertyModel
                 .find({ propertyTitle: { $regex: term, $options: 'i' } })
                 .skip(skip)
                 .limit(limit)
+                .lean()
                 .exec();
             const projectsWithTitle = projects.map((project) => ({
-                ...project,
+                _id: project._id,
+                title: project.projectName,
+                thumbnail: project.thumbnail,
+                description: project.description,
+                address: project.address,
+                city: project.city,
+                priceMin: project.priceMin,
+                priceMax: project.priceMax,
+                minCarpetArea: project.minCarpetArea,
+                maxCarpetArea: project.maxCarpetArea,
+                tags: project.tags,
+                amenities: project.amenities,
                 itsTypeIs: 'PROJECT',
             }));
             const propertiesWithTitle = properties.map((property) => ({
-                ...property,
+                _id: property._id,
+                title: property.propertyTitle,
+                thumbnail: property.thumbnail,
+                description: property.seoDescription,
+                address: property.address,
+                city: property.city,
+                price: property.price,
+                totalArea: property.totalArea,
+                tags: property.tags,
+                amenities: property.amenities,
                 itsTypeIs: 'PROPERTY',
             }));
             const combinedResults = [...projectsWithTitle, ...propertiesWithTitle];

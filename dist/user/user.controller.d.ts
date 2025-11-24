@@ -17,6 +17,7 @@ export declare class UserController {
     }>>;
     findOne(id: string): Promise<Response<User>>;
     create(createUserDto: CreateUserDto): Promise<Response<User>>;
+    getMe(req: any): Promise<Response<User>>;
     update(id: string, updateUserDto: UpdateUserDto): Promise<Response<User>>;
     remove(id: string): Promise<Response<any>>;
 }

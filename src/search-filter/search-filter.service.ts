@@ -502,26 +502,49 @@ export class SearchFilterService {
 
       // Find projects, matching the term in projectName (title)
       const projects = await this.projectModel
-        .find({ projectName: { $regex: term, $options: 'i' } }) // case-insensitive search
+        .find({ projectName: { $regex: term, $options: 'i' } })
         .skip(skip)
-        .limit(limit) // Only include the projectName field
+        .limit(limit)
+        .lean()
         .exec();
 
       // Find properties, matching the term in propertyTitle (title)
       const properties = await this.propertyModel
-        .find({ propertyTitle: { $regex: term, $options: 'i' } }) // case-insensitive search
+        .find({ propertyTitle: { $regex: term, $options: 'i' } })
         .skip(skip)
         .limit(limit)
+        .lean()
         .exec();
 
-      // Rename projectName and propertyTitle to 'title'
+      // Format projects
       const projectsWithTitle = projects.map((project) => ({
-        ...project,
+        _id: project._id,
+        title: project.projectName,
+        thumbnail: project.thumbnail,
+        description: project.description,
+        address: project.address,
+        city: project.city,
+        priceMin: project.priceMin,
+        priceMax: project.priceMax,
+        minCarpetArea: project.minCarpetArea,
+        maxCarpetArea: project.maxCarpetArea,
+        tags: project.tags,
+        amenities: project.amenities,
         itsTypeIs: 'PROJECT',
       }));
 
+      // Format properties
       const propertiesWithTitle = properties.map((property) => ({
-        ...property,
+        _id: property._id,
+        title: property.propertyTitle,
+        thumbnail: property.thumbnail,
+        description: property.seoDescription,
+        address: property.address,
+        city: property.city,
+        price: property.price,
+        totalArea: property.totalArea,
+        tags: property.tags,
+        amenities: property.amenities,
         itsTypeIs: 'PROPERTY',
       }));
 

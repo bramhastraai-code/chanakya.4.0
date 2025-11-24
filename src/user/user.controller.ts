@@ -9,6 +9,8 @@ import {
   Query,
   Patch,
   UseInterceptors,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -20,6 +22,7 @@ import {
   ApiOkResponse,
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -29,6 +32,8 @@ import { Response } from 'src/common/interceptor/response.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Types } from 'mongoose';
 import { Status } from 'src/common/enum/status.enum';
+import { AuthGuard } from '@nestjs/passport';
+// GetUser decorator removed from getMe usage; using raw request instead
 
 @ApiTags('Users')
 @Controller('users')
@@ -131,6 +136,22 @@ export class UserController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Get('current-user/me')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current authenticated user profile' })
+  @ApiResponse({ status: 200, description: 'Current user profile', type: User })
+  async getMe(@Req() req: any): Promise<Response<User>> {
+    const id: string = req.user._id;
+    console.log('req.user._id:', id);
+
+    const user = await this.userService.findOne(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return { data: user, message: 'Successfully retrieved current user' };
   }
 
   @Patch(':id')
