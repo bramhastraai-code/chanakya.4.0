@@ -34,7 +34,7 @@ import { S3Service } from 'src/s3/s3.service';
 
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent')
+@Controller('agent')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class AgentController {

@@ -14,6 +14,7 @@ async function bootstrap() {
     }),
   );
 
+  app.setGlobalPrefix('v1');
   app.enableCors({ origin: '*' });
 
   const config = new DocumentBuilder()

@@ -27,7 +27,7 @@ import { UserRole } from 'src/common/enum/user-role.enum';
 // Agent KYC Controller
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent/kyc')
+@Controller('agent/kyc')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class AgentKycController {
@@ -35,7 +35,10 @@ export class AgentKycController {
 
   @Get('status')
   @ApiOperation({ summary: 'Get KYC status' })
-  @ApiResponse({ status: 200, description: 'KYC status retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'KYC status retrieved successfully',
+  })
   async getStatus(@CurrentUser() user: any) {
     const data = await this.kycService.getStatus(user.userId);
     return {
@@ -46,7 +49,10 @@ export class AgentKycController {
 
   @Post('submit')
   @ApiOperation({ summary: 'Submit KYC documents' })
-  @ApiResponse({ status: 201, description: 'KYC documents submitted successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'KYC documents submitted successfully',
+  })
   async submit(@Body() submitKycDto: SubmitKycDto, @CurrentUser() user: any) {
     const data = await this.kycService.submit(user.userId, submitKycDto);
     return {
@@ -60,7 +66,7 @@ export class AgentKycController {
 // Admin KYC Controller
 @ApiTags('Admin')
 @ApiBearerAuth()
-@Controller('api/admin/kyc')
+@Controller('admin/kyc')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
 export class AdminKycController {
@@ -70,7 +76,10 @@ export class AdminKycController {
   @ApiOperation({ summary: 'Get pending KYC submissions' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'KYC submissions retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'KYC submissions retrieved successfully',
+  })
   async getPendingSubmissions(
     @Query('page') page?: number,
     @Query('limit') limit?: number,

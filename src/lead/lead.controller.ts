@@ -28,7 +28,7 @@ import { LeadStatus } from './enum/lead-status.enum';
 
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent/leads')
+@Controller('agent/leads')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class LeadController {
@@ -37,10 +37,7 @@ export class LeadController {
   @Post()
   @ApiOperation({ summary: 'Create new lead' })
   @ApiResponse({ status: 201, description: 'Lead created successfully' })
-  async create(
-    @Body() createLeadDto: CreateLeadDto,
-    @CurrentUser() user: any,
-  ) {
+  async create(@Body() createLeadDto: CreateLeadDto, @CurrentUser() user: any) {
     const data = await this.leadService.create(createLeadDto, user.userId);
     return {
       success: true,

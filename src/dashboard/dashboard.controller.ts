@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -23,7 +16,7 @@ import { UserRole } from 'src/common/enum/user-role.enum';
 
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent/dashboard')
+@Controller('agent/dashboard')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class DashboardController {

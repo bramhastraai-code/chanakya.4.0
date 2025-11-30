@@ -557,4 +557,31 @@ export class UnifiedAuthService {
       console.error('Error sending verification email:', err);
     }
   }
+
+  /**
+   * Get current user info with profile
+   */
+  async getMe(userId: Types.ObjectId, role: UserRole) {
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const profile = await this.profileFactory.getProfile(userId, role);
+
+    return {
+      user: {
+        id: user._id,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        isEmailVerified: user.isEmailVerified,
+        isKycVerified: (profile as any)?.isKycVerified || false,
+        profileImage: (profile as any)?.profileImage || user.profileImage,
+        name:
+          (profile as any)?.name || (profile as any)?.companyName || user.name,
+      },
+      profile,
+    };
+  }
 }

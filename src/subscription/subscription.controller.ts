@@ -23,7 +23,7 @@ import { UserRole } from 'src/common/enum/user-role.enum';
 
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent/subscriptions')
+@Controller('agent/subscriptions')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class SubscriptionController {
@@ -57,7 +57,10 @@ export class SubscriptionController {
 
   @Post('purchase')
   @ApiOperation({ summary: 'Purchase subscription plan' })
-  @ApiResponse({ status: 201, description: 'Subscription purchased successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Subscription purchased successfully',
+  })
   async purchaseSubscription(
     @Body() purchaseDto: PurchaseSubscriptionDto,
     @CurrentUser() user: any,
@@ -104,7 +107,10 @@ export class SubscriptionController {
 
   @Delete('cancel')
   @ApiOperation({ summary: 'Cancel current subscription' })
-  @ApiResponse({ status: 200, description: 'Subscription cancelled successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription cancelled successfully',
+  })
   async cancelSubscription(@CurrentUser() user: any) {
     const data = await this.subscriptionService.cancelSubscription(user.userId);
 
@@ -119,7 +125,7 @@ export class SubscriptionController {
 // Admin controller for managing subscription plans
 @ApiTags('Admin')
 @ApiBearerAuth()
-@Controller('api/admin/subscriptions')
+@Controller('admin/subscriptions')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
 export class AdminSubscriptionController {

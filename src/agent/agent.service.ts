@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Customer } from 'src/customer/entities/customer.entity';
+import { User } from 'src/core/entities/user.entity';
 import { SubscriptionPlan } from './entities/subscription-plan.entity';
 import { AgentSubscription } from './entities/agent-subscription.entity';
 import { AgentStats } from './entities/agent-stats.entity';
@@ -15,7 +15,7 @@ import {
 @Injectable()
 export class AgentService {
   constructor(
-    @InjectModel(Customer.name) private customerModel: Model<Customer>,
+    @InjectModel(User.name) private userModel: Model<User>,
     @InjectModel(SubscriptionPlan.name)
     private planModel: Model<SubscriptionPlan>,
     @InjectModel(AgentSubscription.name)
@@ -47,7 +47,7 @@ export class AgentService {
   }
 
   async getProfile(agentId: string) {
-    const agent = await this.customerModel
+    const agent = await this.userModel
       .findById(agentId)
       .select('-password -refreshToken')
       .lean()
@@ -57,7 +57,7 @@ export class AgentService {
   }
 
   async updateProfile(agentId: string, updateDto: UpdateProfileDto) {
-    const agent = await this.customerModel.findById(agentId);
+    const agent = await this.userModel.findById(agentId);
 
     if (!agent) {
       throw new NotFoundException('Agent not found');
@@ -97,7 +97,7 @@ export class AgentService {
     agentId: string,
     socialLinksDto: UpdateSocialLinksDto,
   ) {
-    const agent = await this.customerModel.findById(agentId);
+    const agent = await this.userModel.findById(agentId);
 
     if (!agent) {
       throw new NotFoundException('Agent not found');
@@ -131,7 +131,7 @@ export class AgentService {
    * Update website URL
    */
   async updateWebsite(agentId: string, websiteDto: UpdateWebsiteDto) {
-    const agent = await this.customerModel.findByIdAndUpdate(
+    const agent = await this.userModel.findByIdAndUpdate(
       agentId,
       { websiteUrl: websiteDto.websiteUrl },
       { new: true },
@@ -153,7 +153,7 @@ export class AgentService {
     agentId: string,
     businessDto: UpdateBusinessInfoDto,
   ) {
-    const agent = await this.customerModel.findById(agentId);
+    const agent = await this.userModel.findById(agentId);
 
     if (!agent) {
       throw new NotFoundException('Agent not found');
@@ -188,7 +188,7 @@ export class AgentService {
    * Upload profile image
    */
   async updateProfileImage(agentId: string, imageUrl: string) {
-    const agent = await this.customerModel.findByIdAndUpdate(
+    const agent = await this.userModel.findByIdAndUpdate(
       agentId,
       { profileImage: imageUrl },
       { new: true },
@@ -234,7 +234,7 @@ export class AgentService {
     });
 
     // update customer subscription fields
-    await this.customerModel.findByIdAndUpdate(agentId, {
+    await this.userModel.findByIdAndUpdate(agentId, {
       subscriptionPlan: plan._id,
       subscriptionExpiry: endDate,
     });

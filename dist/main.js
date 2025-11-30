@@ -12,6 +12,7 @@ async function bootstrap() {
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
     }));
+    app.setGlobalPrefix('v1');
     app.enableCors({ origin: '*' });
     const config = new swagger_1.DocumentBuilder()
         .addBearerAuth()

@@ -174,14 +174,10 @@ export class UnifiedAuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get current user info' })
   @ApiResponse({ status: 200, description: 'User info retrieved successfully' })
-  async getMe(@CurrentUser() user: any) {
+  async getMe(@CurrentUser() data: any) {
     return {
       success: true,
-      data: {
-        userId: user.userId,
-        email: user.email,
-        role: user.role,
-      },
+      data,
     };
   }
 }

@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -25,7 +18,7 @@ import { TransactionType } from './enum/transaction.enum';
 
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent/wallet')
+@Controller('agent/wallet')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class WalletController {

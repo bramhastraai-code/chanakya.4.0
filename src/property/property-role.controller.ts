@@ -32,7 +32,7 @@ import { Status } from 'src/common/enum/status.enum';
 
 // User Controller - Public property browsing
 @ApiTags('User')
-@Controller('api/customer/properties')
+@Controller('customer/properties')
 export class UserPropertyController {
   constructor(private readonly propertyService: PropertyEnhancedService) {}
 
@@ -131,7 +131,7 @@ export class UserPropertyController {
 // Agent Controller - Property management for agents
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent/properties')
+@Controller('agent/properties')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class AgentPropertyController {
@@ -362,7 +362,7 @@ export class AgentPropertyController {
 // Builder Controller - Builder's property management
 @ApiTags('Builder')
 @ApiBearerAuth()
-@Controller('api/builder/properties')
+@Controller('builder/properties')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.BUILDER)
 export class BuilderPropertyController {
@@ -432,7 +432,7 @@ export class BuilderPropertyController {
 // Admin Controller - Property approval and management
 @ApiTags('Admin')
 @ApiBearerAuth()
-@Controller('api/admin/properties')
+@Controller('admin/properties')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
 export class AdminPropertyController {

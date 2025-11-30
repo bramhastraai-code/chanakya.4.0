@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Get,
-  Put,
-  Param,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Put, Param, Query, UseGuards } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -22,7 +15,7 @@ import { UserRole } from 'src/common/enum/user-role.enum';
 
 @ApiTags('Agent')
 @ApiBearerAuth()
-@Controller('api/agent/notifications')
+@Controller('agent/notifications')
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.AGENT)
 export class NotificationController {
