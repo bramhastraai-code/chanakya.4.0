@@ -19,7 +19,10 @@ export class AgentProfileService {
    * Get agent profile by user ID
    */
   async getProfile(userId: Types.ObjectId) {
-    const profile = await this.agentProfileModel.findOne({ userId }).exec();
+    const profile = await await this.agentProfileModel
+      .findOne({ userId })
+      .populate('userId', { strictPopulate: false })
+      .exec();
 
     if (!profile) {
       throw new NotFoundException('Agent profile not found');

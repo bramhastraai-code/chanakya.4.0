@@ -50,6 +50,13 @@ export class AgentService {
     const agent = await this.userModel
       .findById(agentId)
       .select('-password -refreshToken')
+      .populate([
+        { path: 'subscriptionPlan' },
+        { path: 'builders' },
+        { path: 'projectsApplied' },
+        { path: 'assignAgent' },
+        // Add more fields to populate as needed
+      ])
       .lean()
       .exec();
     if (!agent) throw new NotFoundException('Agent not found');
