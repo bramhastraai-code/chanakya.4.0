@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasPermission = hasPermission;
+exports.hasPermission = void 0;
 const permission_enum_1 = require("../../role/enum/permission.enum");
 async function hasPermission(role, resource, action) {
     if (!role.permissions || role.permissions.length === 0) {
@@ -23,4 +23,5 @@ async function hasPermission(role, resource, action) {
             return false;
     }
 }
+exports.hasPermission = hasPermission;
 //# sourceMappingURL=permission.utils.js.map

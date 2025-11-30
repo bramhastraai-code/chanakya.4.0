@@ -12,10 +12,8 @@ const user_service_1 = require("./user.service");
 const mongoose_1 = require("@nestjs/mongoose");
 const user_entity_1 = require("./entity/user.entity");
 const user_controller_1 = require("./user.controller");
-const auth_service_1 = require("../auth/auth.service");
 const jwt_1 = require("@nestjs/jwt");
-const s3_service_1 = require("../s3/s3.service");
-const local_service_1 = require("../s3/local.service");
+const auth_service_1 = require("../auth/auth.service");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -26,7 +24,7 @@ exports.UserModule = UserModule = __decorate([
             mongoose_1.MongooseModule.forFeature([{ name: user_entity_1.User.name, schema: user_entity_1.UserSchema }]),
         ],
         controllers: [user_controller_1.UserController],
-        providers: [user_service_1.UserService, auth_service_1.AuthService, s3_service_1.S3Service, local_service_1.FileService],
+        providers: [user_service_1.UserService, auth_service_1.AuthService],
         exports: [user_service_1.UserService],
     })
 ], UserModule);

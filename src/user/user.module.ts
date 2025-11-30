@@ -3,10 +3,8 @@ import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './entity/user.entity';
 import { UserController } from './user.controller';
-import { AuthService } from 'src/auth/auth.service';
 import { JwtModule } from '@nestjs/jwt';
-import { S3Service } from 'src/s3/s3.service';
-import { FileService } from 'src/s3/local.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Module({
   imports: [
@@ -14,7 +12,7 @@ import { FileService } from 'src/s3/local.service';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   ],
   controllers: [UserController],
-  providers: [UserService, AuthService, S3Service, FileService],
+  providers: [UserService, AuthService],
   exports: [UserService],
 })
 export class UserModule {}

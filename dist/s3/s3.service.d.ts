@@ -1,3 +1,4 @@
+/// <reference types="multer" />
 export declare class S3Service {
     private readonly s3;
     private readonly bucketName;

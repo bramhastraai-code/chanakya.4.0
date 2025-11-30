@@ -1,5 +1,5 @@
 {
-  "name": "i-key-service",
+  "name": "chanakya-connect-service",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -45,6 +45,7 @@
     "nestjs-razorpay": "^2.0.1",
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.13",
+    "openai": "^6.9.1",
     "passport-jwt": "^4.0.1",
     "razorpay": "^2.9.5",
     "reflect-metadata": "^0.2.0",

@@ -12,7 +12,6 @@ const mongoose_1 = require("@nestjs/mongoose");
 const config_1 = require("@nestjs/config");
 const nestjs_razorpay_1 = require("nestjs-razorpay");
 const user_module_1 = require("./user/user.module");
-const auth_module_1 = require("./auth/auth.module");
 const role_module_1 = require("./role/role.module");
 const property_module_1 = require("./property/property.module");
 const project_module_1 = require("./project/project.module");
@@ -24,7 +23,6 @@ const blog_module_1 = require("./blog/blog.module");
 const customer_module_1 = require("./customer/customer.module");
 const platform_express_1 = require("@nestjs/platform-express");
 const builder_module_1 = require("./builder/builder.module");
-const customer_auth_module_1 = require("./customer-auth/customer-auth.module");
 const search_filter_module_1 = require("./search-filter/search-filter.module");
 const s3_module_1 = require("./s3/s3.module");
 const order_module_1 = require("./order/order.module");
@@ -36,6 +34,22 @@ const schedule_1 = require("@nestjs/schedule");
 const firebase_module_1 = require("./firebase/firebase.module");
 const user_behavior_module_1 = require("./user-behavior/user-behavior.module");
 const video_module_1 = require("./video/video.module");
+const agent_module_1 = require("./agent/agent.module");
+const notification_module_1 = require("./notification/notification.module");
+const core_module_1 = require("./core/core.module");
+const agent_profile_module_1 = require("./profiles/agent/agent-profile.module");
+const builder_profile_module_1 = require("./profiles/builder/builder-profile.module");
+const customer_profile_module_1 = require("./profiles/customer/customer-profile.module");
+const super_admin_profile_module_1 = require("./profiles/super-admin/super-admin-profile.module");
+const lead_module_1 = require("./lead/lead.module");
+const requirement_module_1 = require("./requirement/requirement.module");
+const bounty_module_1 = require("./bounty/bounty.module");
+const wallet_module_1 = require("./wallet/wallet.module");
+const kyc_module_1 = require("./kyc/kyc.module");
+const ai_module_1 = require("./ai/ai.module");
+const website_module_1 = require("./website/website.module");
+const subscription_module_1 = require("./subscription/subscription.module");
+const dashboard_module_1 = require("./dashboard/dashboard.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -58,8 +72,21 @@ exports.AppModule = AppModule = __decorate([
                     uri: configService.get('MONGODB_URL'),
                 }),
             }),
+            core_module_1.CoreModule,
+            agent_profile_module_1.AgentProfileModule,
+            builder_profile_module_1.BuilderProfileModule,
+            customer_profile_module_1.UserProfileModule,
+            super_admin_profile_module_1.SuperAdminProfileModule,
+            lead_module_1.LeadModule,
+            requirement_module_1.RequirementModule,
+            bounty_module_1.BountyModule,
+            wallet_module_1.WalletModule,
+            kyc_module_1.KycModule,
+            ai_module_1.AiModule,
+            website_module_1.WebsiteModule,
+            subscription_module_1.SubscriptionModule,
+            dashboard_module_1.DashboardModule,
             user_module_1.UserModule,
-            auth_module_1.AuthModule,
             role_module_1.RoleModule,
             property_module_1.PropertyModule,
             project_module_1.ProjectModule,
@@ -70,7 +97,6 @@ exports.AppModule = AppModule = __decorate([
             blog_module_1.BlogModule,
             customer_module_1.CustomerModule,
             builder_module_1.BuilderModule,
-            customer_auth_module_1.CustomerAuthModule,
             search_filter_module_1.SearchFilterModule,
             s3_module_1.S3Module,
             order_module_1.OrderModule,
@@ -82,6 +108,8 @@ exports.AppModule = AppModule = __decorate([
             firebase_module_1.FirebaseModule,
             user_behavior_module_1.UserBehaviorModule,
             video_module_1.VideoModule,
+            agent_module_1.AgentModule,
+            notification_module_1.NotificationModule,
         ],
     })
 ], AppModule);

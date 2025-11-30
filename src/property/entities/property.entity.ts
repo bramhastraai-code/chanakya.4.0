@@ -210,14 +210,38 @@ export class Property extends Document {
   @Prop({ type: Types.ObjectId, ref: 'Project' })
   projectId?: Project;
 
+  // Owner (Agent/Builder who created the property)
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  ownerId: Types.ObjectId;
+
   @Prop({ type: Types.ObjectId, ref: 'Customer' })
   customer?: Customer;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
-  createdBy?: User;
+  createdBy?: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
-  updatedBy?: User;
+  updatedBy?: Types.ObjectId;
+
+  // Approval workflow
+  @Prop({
+    type: String,
+    enum: ['pending', 'approved', 'rejected'],
+    default: 'pending',
+  })
+  approvalStatus: string;
+
+  @Prop()
+  approvalNotes?: string;
+
+  @Prop()
+  rejectionReason?: string;
+
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  approvedBy?: Types.ObjectId;
+
+  @Prop()
+  approvedAt?: Date;
 
   // Metadata
   @Prop()

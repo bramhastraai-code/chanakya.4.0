@@ -18,10 +18,10 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .addBearerAuth()
-    .setTitle('vision vistara Api')
-    .setDescription('this is the api for vision vistara')
+    .setTitle('chanakya connect Api')
+    .setDescription('this is the api for chanakya connect')
     .setVersion('1.0')
-    .addTag('vision vistara')
+    .addTag('chanakya connect')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

@@ -14,7 +14,6 @@ const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const customer_entity_1 = require("../../customer/entities/customer.entity");
 const project_entity_1 = require("../../project/entities/project.entity");
-const user_entity_1 = require("../../user/entity/user.entity");
 const property_enum_1 = require("../enum/property.enum");
 const status_enum_1 = require("../../common/enum/status.enum");
 let Property = class Property extends mongoose_2.Document {
@@ -253,17 +252,45 @@ __decorate([
     __metadata("design:type", project_entity_1.Project)
 ], Property.prototype, "projectId", void 0);
 __decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User', required: true }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Property.prototype, "ownerId", void 0);
+__decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Customer' }),
     __metadata("design:type", customer_entity_1.Customer)
 ], Property.prototype, "customer", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User' }),
-    __metadata("design:type", user_entity_1.User)
+    __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Property.prototype, "createdBy", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User' }),
-    __metadata("design:type", user_entity_1.User)
+    __metadata("design:type", mongoose_2.Types.ObjectId)
 ], Property.prototype, "updatedBy", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'pending',
+    }),
+    __metadata("design:type", String)
+], Property.prototype, "approvalStatus", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Property.prototype, "approvalNotes", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", String)
+], Property.prototype, "rejectionReason", void 0);
+__decorate([
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User' }),
+    __metadata("design:type", mongoose_2.Types.ObjectId)
+], Property.prototype, "approvedBy", void 0);
+__decorate([
+    (0, mongoose_1.Prop)(),
+    __metadata("design:type", Date)
+], Property.prototype, "approvedAt", void 0);
 __decorate([
     (0, mongoose_1.Prop)(),
     __metadata("design:type", Number)

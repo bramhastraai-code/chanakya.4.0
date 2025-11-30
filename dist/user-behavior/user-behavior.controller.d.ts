@@ -1,3 +1,4 @@
+/// <reference types="cookie-parser" />
 import { Request } from 'express';
 import { UserBehaviorService } from './user-behavior.service';
 import { UserBehavior } from './entities/user-behavior.entity';
