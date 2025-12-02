@@ -24,7 +24,7 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
 import { S3Service } from 'src/s3/s3.service';
 
-@ApiTags('Profile')
+@ApiTags('admin Profile')
 @ApiBearerAuth()
 @Controller('admin/profile')
 @UseGuards(jwtGuard, RolesGuard)

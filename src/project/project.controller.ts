@@ -113,6 +113,21 @@ export class ProjectController {
     return { data, message: 'Projects retrieved successfully' };
   }
 
+  @Get('active-bounties')
+  @ApiOperation({ summary: 'Get projects with active bounties' })
+  @ApiResponse({
+    status: 200,
+    description: 'Projects with active bounties retrieved successfully.',
+  })
+  async getProjectsWithActiveBounties() {
+    const projects = await this.projectService.findProjectsWithActiveBounties();
+    return {
+      success: true,
+      message: 'Projects with active bounties retrieved successfully.',
+      data: projects,
+    };
+  }
+
   @Get()
   @ApiOperation({
     summary: 'Retrieve all projects with pagination, sorting, and searching',

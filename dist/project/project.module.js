@@ -12,6 +12,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const project_entity_1 = require("./entities/project.entity");
 const amenity_entity_1 = require("../amenity/entities/amenity.entity");
 const user_entity_1 = require("../core/entities/user.entity");
+const bounty_entity_1 = require("../bounty/entities/bounty.entity");
 const project_controller_1 = require("./project.controller");
 const project_service_1 = require("./project.service");
 const property_entity_1 = require("../property/entities/property.entity");
@@ -28,6 +29,7 @@ exports.ProjectModule = ProjectModule = __decorate([
                 { name: property_entity_1.Property.name, schema: property_entity_1.PropertySchema },
                 { name: amenity_entity_1.Amenity.name, schema: amenity_entity_1.AmenitySchema },
                 { name: user_entity_1.User.name, schema: user_entity_1.UserSchema },
+                { name: bounty_entity_1.Bounty.name, schema: bounty_entity_1.BountySchema },
             ]),
         ],
         controllers: [project_controller_1.ProjectController],

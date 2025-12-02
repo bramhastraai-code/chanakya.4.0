@@ -19,6 +19,11 @@ export declare class ProjectController {
         pageSize: number;
         pageNumber: number;
     }>>;
+    getProjectsWithActiveBounties(): Promise<{
+        success: boolean;
+        message: string;
+        data: Project[];
+    }>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<Response<{
         projects: Project[];
         totalPages: number;

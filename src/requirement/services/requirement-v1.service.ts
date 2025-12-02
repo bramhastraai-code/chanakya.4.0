@@ -26,10 +26,14 @@ export class RequirementV1Service {
   /**
    * Create new requirement
    */
-  async create(userId: Types.ObjectId, dto: CreateRequirementDto) {
+  async create(userId: Types.ObjectId | string, dto: CreateRequirementDto) {
+    // Convert string to ObjectId if needed
+    const userObjectId =
+      typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
+
     const requirement = await this.requirementModel.create({
       ...dto,
-      userId,
+      userId: userObjectId,
       status: RequirementStatus.OPEN,
     });
 

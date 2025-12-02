@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { KycStatus } from '../enum/kyc.enum';
+import { KycStatus } from '../enums/kyc.enum';
 
 export type KycSubmissionDocument = KycSubmission & Document;
 
@@ -8,6 +8,18 @@ export type KycSubmissionDocument = KycSubmission & Document;
 export class KycSubmission {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: Types.ObjectId;
+
+  @Prop({ required: true })
+  fullName: string;
+
+  @Prop({ required: true })
+  panNumber: string;
+
+  @Prop({ required: true })
+  aadharNumber: string;
+
+  @Prop({ required: true })
+  address: string;
 
   @Prop({ type: String, enum: KycStatus, default: KycStatus.PENDING })
   status: KycStatus;

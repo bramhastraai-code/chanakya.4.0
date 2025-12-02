@@ -3,7 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RazorpayModule } from 'nestjs-razorpay';
 
-import { RoleModule } from './role/role.module';
+// import { RoleModule } from './role/role.module';
 import { PropertyModule } from './property/property.module';
 import { ProjectModule } from './project/project.module';
 import { AmenityModule } from './amenity/amenity.module';
@@ -71,13 +71,11 @@ import { AgentModule } from './agent/agent.module';
     BountyModule,
     WalletModule,
     KycModule,
-    AiModule,
-    WebsiteModule,
     SubscriptionModule,
     DashboardModule,
 
     // Legacy modules (to be cleaned up)
-    RoleModule,
+    // RoleModule,
     PropertyModule,
     ProjectModule,
     AmenityModule,
@@ -89,6 +87,9 @@ import { AgentModule } from './agent/agent.module';
     ScheduleModule.forRoot(),
     FirebaseModule,
     NotificationModule,
+
+    AiModule,
+    WebsiteModule,
   ],
 })
 export class AppModule {}

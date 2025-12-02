@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 import { KycSubmission } from './kyc-submission.entity';
-import { DocumentType, DocumentStatus } from '../enum/kyc.enum';
+import { DocumentType, DocumentStatus } from '../enums/kyc.enum';
 
 export type KycDocumentDocument = KycDocument & Document;
 
@@ -13,8 +13,8 @@ export class KycDocument {
   @Prop({ type: String, enum: DocumentType, required: true })
   type: DocumentType;
 
-  @Prop({ required: true })
-  number: string;
+  @Prop({ required: false })
+  number?: string;
 
   @Prop({ required: true })
   frontImageUrl: string;

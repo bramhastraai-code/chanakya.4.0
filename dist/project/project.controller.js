@@ -43,6 +43,14 @@ let ProjectController = class ProjectController {
         const data = await this.projectService.findProjectsByCreator(user.userId, pageSize, pageNumber, searchQuery, status);
         return { data, message: 'Projects retrieved successfully' };
     }
+    async getProjectsWithActiveBounties() {
+        const projects = await this.projectService.findProjectsWithActiveBounties();
+        return {
+            success: true,
+            message: 'Projects with active bounties retrieved successfully.',
+            data: projects,
+        };
+    }
     async findAll(pageSize, pageNumber, sortBy = 'createdAt', sortOrder = 'asc', searchQuery, status) {
         try {
             const data = await this.projectService.findAll(pageSize, pageNumber, sortBy, sortOrder, searchQuery, status);
@@ -205,6 +213,17 @@ __decorate([
     __metadata("design:paramtypes", [Object, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "getProjectsByCreator", null);
+__decorate([
+    (0, common_1.Get)('active-bounties'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get projects with active bounties' }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'Projects with active bounties retrieved successfully.',
+    }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectsWithActiveBounties", null);
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({

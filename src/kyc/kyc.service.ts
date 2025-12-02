@@ -4,213 +4,293 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { KycSubmission, KycSubmissionDocument } from './entities/kyc-submission.entity';
-import { KycDocument, KycDocumentDocument } from './entities/kyc-document.entity';
-import { SubmitKycDto } from './dto/submit-kyc.dto';
-import { KycStatus, DocumentStatus } from './enum/kyc.enum';
+import { Model, Types } from 'mongoose';
+import { KycSubmission } from './entities/kyc-submission.entity';
+import { KycDocument } from './entities/kyc-document.entity';
+import { SubmitKycDto } from './dto/kyc.dto';
+import { KycStatus, DocumentStatus, DocumentType } from './enums/kyc.enum';
 
 @Injectable()
-export class KycService {
+export class KycV1Service {
   constructor(
     @InjectModel(KycSubmission.name)
-    private kycSubmissionModel: Model<KycSubmissionDocument>,
-    @InjectModel(KycDocument.name)
-    private kycDocumentModel: Model<KycDocumentDocument>,
+    private submissionModel: Model<KycSubmission>,
+    @InjectModel(KycDocument.name) private documentModel: Model<KycDocument>,
   ) {}
 
-  async getStatus(userId: string) {
-    const submission = await this.kycSubmissionModel
-      .findOne({ user: userId })
-      .sort({ createdAt: -1 })
-      .exec();
+  /**
+   * Submit KYC documents
+   */
+  async submitKyc(userId: Types.ObjectId | string, dto: SubmitKycDto) {
+    // Convert string to ObjectId if needed
+    const userObjectId =
+      typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
 
-    if (!submission) {
-      return {
-        status: KycStatus.NOT_SUBMITTED,
-        submittedAt: null,
-        approvedAt: null,
-        documents: [],
-        rejectionReason: null,
-      };
-    }
+    // Check if pending submission exists
+    const existing = await this.submissionModel.findOne({
+      userId: userObjectId,
+      status: KycStatus.PENDING,
+    });
 
-    const documents = await this.kycDocumentModel
-      .find({ kycSubmission: submission._id })
-      .exec();
-
-    return {
-      status: submission.status,
-      submittedAt: submission.submittedAt,
-      approvedAt: submission.approvedAt,
-      rejectedAt: submission.rejectedAt,
-      documents: documents.map((doc) => ({
-        type: doc.type,
-        status: doc.status,
-        number: doc.number.replace(/(\d{4})(\d{4})(\d{4})/, 'XXXX-XXXX-$3'), // Mask sensitive data
-      })),
-      rejectionReason: submission.rejectionReason,
-    };
-  }
-
-  async submit(userId: string, submitKycDto: SubmitKycDto) {
-    // Check if there's already a pending or approved submission
-    const existingSubmission = await this.kycSubmissionModel
-      .findOne({
-        user: userId,
-        status: { $in: [KycStatus.PENDING, KycStatus.APPROVED] },
-      })
-      .exec();
-
-    if (existingSubmission) {
+    if (existing) {
       throw new BadRequestException(
-        'You already have a pending or approved KYC submission',
+        'You already have a pending KYC submission',
       );
     }
 
-    // Create new submission
-    const submission = new this.kycSubmissionModel({
-      user: userId,
+    // Create submission with personal details
+    const submission = await this.submissionModel.create({
+      userId: userObjectId,
+      fullName: dto.fullName,
+      panNumber: dto.panNumber,
+      aadharNumber: dto.aadharNumber,
+      address: dto.address,
       status: KycStatus.PENDING,
       submittedAt: new Date(),
     });
 
-    const savedSubmission = await submission.save();
-
-    // Create documents
-    const documentPromises = submitKycDto.documents.map((doc) => {
-      const kycDoc = new this.kycDocumentModel({
-        kycSubmission: savedSubmission._id,
-        type: doc.type,
-        number: doc.number,
-        frontImageUrl: doc.frontImage,
-        backImageUrl: doc.backImage,
+    // Create document records for each uploaded document
+    const documents = await Promise.all([
+      // PAN Card
+      this.documentModel.create({
+        kycSubmission: submission._id,
+        type: DocumentType.PAN,
+        number: dto.panNumber,
+        frontImageUrl: dto.panCardImageUrl,
         status: DocumentStatus.PENDING,
-      });
-      return kycDoc.save();
-    });
-
-    // Add address proof if provided
-    if (submitKycDto.addressProof) {
-      const addressProofDoc = new this.kycDocumentModel({
-        kycSubmission: savedSubmission._id,
-        type: 'address_proof',
-        number: 'N/A',
-        frontImageUrl: submitKycDto.addressProof.image,
+      }),
+      // Aadhar Card Front
+      this.documentModel.create({
+        kycSubmission: submission._id,
+        type: DocumentType.AADHAAR,
+        number: dto.aadharNumber,
+        frontImageUrl: dto.aadharCardFrontImageUrl,
+        backImageUrl: dto.aadharCardBackImageUrl,
         status: DocumentStatus.PENDING,
-      });
-      documentPromises.push(addressProofDoc.save());
-    }
-
-    await Promise.all(documentPromises);
+      }),
+      // Profile Photo
+      this.documentModel.create({
+        kycSubmission: submission._id,
+        type: DocumentType.PROFILE_PHOTO,
+        frontImageUrl: dto.profilePhotoUrl,
+        status: DocumentStatus.PENDING,
+      }),
+    ]);
 
     return {
-      status: KycStatus.PENDING,
-      submittedAt: savedSubmission.submittedAt,
-      estimatedVerificationTime: '24-48 hours',
+      submission,
+      documents,
     };
   }
 
-  async getPendingSubmissions(page: number = 1, limit: number = 20) {
-    const query = { status: KycStatus.PENDING };
-    const skip = (page - 1) * limit;
+  /**
+   * Update KYC documents
+   */
+  async updateKyc(userId: Types.ObjectId | string, dto: Partial<SubmitKycDto>) {
+    // Convert string to ObjectId if needed
+    const userObjectId =
+      typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
 
-    const [submissions, total] = await Promise.all([
-      this.kycSubmissionModel
-        .find(query)
-        .populate('user', 'name email phoneNumber')
-        .sort({ submittedAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .exec(),
-      this.kycSubmissionModel.countDocuments(query),
-    ]);
+    const submission = await this.submissionModel.findOne({
+      userId: userObjectId,
+    });
 
-    // Get documents for each submission
-    const submissionsWithDocs = await Promise.all(
-      submissions.map(async (submission) => {
-        const documents = await this.kycDocumentModel
-          .find({ kycSubmission: submission._id })
-          .exec();
+    if (!submission) {
+      throw new NotFoundException('KYC submission not found');
+    }
 
-        return {
-          ...submission.toObject(),
-          documents,
-        };
-      }),
-    );
+    if (submission.status === KycStatus.APPROVED) {
+      throw new BadRequestException('Cannot update approved KYC');
+    }
+
+    // Update personal details if provided
+    if (dto.fullName) submission.fullName = dto.fullName;
+    if (dto.panNumber) submission.panNumber = dto.panNumber;
+    if (dto.aadharNumber) submission.aadharNumber = dto.aadharNumber;
+    if (dto.address) submission.address = dto.address;
+
+    // If rejected, reset status to pending on update
+    if (submission.status === KycStatus.REJECTED) {
+      submission.status = KycStatus.PENDING;
+      submission.submittedAt = new Date();
+      submission.rejectionReason = undefined;
+      submission.rejectedAt = undefined;
+      submission.reviewedBy = undefined;
+    }
+
+    await submission.save();
+
+    // Update documents if provided
+    const documentUpdates = [];
+
+    if (dto.panCardImageUrl) {
+      documentUpdates.push(
+        this.documentModel.findOneAndUpdate(
+          { kycSubmission: submission._id, type: DocumentType.PAN },
+          {
+            frontImageUrl: dto.panCardImageUrl,
+            status: DocumentStatus.PENDING,
+            number: dto.panNumber || submission.panNumber,
+          },
+          { upsert: true, new: true },
+        ),
+      );
+    }
+
+    if (dto.aadharCardFrontImageUrl || dto.aadharCardBackImageUrl) {
+      const update: any = {
+        status: DocumentStatus.PENDING,
+        number: dto.aadharNumber || submission.aadharNumber,
+      };
+      if (dto.aadharCardFrontImageUrl)
+        update.frontImageUrl = dto.aadharCardFrontImageUrl;
+      if (dto.aadharCardBackImageUrl)
+        update.backImageUrl = dto.aadharCardBackImageUrl;
+
+      documentUpdates.push(
+        this.documentModel.findOneAndUpdate(
+          { kycSubmission: submission._id, type: DocumentType.AADHAAR },
+          update,
+          { upsert: true, new: true },
+        ),
+      );
+    }
+
+    if (dto.profilePhotoUrl) {
+      documentUpdates.push(
+        this.documentModel.findOneAndUpdate(
+          { kycSubmission: submission._id, type: DocumentType.PROFILE_PHOTO },
+          {
+            frontImageUrl: dto.profilePhotoUrl,
+            status: DocumentStatus.PENDING,
+          },
+          { upsert: true, new: true },
+        ),
+      );
+    }
+
+    const documents = await Promise.all(documentUpdates);
+
+    // If no specific document updates but we have documents, fetch them to return
+    const allDocuments = await this.documentModel.find({
+      kycSubmission: submission._id,
+    });
 
     return {
-      submissions: submissionsWithDocs,
+      submission,
+      documents: allDocuments,
+    };
+  }
+
+  /**
+   * Get KYC status
+   */
+  async getStatus(userId: Types.ObjectId) {
+    const submission = await this.submissionModel
+      .findOne({ userId })
+      .sort({ createdAt: -1 });
+
+    if (!submission) {
+      return { status: KycStatus.NOT_SUBMITTED };
+    }
+
+    const documents = await this.documentModel.find({
+      kycSubmission: submission._id,
+    });
+
+    return {
+      ...submission.toObject(),
+      documents,
+    };
+  }
+
+  /**
+   * Admin: Get pending submissions
+   */
+  async getPendingSubmissions(filters: any = {}) {
+    const { page = 1, limit = 20 } = filters;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [submissions, total] = await Promise.all([
+      this.submissionModel
+        .find({ status: KycStatus.PENDING })
+        .populate('userId', 'name email phoneNumber')
+        .sort({ submittedAt: 1 }) // Oldest first
+        .skip(skip)
+        .limit(Number(limit))
+        .exec(),
+      this.submissionModel.countDocuments({ status: KycStatus.PENDING }),
+    ]);
+
+    return {
+      submissions,
       pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
-        totalItems: total,
-        itemsPerPage: limit,
-        hasNext: page < Math.ceil(total / limit),
-        hasPrev: page > 1,
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
       },
     };
   }
 
-  async approve(submissionId: string, adminId: string) {
-    const submission = await this.kycSubmissionModel.findById(submissionId);
+  /**
+   * Admin: Get submission details
+   */
+  async getSubmission(id: string) {
+    const submission = await this.submissionModel
+      .findById(id)
+      .populate('userId', 'name email phoneNumber');
 
     if (!submission) {
-      throw new NotFoundException('KYC submission not found');
+      throw new NotFoundException('Submission not found');
     }
 
-    if (submission.status !== KycStatus.PENDING) {
-      throw new BadRequestException('KYC submission is not pending');
-    }
+    const documents = await this.documentModel.find({ kycSubmission: id });
 
-    submission.status = KycStatus.APPROVED;
-    submission.approvedAt = new Date();
-    submission.reviewedBy = adminId as any;
-
-    await submission.save();
-
-    // Update all documents to approved
-    await this.kycDocumentModel.updateMany(
-      { kycSubmission: submissionId },
-      { status: DocumentStatus.APPROVED },
-    );
-
-    // TODO: Update user's isKycVerified field
-    // TODO: Send notification to user
-
-    return submission;
+    return {
+      submission,
+      documents,
+    };
   }
 
-  async reject(
-    submissionId: string,
-    adminId: string,
-    rejectionReason: string,
+  /**
+   * Admin: Review submission
+   */
+  async reviewSubmission(
+    id: string,
+    adminId: Types.ObjectId,
+    approved: boolean,
+    rejectionReason?: string,
   ) {
-    const submission = await this.kycSubmissionModel.findById(submissionId);
+    const submission = await this.submissionModel.findById(id);
 
     if (!submission) {
-      throw new NotFoundException('KYC submission not found');
+      throw new NotFoundException('Submission not found');
     }
 
     if (submission.status !== KycStatus.PENDING) {
-      throw new BadRequestException('KYC submission is not pending');
+      throw new BadRequestException('Submission is already reviewed');
     }
 
-    submission.status = KycStatus.REJECTED;
-    submission.rejectedAt = new Date();
-    submission.rejectionReason = rejectionReason;
-    submission.reviewedBy = adminId as any;
+    submission.status = approved ? KycStatus.APPROVED : KycStatus.REJECTED;
+    submission.reviewedBy = adminId;
+
+    if (approved) {
+      submission.approvedAt = new Date();
+    } else {
+      submission.rejectedAt = new Date();
+      submission.rejectionReason = rejectionReason;
+    }
 
     await submission.save();
 
-    // Update all documents to rejected
-    await this.kycDocumentModel.updateMany(
-      { kycSubmission: submissionId },
-      { status: DocumentStatus.REJECTED },
+    // Update documents status
+    await this.documentModel.updateMany(
+      { kycSubmission: id },
+      {
+        status: approved ? DocumentStatus.APPROVED : DocumentStatus.REJECTED,
+      },
     );
-
-    // TODO: Send notification to user
 
     return submission;
   }

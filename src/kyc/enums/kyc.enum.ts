@@ -12,6 +12,7 @@ export enum DocumentType {
   PASSPORT = 'passport',
   VOTER_ID = 'voter_id',
   ADDRESS_PROOF = 'address_proof',
+  PROFILE_PHOTO = 'profile_photo',
 }
 
 export enum DocumentStatus {

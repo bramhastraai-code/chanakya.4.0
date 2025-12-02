@@ -19,9 +19,12 @@ const mongoose_2 = require("mongoose");
 const project_entity_1 = require("./entities/project.entity");
 const property_service_1 = require("../property/property.service");
 const status_enum_1 = require("../common/enum/status.enum");
+const bounty_entity_1 = require("../bounty/entities/bounty.entity");
+const bounty_enum_1 = require("../bounty/enum/bounty.enum");
 let ProjectService = class ProjectService {
-    constructor(projectModel, propertyService) {
+    constructor(projectModel, bountyModel, propertyService) {
         this.projectModel = projectModel;
+        this.bountyModel = bountyModel;
         this.propertyService = propertyService;
     }
     async create(createProjectDto) {
@@ -454,12 +457,39 @@ let ProjectService = class ProjectService {
         }
         return projects;
     }
+    async findProjectsWithActiveBounties() {
+        const activeBounties = await this.bountyModel.find({
+            status: bounty_enum_1.BountyStatus.ACTIVE,
+        });
+        const projectIds = [
+            ...new Set(activeBounties.map((bounty) => bounty.project)),
+        ];
+        if (projectIds.length === 0) {
+            return [];
+        }
+        const projects = await this.projectModel
+            .find({
+            _id: { $in: projectIds },
+            status: status_enum_1.Status.ACTIVE,
+        })
+            .populate({ path: 'builder', strictPopulate: false })
+            .populate({ path: 'amenities', strictPopulate: false })
+            .populate({ path: 'facilities', strictPopulate: false })
+            .populate({ path: 'createdBy', strictPopulate: false })
+            .populate({ path: 'updatedBy', strictPopulate: false })
+            .populate({ path: 'executiveUser', strictPopulate: false })
+            .sort({ featured: -1 })
+            .exec();
+        return projects;
+    }
 };
 exports.ProjectService = ProjectService;
 exports.ProjectService = ProjectService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(project_entity_1.Project.name)),
+    __param(1, (0, mongoose_1.InjectModel)(bounty_entity_1.Bounty.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
         property_service_1.PropertyService])
 ], ProjectService);
 //# sourceMappingURL=project.service.js.map

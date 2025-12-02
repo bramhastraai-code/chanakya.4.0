@@ -5,10 +5,12 @@ import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PropertyService } from 'src/property/property.service';
 import { Status } from 'src/common/enum/status.enum';
+import { Bounty } from 'src/bounty/entities/bounty.entity';
 export declare class ProjectService {
     private projectModel;
+    private bountyModel;
     private readonly propertyService;
-    constructor(projectModel: Model<Project>, propertyService: PropertyService);
+    constructor(projectModel: Model<Project>, bountyModel: Model<Bounty>, propertyService: PropertyService);
     create(createProjectDto: CreateProjectDto): Promise<Project>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<{
         projects: Project[];
@@ -59,4 +61,5 @@ export declare class ProjectService {
         title: string;
     }[]>;
     getBuilderProjects(builderId: string): Promise<Project[]>;
+    findProjectsWithActiveBounties(): Promise<Project[]>;
 }

@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Body,
   Param,
   Query,
@@ -15,9 +16,8 @@ import {
   ApiBearerAuth,
   ApiQuery,
 } from '@nestjs/swagger';
-import { KycService } from './kyc.service';
-import { SubmitKycDto } from './dto/submit-kyc.dto';
-import { ReviewKycDto } from './dto/review-kyc.dto';
+import { KycV1Service } from './kyc.service';
+import { SubmitKycDto, ReviewKycDto, UpdateKycDto } from './dto/kyc.dto';
 import { jwtGuard } from 'src/core/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -29,9 +29,9 @@ import { UserRole } from 'src/common/enum/user-role.enum';
 @ApiBearerAuth()
 @Controller('agent/kyc')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.AGENT)
+@Roles(UserRole.AGENT, UserRole.BUILDER)
 export class AgentKycController {
-  constructor(private readonly kycService: KycService) {}
+  constructor(private readonly kycService: KycV1Service) {}
 
   @Get('status')
   @ApiOperation({ summary: 'Get KYC status' })
@@ -54,10 +54,26 @@ export class AgentKycController {
     description: 'KYC documents submitted successfully',
   })
   async submit(@Body() submitKycDto: SubmitKycDto, @CurrentUser() user: any) {
-    const data = await this.kycService.submit(user.userId, submitKycDto);
+    const data = await this.kycService.submitKyc(user.userId, submitKycDto);
     return {
       success: true,
-      message: 'KYC documents submitted successfully',
+      message:
+        'KYC documents submitted successfully. Admin will review them shortly.',
+      data,
+    };
+  }
+
+  @Patch('update')
+  @ApiOperation({ summary: 'Update KYC documents' })
+  @ApiResponse({
+    status: 200,
+    description: 'KYC documents updated successfully',
+  })
+  async update(@Body() updateKycDto: UpdateKycDto, @CurrentUser() user: any) {
+    const data = await this.kycService.updateKyc(user.userId, updateKycDto);
+    return {
+      success: true,
+      message: 'KYC updated successfully.',
       data,
     };
   }
@@ -70,55 +86,55 @@ export class AgentKycController {
 @UseGuards(jwtGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
 export class AdminKycController {
-  constructor(private readonly kycService: KycService) {}
+  constructor(private readonly kycService: KycV1Service) {}
 
   @Get('submissions')
   @ApiOperation({ summary: 'Get pending KYC submissions' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'page', required: false, example: 1 })
+  @ApiQuery({ name: 'limit', required: false, example: 20 })
   @ApiResponse({
     status: 200,
-    description: 'KYC submissions retrieved successfully',
+    description: 'Submissions retrieved successfully',
   })
-  async getPendingSubmissions(
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
-  ) {
-    const data = await this.kycService.getPendingSubmissions(page, limit);
+  async getSubmissions(@Query() filters: any) {
+    const data = await this.kycService.getPendingSubmissions(filters);
     return {
       success: true,
       data,
     };
   }
 
-  @Put('submissions/:id/approve')
-  @ApiOperation({ summary: 'Approve KYC submission' })
-  @ApiResponse({ status: 200, description: 'KYC approved successfully' })
-  async approve(@Param('id') id: string, @CurrentUser() user: any) {
-    const data = await this.kycService.approve(id, user.userId);
+  @Get('submissions/:id')
+  @ApiOperation({ summary: 'Get submission details' })
+  @ApiResponse({
+    status: 200,
+    description: 'Submission details retrieved successfully',
+  })
+  async getSubmission(@Param('id') id: string) {
+    const data = await this.kycService.getSubmission(id);
     return {
       success: true,
-      message: 'KYC approved successfully',
       data,
     };
   }
 
-  @Put('submissions/:id/reject')
-  @ApiOperation({ summary: 'Reject KYC submission' })
-  @ApiResponse({ status: 200, description: 'KYC rejected successfully' })
-  async reject(
-    @Param('id') id: string,
-    @Body() reviewKycDto: ReviewKycDto,
+  @Put('submissions/:id/review')
+  @ApiOperation({ summary: 'Review submission (Approve/Reject)' })
+  @ApiResponse({ status: 200, description: 'Submission reviewed successfully' })
+  async review(
     @CurrentUser() user: any,
+    @Param('id') id: string,
+    @Body() dto: ReviewKycDto,
   ) {
-    const data = await this.kycService.reject(
+    const data = await this.kycService.reviewSubmission(
       id,
       user.userId,
-      reviewKycDto.rejectionReason || 'No reason provided',
+      dto.approved,
+      dto.rejectionReason,
     );
     return {
       success: true,
-      message: 'KYC rejected successfully',
+      message: dto.approved ? 'KYC approved' : 'KYC rejected',
       data,
     };
   }

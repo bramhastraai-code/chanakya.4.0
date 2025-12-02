@@ -11,7 +11,6 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const config_1 = require("@nestjs/config");
 const nestjs_razorpay_1 = require("nestjs-razorpay");
-const role_module_1 = require("./role/role.module");
 const property_module_1 = require("./property/property.module");
 const project_module_1 = require("./project/project.module");
 const amenity_module_1 = require("./amenity/amenity.module");
@@ -73,11 +72,8 @@ exports.AppModule = AppModule = __decorate([
             bounty_module_1.BountyModule,
             wallet_module_1.WalletModule,
             kyc_module_1.KycModule,
-            ai_module_1.AiModule,
-            website_module_1.WebsiteModule,
             subscription_module_1.SubscriptionModule,
             dashboard_module_1.DashboardModule,
-            role_module_1.RoleModule,
             property_module_1.PropertyModule,
             project_module_1.ProjectModule,
             amenity_module_1.AmenityModule,
@@ -88,6 +84,8 @@ exports.AppModule = AppModule = __decorate([
             schedule_1.ScheduleModule.forRoot(),
             firebase_module_1.FirebaseModule,
             notification_module_1.NotificationModule,
+            ai_module_1.AiModule,
+            website_module_1.WebsiteModule,
         ],
     })
 ], AppModule);

@@ -19,12 +19,16 @@ export class WalletV1Service {
   /**
    * Get or create wallet for user
    */
-  async getWallet(userId: Types.ObjectId) {
-    let wallet = await this.walletModel.findOne({ userId });
+  async getWallet(userId: Types.ObjectId | string) {
+    // Convert string to ObjectId if needed
+    const userObjectId =
+      typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
+
+    let wallet = await this.walletModel.findOne({ userId: userObjectId });
 
     if (!wallet) {
       wallet = await this.walletModel.create({
-        userId,
+        userId: userObjectId,
         balance: 0,
         pendingEarnings: 0,
         lifetimeEarnings: 0,

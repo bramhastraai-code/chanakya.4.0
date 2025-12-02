@@ -11,12 +11,14 @@ import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PropertyService } from 'src/property/property.service';
 import { Status } from 'src/common/enum/status.enum';
+import { Bounty } from 'src/bounty/entities/bounty.entity';
+import { BountyStatus } from 'src/bounty/enum/bounty.enum';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
-
+    @InjectModel(Bounty.name) private bountyModel: Model<Bounty>,
     private readonly propertyService: PropertyService,
   ) {}
 
@@ -546,6 +548,39 @@ export class ProjectService {
     if (!projects.length) {
       throw new NotFoundException('No active projects found for this builder');
     }
+
+    return projects;
+  }
+
+  async findProjectsWithActiveBounties(): Promise<Project[]> {
+    // 1. Find all active bounties
+    const activeBounties = await this.bountyModel.find({
+      status: BountyStatus.ACTIVE,
+    });
+
+    // 2. Extract unique project IDs
+    const projectIds = [
+      ...new Set(activeBounties.map((bounty) => bounty.project)),
+    ];
+
+    if (projectIds.length === 0) {
+      return [];
+    }
+
+    // 3. Fetch projects with these IDs
+    const projects = await this.projectModel
+      .find({
+        _id: { $in: projectIds },
+        status: Status.ACTIVE,
+      })
+      .populate({ path: 'builder', strictPopulate: false })
+      .populate({ path: 'amenities', strictPopulate: false })
+      .populate({ path: 'facilities', strictPopulate: false })
+      .populate({ path: 'createdBy', strictPopulate: false })
+      .populate({ path: 'updatedBy', strictPopulate: false })
+      .populate({ path: 'executiveUser', strictPopulate: false })
+      .sort({ featured: -1 })
+      .exec();
 
     return projects;
   }

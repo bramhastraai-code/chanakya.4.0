@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Project, ProjectSchema } from './entities/project.entity';
 import { Amenity, AmenitySchema } from 'src/amenity/entities/amenity.entity';
 import { User, UserSchema } from 'src/core/entities/user.entity';
+import { Bounty, BountySchema } from 'src/bounty/entities/bounty.entity';
 
 import { ProjectController } from './project.controller';
 import { ProjectService } from './project.service';
@@ -21,6 +22,7 @@ import { S3Service } from 'src/s3/s3.service';
 
       { name: Amenity.name, schema: AmenitySchema },
       { name: User.name, schema: UserSchema },
+      { name: Bounty.name, schema: BountySchema },
     ]),
   ],
   controllers: [ProjectController],
