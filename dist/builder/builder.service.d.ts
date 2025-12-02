@@ -886,4 +886,9 @@ export declare class BuilderService {
     remove(id: string): Promise<{
         message: string;
     }>;
+    getProfile(userId: string): Promise<import("mongoose").FlattenMaps<BuilderProfile> & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }>;
 }

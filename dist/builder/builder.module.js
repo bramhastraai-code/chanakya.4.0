@@ -24,7 +24,7 @@ exports.BuilderModule = BuilderModule = __decorate([
                 { name: builder_profile_entity_1.BuilderProfile.name, schema: builder_profile_entity_1.BuilderProfileSchema },
             ]),
         ],
-        controllers: [builder_controller_1.BuilderController],
+        controllers: [builder_controller_1.BuilderController, builder_controller_1.BuilderAdminController],
         providers: [builder_service_1.BuilderService],
         exports: [builder_service_1.BuilderService],
     })

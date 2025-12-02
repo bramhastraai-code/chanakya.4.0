@@ -14,6 +14,7 @@ import {
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { LeadStatus } from './enum/lead-status.enum';
+import { UserRole } from 'src/common/enum/user-role.enum';
 
 @Injectable()
 export class LeadService {
@@ -23,31 +24,40 @@ export class LeadService {
     private leadActivityModel: Model<LeadActivityDocument>,
   ) {}
 
-  async create(
-    createLeadDto: CreateLeadDto,
-    agentId: string,
-  ): Promise<LeadDocument> {
-    const lead = new this.leadModel({
+  async create(createLeadDto: CreateLeadDto, user: any): Promise<LeadDocument> {
+    const leadData: any = {
       ...createLeadDto,
       property: createLeadDto.propertyId,
-      assignedTo: agentId,
       status: LeadStatus.NEW,
-    });
+      createdBy: user.userId,
+    };
 
+    if (user.role === UserRole.AGENT) {
+      leadData.assignedTo = user.userId;
+    } else if (user.role === UserRole.ADMIN) {
+      if (createLeadDto.assignedTo) {
+        leadData.assignedTo = createLeadDto.assignedTo;
+      }
+    } else if (user.role === UserRole.BUILDER) {
+      // Builder creates lead, assignedTo can be null initially or self if they act as agent
+      // For now, leaving assignedTo empty unless logic dictates otherwise
+    }
+
+    const lead = new this.leadModel(leadData);
     const savedLead = await lead.save();
 
     // Create initial activity
     await this.createActivity(
       savedLead._id.toString(),
       ActivityType.STATUS_CHANGE,
-      `Lead created with status: ${LeadStatus.NEW}`,
+      `Lead created by ${user.role} with status: ${LeadStatus.NEW}`,
     );
 
     return savedLead;
   }
 
   async findAll(
-    agentId: string,
+    user: any,
     page: number = 1,
     limit: number = 20,
     status?: LeadStatus,
@@ -55,7 +65,15 @@ export class LeadService {
     dateFrom?: string,
     dateTo?: string,
   ) {
-    const query: any = { assignedTo: agentId };
+    const query: any = {};
+
+    // Role-based filtering
+    if (user.role === UserRole.AGENT) {
+      query.assignedTo = user.userId;
+    } else if (user.role === UserRole.BUILDER) {
+      query.createdBy = user.userId;
+    }
+    // Admin sees all
 
     if (status) {
       query.status = status;
@@ -81,6 +99,7 @@ export class LeadService {
       this.leadModel
         .find(query)
         .populate('property', 'propertyTitle price thumbnail')
+        .populate('assignedTo', 'name email')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -88,8 +107,8 @@ export class LeadService {
       this.leadModel.countDocuments(query),
     ]);
 
-    // Get stats
-    const stats = await this.getLeadStats(agentId);
+    // Get stats (filtered by role)
+    const stats = await this.getLeadStats(user);
 
     return {
       leads,
@@ -105,19 +124,29 @@ export class LeadService {
     };
   }
 
-  async findOne(id: string, agentId: string): Promise<any> {
+  async findOne(id: string, user: any): Promise<any> {
     const lead = await this.leadModel
       .findById(id)
       .populate('property', 'propertyTitle price thumbnail images')
       .populate('assignedTo', 'name email')
+      .populate('createdBy', 'name email role')
       .exec();
 
     if (!lead) {
       throw new NotFoundException('Lead not found');
     }
 
-    // Check if the lead belongs to the agent
-    if (lead.assignedTo?._id.toString() !== agentId) {
+    // Role-based access check
+    if (
+      user.role === UserRole.AGENT &&
+      lead.assignedTo?._id.toString() !== user.userId
+    ) {
+      throw new ForbiddenException('You do not have access to this lead');
+    }
+    if (
+      user.role === UserRole.BUILDER &&
+      lead.createdBy?._id.toString() !== user.userId
+    ) {
       throw new ForbiddenException('You do not have access to this lead');
     }
 
@@ -136,7 +165,7 @@ export class LeadService {
   async update(
     id: string,
     updateLeadDto: UpdateLeadDto,
-    agentId: string,
+    user: any,
   ): Promise<LeadDocument> {
     const lead = await this.leadModel.findById(id);
 
@@ -144,7 +173,17 @@ export class LeadService {
       throw new NotFoundException('Lead not found');
     }
 
-    if (lead.assignedTo?.toString() !== agentId) {
+    // Role-based access check
+    if (
+      user.role === UserRole.AGENT &&
+      lead.assignedTo?.toString() !== user.userId
+    ) {
+      throw new ForbiddenException('You do not have access to this lead');
+    }
+    if (
+      user.role === UserRole.BUILDER &&
+      lead.createdBy?.toString() !== user.userId
+    ) {
       throw new ForbiddenException('You do not have access to this lead');
     }
 
@@ -159,7 +198,7 @@ export class LeadService {
       await this.createActivity(
         id,
         ActivityType.STATUS_CHANGE,
-        `Status changed from ${oldStatus} to ${updateLeadDto.status}`,
+        `Status changed from ${oldStatus} to ${updateLeadDto.status} by ${user.name}`,
       );
     }
 
@@ -168,21 +207,31 @@ export class LeadService {
       await this.createActivity(
         id,
         ActivityType.NOTE_ADDED,
-        `Note added: ${updateLeadDto.notes}`,
+        `Note added by ${user.name}: ${updateLeadDto.notes}`,
       );
     }
 
     return updatedLead;
   }
 
-  async remove(id: string, agentId: string): Promise<void> {
+  async remove(id: string, user: any): Promise<void> {
     const lead = await this.leadModel.findById(id);
 
     if (!lead) {
       throw new NotFoundException('Lead not found');
     }
 
-    if (lead.assignedTo?.toString() !== agentId) {
+    // Role-based access check
+    if (
+      user.role === UserRole.AGENT &&
+      lead.assignedTo?.toString() !== user.userId
+    ) {
+      throw new ForbiddenException('You do not have access to this lead');
+    }
+    if (
+      user.role === UserRole.BUILDER &&
+      lead.createdBy?.toString() !== user.userId
+    ) {
       throw new ForbiddenException('You do not have access to this lead');
     }
 
@@ -205,20 +254,27 @@ export class LeadService {
     await activity.save();
   }
 
-  private async getLeadStats(agentId: string) {
+  private async getLeadStats(user: any) {
+    const query: any = {};
+    if (user.role === UserRole.AGENT) {
+      query.assignedTo = user.userId;
+    } else if (user.role === UserRole.BUILDER) {
+      query.createdBy = user.userId;
+    }
+
     const [totalLeads, newLeads, qualifiedLeads, closedLeads] =
       await Promise.all([
-        this.leadModel.countDocuments({ assignedTo: agentId }),
+        this.leadModel.countDocuments(query),
         this.leadModel.countDocuments({
-          assignedTo: agentId,
+          ...query,
           status: LeadStatus.NEW,
         }),
         this.leadModel.countDocuments({
-          assignedTo: agentId,
+          ...query,
           status: LeadStatus.QUALIFIED,
         }),
         this.leadModel.countDocuments({
-          assignedTo: agentId,
+          ...query,
           status: LeadStatus.CLOSED,
         }),
       ]);

@@ -20,7 +20,7 @@ export declare class PropertyController {
         data: Property;
         message: string;
     }>;
-    create(createPropertyDto: CreatePropertyDto): Promise<{
+    create(createPropertyDto: CreatePropertyDto, user: any): Promise<{
         data: Property;
         message: string;
     }>;
@@ -35,7 +35,7 @@ export declare class PropertyController {
     getPropertyById(id: string): Promise<Response<any>>;
     getPropertyByCity(city: string): Promise<Response<any>>;
     getFormattedProperties(res: any): Promise<any>;
-    createWeb(createPropertyDto: CreatePropertyDto): Promise<{
+    createWeb(createPropertyDto: CreatePropertyDto, user: any): Promise<{
         data: Property;
         message: string;
     }>;

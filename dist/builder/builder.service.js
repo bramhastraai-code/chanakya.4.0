@@ -179,6 +179,17 @@ let BuilderService = class BuilderService {
         await this.builderProfileModel.findOneAndDelete({ userId: id });
         return { message: 'Builder deleted successfully' };
     }
+    async getProfile(userId) {
+        const profile = await this.builderProfileModel
+            .findOne({ userId })
+            .populate('userId', 'name email phoneNumber isActive')
+            .lean()
+            .exec();
+        if (!profile) {
+            throw new common_1.NotFoundException('Builder profile not found');
+        }
+        return profile;
+    }
 };
 exports.BuilderService = BuilderService;
 exports.BuilderService = BuilderService = __decorate([

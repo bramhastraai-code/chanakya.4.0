@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
 import { BuilderService } from './builder.service';
-import { BuilderController } from './builder.controller';
+import {
+  BuilderController,
+  BuilderAdminController,
+} from './builder.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/core/entities/user.entity';
 import {
@@ -15,7 +18,7 @@ import {
       { name: BuilderProfile.name, schema: BuilderProfileSchema },
     ]),
   ],
-  controllers: [BuilderController],
+  controllers: [BuilderController, BuilderAdminController],
   providers: [BuilderService],
   exports: [BuilderService],
 })

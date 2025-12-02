@@ -150,7 +150,7 @@ let ProjectController = class ProjectController {
         return { data, message: 'Project deleted successfully' };
     }
     async getPublicProjects(pageSize = '20', pageNumber = '1', city, category) {
-        const data = await this.projectService.findAll(pageSize, pageNumber, 'createdAt', 'desc', undefined, status_enum_1.Status.ACTIVE);
+        const data = await this.projectService.findAll(pageSize, pageNumber, 'createdAt', 'desc', `${city}+${category ? ` ${category}` : ''}`, status_enum_1.Status.ACTIVE);
         return { data, message: 'Public projects retrieved successfully' };
     }
 };

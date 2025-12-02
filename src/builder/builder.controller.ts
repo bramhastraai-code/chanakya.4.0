@@ -24,12 +24,34 @@ import { jwtGuard } from 'src/core/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
+@ApiTags('Builder')
+@ApiBearerAuth()
+@Controller('builder')
+@UseGuards(jwtGuard, RolesGuard)
+export class BuilderController {
+  constructor(private readonly builderService: BuilderService) {}
+
+  @Get('profile')
+  @Roles(UserRole.BUILDER)
+  @ApiOperation({ summary: 'Get builder profile' })
+  @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
+  async getProfile(@CurrentUser() user: any) {
+    const data = await this.builderService.getProfile(user.userId);
+    return {
+      success: true,
+      data,
+    };
+  }
+}
+
+// Admin endpoints
 @ApiTags('Builder by Admin')
 @ApiBearerAuth()
 @Controller('builder-by-admin')
 @UseGuards(jwtGuard, RolesGuard)
-export class BuilderController {
+export class BuilderAdminController {
   constructor(private readonly builderService: BuilderService) {}
 
   @Post()

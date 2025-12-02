@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
@@ -15,6 +16,8 @@ import {
 } from '../dto/v1/bounty.dto';
 import { BountyStatus, SubmissionStatus } from '../enum/bounty.enum';
 import { TransactionType } from '../../wallet/enum/transaction.enum';
+import { UserRole } from 'src/common/enum/user-role.enum';
+import { Project } from 'src/project/entities/project.entity';
 
 @Injectable()
 export class BountyV1Service {
@@ -22,16 +25,32 @@ export class BountyV1Service {
     @InjectModel(Bounty.name) private bountyModel: Model<Bounty>,
     @InjectModel(BountySubmission.name)
     private submissionModel: Model<BountySubmission>,
+    @InjectModel(Project.name) private projectModel: Model<Project>,
     private readonly walletService: WalletV1Service,
   ) {}
 
   /**
    * Create new bounty program
    */
-  async create(adminId: Types.ObjectId, dto: CreateBountyDto) {
+  async create(user: any, dto: CreateBountyDto) {
+    // If Builder, validate they own the project
+    if (user.role === UserRole.BUILDER) {
+      const project = await this.projectModel.findById(dto.projectId);
+      if (!project) {
+        throw new NotFoundException('Project not found');
+      }
+      if (project.builder?.toString() !== user.userId) {
+        throw new ForbiddenException(
+          'You can only create bounties for your own projects',
+        );
+      }
+    }
+    // If Admin, allow bounty creation for any project
+
     return this.bountyModel.create({
       ...dto,
-      createdBy: adminId,
+      project: new Types.ObjectId(dto.projectId),
+      createdBy: user.userId,
       status: BountyStatus.ACTIVE,
     });
   }
@@ -39,9 +58,14 @@ export class BountyV1Service {
   /**
    * Get active bounties
    */
-  async findAllActive() {
+  async findAllActive(projectId?: string) {
+    const query: any = { status: BountyStatus.ACTIVE };
+    if (projectId) {
+      query.project = new Types.ObjectId(projectId);
+    }
     return this.bountyModel
-      .find({ status: BountyStatus.ACTIVE })
+      .find(query)
+      .populate('project', 'title location')
       .sort({ createdAt: -1 })
       .exec();
   }

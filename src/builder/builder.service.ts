@@ -211,4 +211,18 @@ export class BuilderService {
 
     return { message: 'Builder deleted successfully' };
   }
+
+  async getProfile(userId: string) {
+    const profile = await this.builderProfileModel
+      .findOne({ userId })
+      .populate('userId', 'name email phoneNumber isActive')
+      .lean()
+      .exec();
+
+    if (!profile) {
+      throw new NotFoundException('Builder profile not found');
+    }
+
+    return profile;
+  }
 }

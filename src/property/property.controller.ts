@@ -12,6 +12,7 @@ import {
   Delete,
   HttpStatus,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -35,6 +36,11 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 import { PropertySummaryDto } from './dto/recommondedProperty.dto';
 import { PropertyDetailDto } from './dto/property-detail.dto';
 import { Status } from 'src/common/enum/status.enum';
+import { jwtGuard } from 'src/core/guards/jwt.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { UserRole } from 'src/common/enum/user-role.enum';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @ApiTags('Properties')
 @Controller('properties')
@@ -134,11 +140,19 @@ export class PropertyController {
     description: 'Property created successfully',
     type: Property,
   })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('thumbnail'))
   async create(
     @Body() createPropertyDto: CreatePropertyDto,
+    @CurrentUser() user: any,
   ): Promise<{ data: Property; message: string }> {
     try {
+      createPropertyDto.createdBy = user.userId;
+      createPropertyDto.updatedBy = user.userId;
+      if (user.role === UserRole.BUILDER) {
+        createPropertyDto.builderId = user.userId;
+      }
       const data = await this.propertyService.create(createPropertyDto);
       return { data, message: 'Property created successfully' };
     } catch (error) {
@@ -238,11 +252,19 @@ export class PropertyController {
     description: 'Property created successfully',
     type: Property,
   })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('thumbnail'))
   async createWeb(
     @Body() createPropertyDto: CreatePropertyDto,
+    @CurrentUser() user: any,
   ): Promise<{ data: Property; message: string }> {
     try {
+      createPropertyDto.createdBy = user.userId;
+      createPropertyDto.updatedBy = user.userId;
+      if (user.role === UserRole.BUILDER) {
+        createPropertyDto.builderId = user.userId;
+      }
       const data = await this.propertyService.createWeb(createPropertyDto);
       return { data, message: 'Property created successfully' };
     } catch (error) {

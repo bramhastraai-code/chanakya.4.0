@@ -43,6 +43,10 @@ export class CreateBountyDto {
   @IsDateString()
   @IsOptional()
   expiryDate?: Date;
+
+  @ApiProperty({ example: '507f1f77bcf86cd799439011' })
+  @IsString()
+  projectId: string;
 }
 
 export class UpdateBountyDto {

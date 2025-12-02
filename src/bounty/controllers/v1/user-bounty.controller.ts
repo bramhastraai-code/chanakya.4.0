@@ -1,30 +1,32 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { BountyV1Service } from '../../services/bounty-v1.service';
 import { SubmitBountyDto } from '../../dto/v1/bounty.dto';
 import { jwtGuard } from 'src/core/guards/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
-@ApiTags('Bounty Program')
+@ApiTags('Bounty agent  Program')
 @ApiBearerAuth()
-@Controller('bounties')
+@Controller('bounties/agent')
 @UseGuards(jwtGuard)
 export class UserBountyController {
   constructor(private readonly bountyService: BountyV1Service) {}
 
   @Get()
   @ApiOperation({ summary: 'List active bounty programs' })
+  @ApiQuery({ name: 'projectId', required: false, type: String })
   @ApiResponse({
     status: 200,
     description: 'Active bounties retrieved successfully',
   })
-  async getActiveBounties() {
-    const data = await this.bountyService.findAllActive();
+  async getActiveBounties(@Query('projectId') projectId?: string) {
+    const data = await this.bountyService.findAllActive(projectId);
     return {
       success: true,
       data,

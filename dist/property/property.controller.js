@@ -24,6 +24,11 @@ const update_property_dto_1 = require("./dto/update-property.dto");
 const recommondedProperty_dto_1 = require("./dto/recommondedProperty.dto");
 const property_detail_dto_1 = require("./dto/property-detail.dto");
 const status_enum_1 = require("../common/enum/status.enum");
+const jwt_guard_1 = require("../core/guards/jwt.guard");
+const roles_guard_1 = require("../common/guards/roles.guard");
+const user_role_enum_1 = require("../common/enum/user-role.enum");
+const roles_decorator_1 = require("../common/decorators/roles.decorator");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let PropertyController = class PropertyController {
     constructor(propertyService, s3Service) {
         this.propertyService = propertyService;
@@ -48,8 +53,13 @@ let PropertyController = class PropertyController {
         }
         return { data: property, message: 'Successfully retrieved property' };
     }
-    async create(createPropertyDto) {
+    async create(createPropertyDto, user) {
         try {
+            createPropertyDto.createdBy = user.userId;
+            createPropertyDto.updatedBy = user.userId;
+            if (user.role === user_role_enum_1.UserRole.BUILDER) {
+                createPropertyDto.builderId = user.userId;
+            }
             const data = await this.propertyService.create(createPropertyDto);
             return { data, message: 'Property created successfully' };
         }
@@ -106,8 +116,13 @@ let PropertyController = class PropertyController {
             return error;
         }
     }
-    async createWeb(createPropertyDto) {
+    async createWeb(createPropertyDto, user) {
         try {
+            createPropertyDto.createdBy = user.userId;
+            createPropertyDto.updatedBy = user.userId;
+            if (user.role === user_role_enum_1.UserRole.BUILDER) {
+                createPropertyDto.builderId = user.userId;
+            }
             const data = await this.propertyService.createWeb(createPropertyDto);
             return { data, message: 'Property created successfully' };
         }
@@ -180,10 +195,13 @@ __decorate([
         description: 'Property created successfully',
         type: property_entity_1.Property,
     }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('thumbnail')),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_property_dto_1.CreatePropertyDto]),
+    __metadata("design:paramtypes", [create_property_dto_1.CreatePropertyDto, Object]),
     __metadata("design:returntype", Promise)
 ], PropertyController.prototype, "create", null);
 __decorate([
@@ -260,10 +278,13 @@ __decorate([
         description: 'Property created successfully',
         type: property_entity_1.Property,
     }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('thumbnail')),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_property_dto_1.CreatePropertyDto]),
+    __metadata("design:paramtypes", [create_property_dto_1.CreatePropertyDto, Object]),
     __metadata("design:returntype", Promise)
 ], PropertyController.prototype, "createWeb", null);
 exports.PropertyController = PropertyController = __decorate([

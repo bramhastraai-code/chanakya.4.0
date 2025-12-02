@@ -79,6 +79,50 @@ export class AgentRequirementController {
       data,
     };
   }
+
+  @Post()
+  @ApiOperation({ summary: 'Post new requirement' })
+  @ApiResponse({ status: 201, description: 'Requirement created successfully' })
+  async create(
+    @Body() createRequirementDto: CreateRequirementDto,
+    @CurrentUser() user: any,
+  ) {
+    const data = await this.requirementService.create(
+      user.userId,
+      createRequirementDto,
+    );
+    return {
+      success: true,
+      message: 'Requirement created successfully',
+      data,
+    };
+  }
+
+  @Put(':id')
+  @ApiOperation({ summary: 'Update requirement' })
+  @ApiResponse({ status: 200, description: 'Requirement updated successfully' })
+  async update(
+    @Param('id') id: string,
+    @Body() updateRequirementDto: UpdateRequirementDto,
+  ) {
+    const data = await this.requirementService.update(id, updateRequirementDto);
+    return {
+      success: true,
+      message: 'Requirement updated successfully',
+      data,
+    };
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete requirement' })
+  @ApiResponse({ status: 200, description: 'Requirement deleted successfully' })
+  async remove(@Param('id') id: string) {
+    await this.requirementService.remove(id);
+    return {
+      success: true,
+      message: 'Requirement deleted successfully',
+    };
+  }
 }
 
 // User Controller - Post and manage requirements

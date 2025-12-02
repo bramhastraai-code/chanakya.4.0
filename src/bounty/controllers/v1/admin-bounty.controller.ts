@@ -24,11 +24,11 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
 import { SubmissionStatus } from '../../enum/bounty.enum';
 
-@ApiTags('Admin Bounty Management')
+@ApiTags('Bounty Management')
 @ApiBearerAuth()
-@Controller('admin/bounties')
+@Controller('bounties/manage')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN)
+@Roles(UserRole.ADMIN, UserRole.BUILDER)
 export class AdminBountyController {
   constructor(private readonly bountyService: BountyV1Service) {}
 
@@ -36,7 +36,7 @@ export class AdminBountyController {
   @ApiOperation({ summary: 'Create a new bounty program' })
   @ApiResponse({ status: 201, description: 'Bounty created successfully' })
   async create(@CurrentUser() user: any, @Body() dto: CreateBountyDto) {
-    const data = await this.bountyService.create(user.userId, dto);
+    const data = await this.bountyService.create(user, dto);
     return {
       success: true,
       message: 'Bounty program created successfully',

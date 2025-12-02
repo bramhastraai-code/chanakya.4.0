@@ -30,6 +30,9 @@ export class Bounty {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy: Types.ObjectId;
 
+  @Prop({ type: Types.ObjectId, ref: 'Project', required: true })
+  project: Types.ObjectId;
+
   @Prop()
   createdAt: Date;
 
@@ -41,3 +44,4 @@ export const BountySchema = SchemaFactory.createForClass(Bounty);
 
 BountySchema.index({ status: 1 });
 BountySchema.index({ type: 1 });
+BountySchema.index({ project: 1 });

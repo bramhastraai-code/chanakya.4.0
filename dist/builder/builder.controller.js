@@ -12,7 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.BuilderController = void 0;
+exports.BuilderAdminController = exports.BuilderController = void 0;
 const common_1 = require("@nestjs/common");
 const builder_service_1 = require("./builder.service");
 const create_builder_dto_1 = require("./dto/create-builder.dto");
@@ -22,7 +22,38 @@ const jwt_guard_1 = require("../core/guards/jwt.guard");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const user_role_enum_1 = require("../common/enum/user-role.enum");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let BuilderController = class BuilderController {
+    constructor(builderService) {
+        this.builderService = builderService;
+    }
+    async getProfile(user) {
+        const data = await this.builderService.getProfile(user.userId);
+        return {
+            success: true,
+            data,
+        };
+    }
+};
+exports.BuilderController = BuilderController;
+__decorate([
+    (0, common_1.Get)('profile'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER),
+    (0, swagger_1.ApiOperation)({ summary: 'Get builder profile' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Profile retrieved successfully' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], BuilderController.prototype, "getProfile", null);
+exports.BuilderController = BuilderController = __decorate([
+    (0, swagger_1.ApiTags)('Builder'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Controller)('builder'),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    __metadata("design:paramtypes", [builder_service_1.BuilderService])
+], BuilderController);
+let BuilderAdminController = class BuilderAdminController {
     constructor(builderService) {
         this.builderService = builderService;
     }
@@ -42,7 +73,7 @@ let BuilderController = class BuilderController {
         return this.builderService.remove(id);
     }
 };
-exports.BuilderController = BuilderController;
+exports.BuilderAdminController = BuilderAdminController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
@@ -52,7 +83,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_builder_dto_1.CreateBuilderDto]),
     __metadata("design:returntype", void 0)
-], BuilderController.prototype, "create", null);
+], BuilderAdminController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
     (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
@@ -72,7 +103,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Number, String, String, String, Boolean]),
     __metadata("design:returntype", void 0)
-], BuilderController.prototype, "findAll", null);
+], BuilderAdminController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('builder/:id'),
     (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
@@ -81,7 +112,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], BuilderController.prototype, "findOne", null);
+], BuilderAdminController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)('builder/:id'),
     (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
@@ -91,7 +122,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_builder_dto_1.UpdateBuilderDto]),
     __metadata("design:returntype", void 0)
-], BuilderController.prototype, "update", null);
+], BuilderAdminController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)('builder/:id'),
     (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
@@ -100,12 +131,12 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
-], BuilderController.prototype, "remove", null);
-exports.BuilderController = BuilderController = __decorate([
+], BuilderAdminController.prototype, "remove", null);
+exports.BuilderAdminController = BuilderAdminController = __decorate([
     (0, swagger_1.ApiTags)('Builder by Admin'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('builder-by-admin'),
     (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [builder_service_1.BuilderService])
-], BuilderController);
+], BuilderAdminController);
 //# sourceMappingURL=builder.controller.js.map

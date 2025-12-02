@@ -5,6 +5,18 @@ import { UserRole } from 'src/common/enum/user-role.enum';
 export declare class BuilderController {
     private readonly builderService;
     constructor(builderService: BuilderService);
+    getProfile(user: any): Promise<{
+        success: boolean;
+        data: import("mongoose").FlattenMaps<import("../profiles/builder/entities/builder-profile.entity").BuilderProfile> & Required<{
+            _id: import("mongoose").Types.ObjectId;
+        }> & {
+            __v: number;
+        };
+    }>;
+}
+export declare class BuilderAdminController {
+    private readonly builderService;
+    constructor(builderService: BuilderService);
     create(createBuilderDto: CreateBuilderDto): Promise<{
         user: import("mongoose").Document<unknown, {}, import("../core/entities/user.entity").UserDocument, {}, {}> & import("../core/entities/user.entity").User & import("mongoose").Document<import("mongoose").Types.ObjectId, any, any, Record<string, any>, {}> & Required<{
             _id: import("mongoose").Types.ObjectId;

@@ -52,4 +52,9 @@ export class CreateLeadDto {
   @IsString()
   @IsOptional()
   notes?: string;
+
+  @ApiPropertyOptional({ description: 'Agent ID to assign (Admin only)' })
+  @IsMongoId()
+  @IsOptional()
+  assignedTo?: string;
 }

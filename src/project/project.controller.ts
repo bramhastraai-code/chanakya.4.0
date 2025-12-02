@@ -8,7 +8,6 @@ import {
   HttpCode,
   HttpStatus,
   Query,
-  InternalServerErrorException,
   Patch,
   NotFoundException,
   HttpException,
@@ -645,7 +644,7 @@ export class ProjectController {
       pageNumber,
       'createdAt',
       'desc',
-      undefined,
+      `${city}+${category ? ` ${category}` : ''}`,
       Status.ACTIVE,
     );
     return { data, message: 'Public projects retrieved successfully' };

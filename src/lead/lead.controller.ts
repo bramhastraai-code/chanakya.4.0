@@ -26,11 +26,11 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
 import { LeadStatus } from './enum/lead-status.enum';
 
-@ApiTags('Agent')
+@ApiTags('Lead')
 @ApiBearerAuth()
-@Controller('agent/leads')
+@Controller('leads')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.AGENT)
+@Roles(UserRole.AGENT, UserRole.ADMIN, UserRole.BUILDER)
 export class LeadController {
   constructor(private readonly leadService: LeadService) {}
 
@@ -38,7 +38,7 @@ export class LeadController {
   @ApiOperation({ summary: 'Create new lead' })
   @ApiResponse({ status: 201, description: 'Lead created successfully' })
   async create(@Body() createLeadDto: CreateLeadDto, @CurrentUser() user: any) {
-    const data = await this.leadService.create(createLeadDto, user.userId);
+    const data = await this.leadService.create(createLeadDto, user);
     return {
       success: true,
       message: 'Lead created successfully',
@@ -47,7 +47,7 @@ export class LeadController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all leads for agent' })
+  @ApiOperation({ summary: 'Get all leads' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'status', required: false, enum: LeadStatus })
@@ -65,7 +65,7 @@ export class LeadController {
     @Query('dateTo') dateTo?: string,
   ) {
     const data = await this.leadService.findAll(
-      user.userId,
+      user,
       page,
       limit,
       status,
@@ -84,7 +84,7 @@ export class LeadController {
   @ApiResponse({ status: 200, description: 'Lead details retrieved' })
   @ApiResponse({ status: 404, description: 'Lead not found' })
   async findOne(@Param('id') id: string, @CurrentUser() user: any) {
-    const data = await this.leadService.findOne(id, user.userId);
+    const data = await this.leadService.findOne(id, user);
     return {
       success: true,
       data,
@@ -100,7 +100,7 @@ export class LeadController {
     @Body() updateLeadDto: UpdateLeadDto,
     @CurrentUser() user: any,
   ) {
-    const data = await this.leadService.update(id, updateLeadDto, user.userId);
+    const data = await this.leadService.update(id, updateLeadDto, user);
     return {
       success: true,
       message: 'Lead updated successfully',
@@ -113,7 +113,7 @@ export class LeadController {
   @ApiResponse({ status: 200, description: 'Lead deleted successfully' })
   @ApiResponse({ status: 404, description: 'Lead not found' })
   async remove(@Param('id') id: string, @CurrentUser() user: any) {
-    await this.leadService.remove(id, user.userId);
+    await this.leadService.remove(id, user);
     return {
       success: true,
       message: 'Lead deleted successfully',
