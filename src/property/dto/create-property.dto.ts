@@ -701,6 +701,15 @@ export class CreatePropertyDto {
   @IsMongoId()
   updatedBy?: string;
 
+  @ApiProperty({
+    required: false,
+    description: 'ID of the owner (Agent/Builder who created the property)',
+    example: '60d5f447c1375b6b4c8f6a33',
+  })
+  @IsOptional()
+  @IsMongoId()
+  ownerId?: string;
+
   // Metadata
   @ApiProperty({
     required: false,

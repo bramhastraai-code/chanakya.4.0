@@ -77,6 +77,7 @@ export declare class CreatePropertyDto {
     createdBy?: string;
     customer?: string;
     updatedBy?: string;
+    ownerId?: string;
     views?: number;
 }
 export {};

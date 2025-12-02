@@ -82,6 +82,64 @@ export class ProjectService {
     }
   }
 
+  async findProjectsByCreator(
+    creatorId: string,
+    pageSize: string,
+    pageNumber: string,
+    searchQuery?: string,
+    status?: string,
+  ): Promise<{
+    projects: Project[];
+    totalPages: number;
+    totalProjects: number;
+    pageSize: number;
+    pageNumber: number;
+  }> {
+    try {
+      const page = parseInt(pageNumber, 10) || 1;
+      const size = parseInt(pageSize, 10) || 10;
+      const skip = (page - 1) * size;
+
+      const query: any = { createdBy: creatorId };
+
+      if (searchQuery) {
+        query.$or = [
+          { projectName: { $regex: searchQuery, $options: 'i' } },
+          { description: { $regex: searchQuery, $options: 'i' } },
+        ];
+      }
+
+      if (status && status !== 'all') {
+        query.status = status;
+      }
+
+      const totalProjects = await this.projectModel.countDocuments(query);
+      const totalPages = Math.ceil(totalProjects / size);
+
+      const projects = await this.projectModel
+        .find(query)
+        .skip(skip)
+        .limit(size)
+        .sort({ createdAt: -1 })
+        .populate({ path: 'builder', strictPopulate: false })
+        .populate({ path: 'amenities', strictPopulate: false })
+        .populate({ path: 'facilities', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
+        .exec();
+
+      return {
+        projects,
+        totalProjects,
+        totalPages,
+        pageSize: size,
+        pageNumber: page,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findOne(id: string): Promise<Project> {
     const project = await this.projectModel
       .findById(id)

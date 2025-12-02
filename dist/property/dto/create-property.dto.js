@@ -747,6 +747,16 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         required: false,
+        description: 'ID of the owner (Agent/Builder who created the property)',
+        example: '60d5f447c1375b6b4c8f6a33',
+    }),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsMongoId)(),
+    __metadata("design:type", String)
+], CreatePropertyDto.prototype, "ownerId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({
+        required: false,
         description: 'Number of views',
         example: 1000,
     }),

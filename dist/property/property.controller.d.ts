@@ -9,6 +9,13 @@ export declare class PropertyController {
     private readonly propertyService;
     private readonly s3Service;
     constructor(propertyService: PropertyService, s3Service: S3Service);
+    getPropertiesByCreator(user: any, pageSize: string, pageNumber: string, searchQuery?: string, status?: string): Promise<Response<{
+        properties: Property[];
+        totalPages: number;
+        totalProperties: number;
+        pageSize: number;
+        pageNumber: number;
+    }>>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<Response<{
         properties: Property[];
         totalPages: number;
@@ -24,7 +31,7 @@ export declare class PropertyController {
         data: Property;
         message: string;
     }>;
-    update(id: string, updatePropertyDto: UpdatePropertyDto): Promise<{
+    update(id: string, updatePropertyDto: UpdatePropertyDto, user: any): Promise<{
         data: Property;
         message: string;
     }>;

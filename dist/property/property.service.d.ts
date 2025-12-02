@@ -13,6 +13,13 @@ export declare class PropertyService {
         pageSize: number;
         pageNumber: number;
     }>;
+    findPropertiesByCreator(creatorId: string, pageSize: string, pageNumber: string, searchQuery?: string, status?: string): Promise<{
+        properties: Property[];
+        totalPages: number;
+        totalProperties: number;
+        pageSize: number;
+        pageNumber: number;
+    }>;
     findOne(id: string): Promise<Property>;
     create(createPropertyDto: CreatePropertyDto): Promise<Property>;
     update(id: string, updatePropertyDto: UpdatePropertyDto): Promise<Property>;

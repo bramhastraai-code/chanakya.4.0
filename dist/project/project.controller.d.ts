@@ -12,6 +12,13 @@ export declare class ProjectController {
     private readonly projectService;
     constructor(projectService: ProjectService);
     create(createProjectDto: CreateProjectDto, user: any): Promise<Response<Project>>;
+    getProjectsByCreator(user: any, pageSize: string, pageNumber: string, searchQuery?: string, status?: string): Promise<Response<{
+        projects: Project[];
+        totalPages: number;
+        totalProjects: number;
+        pageSize: number;
+        pageNumber: number;
+    }>>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<Response<{
         projects: Project[];
         totalPages: number;

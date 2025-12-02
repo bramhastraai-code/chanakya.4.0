@@ -76,6 +76,43 @@ export class ProjectController {
     return { data, message: 'created successfully' };
   }
 
+  @Get('by-creator')
+  @UseGuards(jwtGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get projects by creator (JWT) with pagination' })
+  @ApiQuery({ name: 'pageSize', type: Number, required: true })
+  @ApiQuery({ name: 'pageNumber', type: Number, required: true })
+  @ApiQuery({ name: 'searchQuery', type: String, required: false })
+  @ApiQuery({ name: 'status', type: String, required: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Projects created by the authenticated user',
+  })
+  async getProjectsByCreator(
+    @CurrentUser() user: any,
+    @Query('pageSize') pageSize: string,
+    @Query('pageNumber') pageNumber: string,
+    @Query('searchQuery') searchQuery?: string,
+    @Query('status') status?: string,
+  ): Promise<
+    Response<{
+      projects: Project[];
+      totalPages: number;
+      totalProjects: number;
+      pageSize: number;
+      pageNumber: number;
+    }>
+  > {
+    const data = await this.projectService.findProjectsByCreator(
+      user.userId,
+      pageSize,
+      pageNumber,
+      searchQuery,
+      status,
+    );
+    return { data, message: 'Projects retrieved successfully' };
+  }
+
   @Get()
   @ApiOperation({
     summary: 'Retrieve all projects with pagination, sorting, and searching',

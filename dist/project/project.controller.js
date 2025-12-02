@@ -39,6 +39,10 @@ let ProjectController = class ProjectController {
         const data = await this.projectService.create(createProjectDto);
         return { data, message: 'created successfully' };
     }
+    async getProjectsByCreator(user, pageSize, pageNumber, searchQuery, status) {
+        const data = await this.projectService.findProjectsByCreator(user.userId, pageSize, pageNumber, searchQuery, status);
+        return { data, message: 'Projects retrieved successfully' };
+    }
     async findAll(pageSize, pageNumber, sortBy = 'createdAt', sortOrder = 'asc', searchQuery, status) {
         try {
             const data = await this.projectService.findAll(pageSize, pageNumber, sortBy, sortOrder, searchQuery, status);
@@ -179,6 +183,28 @@ __decorate([
     __metadata("design:paramtypes", [create_project_dto_1.CreateProjectDto, Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "create", null);
+__decorate([
+    (0, common_1.Get)('by-creator'),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get projects by creator (JWT) with pagination' }),
+    (0, swagger_1.ApiQuery)({ name: 'pageSize', type: Number, required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'pageNumber', type: Number, required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'searchQuery', type: String, required: false }),
+    (0, swagger_1.ApiQuery)({ name: 'status', type: String, required: false }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Projects created by the authenticated user',
+    }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('pageSize')),
+    __param(2, (0, common_1.Query)('pageNumber')),
+    __param(3, (0, common_1.Query)('searchQuery')),
+    __param(4, (0, common_1.Query)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, String]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectsByCreator", null);
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({

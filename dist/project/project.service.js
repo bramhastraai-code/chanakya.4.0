@@ -68,6 +68,46 @@ let ProjectService = class ProjectService {
             throw error;
         }
     }
+    async findProjectsByCreator(creatorId, pageSize, pageNumber, searchQuery, status) {
+        try {
+            const page = parseInt(pageNumber, 10) || 1;
+            const size = parseInt(pageSize, 10) || 10;
+            const skip = (page - 1) * size;
+            const query = { createdBy: creatorId };
+            if (searchQuery) {
+                query.$or = [
+                    { projectName: { $regex: searchQuery, $options: 'i' } },
+                    { description: { $regex: searchQuery, $options: 'i' } },
+                ];
+            }
+            if (status && status !== 'all') {
+                query.status = status;
+            }
+            const totalProjects = await this.projectModel.countDocuments(query);
+            const totalPages = Math.ceil(totalProjects / size);
+            const projects = await this.projectModel
+                .find(query)
+                .skip(skip)
+                .limit(size)
+                .sort({ createdAt: -1 })
+                .populate({ path: 'builder', strictPopulate: false })
+                .populate({ path: 'amenities', strictPopulate: false })
+                .populate({ path: 'facilities', strictPopulate: false })
+                .populate({ path: 'createdBy', strictPopulate: false })
+                .populate({ path: 'updatedBy', strictPopulate: false })
+                .exec();
+            return {
+                projects,
+                totalProjects,
+                totalPages,
+                pageSize: size,
+                pageNumber: page,
+            };
+        }
+        catch (error) {
+            throw error;
+        }
+    }
     async findOne(id) {
         const project = await this.projectModel
             .findById(id)

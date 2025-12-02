@@ -34,6 +34,10 @@ let PropertyController = class PropertyController {
         this.propertyService = propertyService;
         this.s3Service = s3Service;
     }
+    async getPropertiesByCreator(user, pageSize, pageNumber, searchQuery, status) {
+        const data = await this.propertyService.findPropertiesByCreator(user.userId, pageSize, pageNumber, searchQuery, status);
+        return { data, message: 'Properties retrieved successfully' };
+    }
     async findAll(pageSize, pageNumber, sortBy = 'createdAt', sortOrder = 'asc', searchQuery, status) {
         try {
             const data = await this.propertyService.findAll(pageSize, pageNumber, sortBy, sortOrder, searchQuery, status);
@@ -57,7 +61,8 @@ let PropertyController = class PropertyController {
         try {
             createPropertyDto.createdBy = user.userId;
             createPropertyDto.updatedBy = user.userId;
-            if (user.role === user_role_enum_1.UserRole.BUILDER) {
+            createPropertyDto.ownerId = user.userId;
+            if (user.role === user_role_enum_1.UserRole.BUILDER || user.role === user_role_enum_1.UserRole.AGENT) {
                 createPropertyDto.builderId = user.userId;
             }
             const data = await this.propertyService.create(createPropertyDto);
@@ -67,8 +72,9 @@ let PropertyController = class PropertyController {
             throw error;
         }
     }
-    async update(id, updatePropertyDto) {
+    async update(id, updatePropertyDto, user) {
         try {
+            updatePropertyDto.updatedBy = user.userId;
             const data = await this.propertyService.update(id, updatePropertyDto);
             return { data, message: 'Property updated successfully' };
         }
@@ -120,7 +126,8 @@ let PropertyController = class PropertyController {
         try {
             createPropertyDto.createdBy = user.userId;
             createPropertyDto.updatedBy = user.userId;
-            if (user.role === user_role_enum_1.UserRole.BUILDER) {
+            createPropertyDto.ownerId = user.userId;
+            if (user.role === user_role_enum_1.UserRole.BUILDER || user.role === user_role_enum_1.UserRole.AGENT) {
                 createPropertyDto.builderId = user.userId;
             }
             const data = await this.propertyService.createWeb(createPropertyDto);
@@ -132,6 +139,28 @@ let PropertyController = class PropertyController {
     }
 };
 exports.PropertyController = PropertyController;
+__decorate([
+    (0, common_1.Get)('by-creator'),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get properties by creator (JWT) with pagination' }),
+    (0, swagger_1.ApiQuery)({ name: 'pageSize', type: Number, required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'pageNumber', type: Number, required: true }),
+    (0, swagger_1.ApiQuery)({ name: 'searchQuery', type: String, required: false }),
+    (0, swagger_1.ApiQuery)({ name: 'status', type: String, required: false }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.OK,
+        description: 'Properties created by the authenticated user',
+    }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('pageSize')),
+    __param(2, (0, common_1.Query)('pageNumber')),
+    __param(3, (0, common_1.Query)('searchQuery')),
+    __param(4, (0, common_1.Query)('status')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String, String]),
+    __metadata("design:returntype", Promise)
+], PropertyController.prototype, "getPropertiesByCreator", null);
 __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({
@@ -188,6 +217,9 @@ __decorate([
 ], PropertyController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN, user_role_enum_1.UserRole.AGENT),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new property' }),
     (0, swagger_1.ApiBody)({ type: create_property_dto_1.CreatePropertyDto }),
     (0, swagger_1.ApiResponse)({
@@ -195,8 +227,6 @@ __decorate([
         description: 'Property created successfully',
         type: property_entity_1.Property,
     }),
-    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('thumbnail')),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
@@ -206,6 +236,9 @@ __decorate([
 ], PropertyController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)('property/:id'),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN, user_role_enum_1.UserRole.AGENT),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Update property by ID' }),
     (0, swagger_1.ApiParam)({ name: 'id', type: 'string', description: 'Property ID' }),
     (0, swagger_1.ApiBody)({ type: update_property_dto_1.UpdatePropertyDto }),
@@ -218,12 +251,16 @@ __decorate([
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('thumbnail'), (0, platform_express_1.FilesInterceptor)('images', 10)),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_property_dto_1.UpdatePropertyDto]),
+    __metadata("design:paramtypes", [String, update_property_dto_1.UpdatePropertyDto, Object]),
     __metadata("design:returntype", Promise)
 ], PropertyController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)('property/:id'),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN, user_role_enum_1.UserRole.AGENT),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: 'Delete property by ID' }),
     (0, swagger_1.ApiParam)({ name: 'id', type: 'string', description: 'Property ID' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Property deleted successfully' }),
@@ -279,7 +316,8 @@ __decorate([
         type: property_entity_1.Property,
     }),
     (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
-    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.ADMIN, user_role_enum_1.UserRole.AGENT),
+    (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('thumbnail')),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),

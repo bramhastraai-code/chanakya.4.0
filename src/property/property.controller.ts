@@ -24,6 +24,7 @@ import {
   ApiOkResponse,
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { PropertyService } from './property.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -49,6 +50,43 @@ export class PropertyController {
     private readonly propertyService: PropertyService,
     private readonly s3Service: S3Service, // Inject the S3 service
   ) {}
+
+  @Get('by-creator')
+  @UseGuards(jwtGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get properties by creator (JWT) with pagination' })
+  @ApiQuery({ name: 'pageSize', type: Number, required: true })
+  @ApiQuery({ name: 'pageNumber', type: Number, required: true })
+  @ApiQuery({ name: 'searchQuery', type: String, required: false })
+  @ApiQuery({ name: 'status', type: String, required: false })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Properties created by the authenticated user',
+  })
+  async getPropertiesByCreator(
+    @CurrentUser() user: any,
+    @Query('pageSize') pageSize: string,
+    @Query('pageNumber') pageNumber: string,
+    @Query('searchQuery') searchQuery?: string,
+    @Query('status') status?: string,
+  ): Promise<
+    Response<{
+      properties: Property[];
+      totalPages: number;
+      totalProperties: number;
+      pageSize: number;
+      pageNumber: number;
+    }>
+  > {
+    const data = await this.propertyService.findPropertiesByCreator(
+      user.userId,
+      pageSize,
+      pageNumber,
+      searchQuery,
+      status,
+    );
+    return { data, message: 'Properties retrieved successfully' };
+  }
 
   @Get()
   @ApiOperation({
@@ -133,6 +171,9 @@ export class PropertyController {
   }
 
   @Post()
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.ADMIN, UserRole.AGENT)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new property' })
   @ApiBody({ type: CreatePropertyDto })
   @ApiResponse({
@@ -140,19 +181,22 @@ export class PropertyController {
     description: 'Property created successfully',
     type: Property,
   })
-  @UseGuards(jwtGuard, RolesGuard)
-  @Roles(UserRole.BUILDER, UserRole.ADMIN)
   @UseInterceptors(FileInterceptor('thumbnail'))
   async create(
     @Body() createPropertyDto: CreatePropertyDto,
     @CurrentUser() user: any,
   ): Promise<{ data: Property; message: string }> {
     try {
+      // Set user-related fields from JWT token
       createPropertyDto.createdBy = user.userId;
       createPropertyDto.updatedBy = user.userId;
-      if (user.role === UserRole.BUILDER) {
+      createPropertyDto.ownerId = user.userId; // Owner is the user creating the property
+
+      // Set builderId if user is a BUILDER or AGENT
+      if (user.role === UserRole.BUILDER || user.role === UserRole.AGENT) {
         createPropertyDto.builderId = user.userId;
       }
+
       const data = await this.propertyService.create(createPropertyDto);
       return { data, message: 'Property created successfully' };
     } catch (error) {
@@ -161,6 +205,9 @@ export class PropertyController {
   }
 
   @Patch('property/:id')
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.ADMIN, UserRole.AGENT)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update property by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Property ID' })
   @ApiBody({ type: UpdatePropertyDto })
@@ -174,8 +221,12 @@ export class PropertyController {
   async update(
     @Param('id') id: string,
     @Body() updatePropertyDto: UpdatePropertyDto,
+    @CurrentUser() user: any,
   ): Promise<{ data: Property; message: string }> {
     try {
+      // Set updatedBy from authenticated user
+      updatePropertyDto.updatedBy = user.userId;
+
       const data = await this.propertyService.update(id, updatePropertyDto);
       return { data, message: 'Property updated successfully' };
     } catch (error) {
@@ -186,6 +237,9 @@ export class PropertyController {
   }
 
   @Delete('property/:id')
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.ADMIN, UserRole.AGENT)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete property by ID' })
   @ApiParam({ name: 'id', type: 'string', description: 'Property ID' })
   @ApiResponse({ status: 200, description: 'Property deleted successfully' })
@@ -253,18 +307,24 @@ export class PropertyController {
     type: Property,
   })
   @UseGuards(jwtGuard, RolesGuard)
-  @Roles(UserRole.BUILDER, UserRole.ADMIN)
+  @Roles(UserRole.BUILDER, UserRole.ADMIN, UserRole.AGENT)
+  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('thumbnail'))
   async createWeb(
     @Body() createPropertyDto: CreatePropertyDto,
     @CurrentUser() user: any,
   ): Promise<{ data: Property; message: string }> {
     try {
+      // Set user-related fields from JWT token
       createPropertyDto.createdBy = user.userId;
       createPropertyDto.updatedBy = user.userId;
-      if (user.role === UserRole.BUILDER) {
+      createPropertyDto.ownerId = user.userId; // Owner is the user creating the property
+
+      // Set builderId if user is a BUILDER or AGENT
+      if (user.role === UserRole.BUILDER || user.role === UserRole.AGENT) {
         createPropertyDto.builderId = user.userId;
       }
+
       const data = await this.propertyService.createWeb(createPropertyDto);
       return { data, message: 'Property created successfully' };
     } catch (error) {

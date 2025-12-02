@@ -17,6 +17,13 @@ export declare class ProjectService {
         pageSize: number;
         pageNumber: number;
     }>;
+    findProjectsByCreator(creatorId: string, pageSize: string, pageNumber: string, searchQuery?: string, status?: string): Promise<{
+        projects: Project[];
+        totalPages: number;
+        totalProjects: number;
+        pageSize: number;
+        pageNumber: number;
+    }>;
     findOne(id: string): Promise<Project>;
     update(id: string, updateProjectDto: UpdateProjectDto): Promise<Project>;
     remove(_id: string): Promise<any>;

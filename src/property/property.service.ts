@@ -94,6 +94,88 @@ export class PropertyService {
     }
   }
 
+  async findPropertiesByCreator(
+    creatorId: string,
+    pageSize: string,
+    pageNumber: string,
+    searchQuery?: string,
+    status?: string,
+  ): Promise<{
+    properties: Property[];
+    totalPages: number;
+    totalProperties: number;
+    pageSize: number;
+    pageNumber: number;
+  }> {
+    try {
+      const page = parseInt(pageNumber, 10) || 1;
+      const size = parseInt(pageSize, 10) || 10;
+      const skip = (page - 1) * size;
+
+      const query: any = { createdBy: creatorId };
+
+      if (searchQuery) {
+        query.$or = [
+          { propertyTitle: { $regex: searchQuery, $options: 'i' } },
+          { propertyDescription: { $regex: searchQuery, $options: 'i' } },
+        ];
+      }
+
+      if (status && status !== 'all') {
+        query.status = status;
+      }
+
+      const totalProperties = await this.propertyModel.countDocuments(query);
+      const totalPages = Math.ceil(totalProperties / size);
+
+      const properties = await this.propertyModel
+        .find(query)
+        .skip(skip)
+        .limit(size)
+        .populate({
+          path: 'amenities',
+          model: Amenity.name,
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'facilities',
+          model: Amenity.name,
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'builderId',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'projectId',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'customer',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'createdBy',
+          strictPopulate: false,
+        })
+        .populate({
+          path: 'updatedBy',
+          strictPopulate: false,
+        })
+        .sort({ createdAt: -1 });
+
+      return {
+        properties,
+        totalProperties,
+        totalPages,
+        pageSize: size,
+        pageNumber: page,
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async findOne(id: string): Promise<Property> {
     try {
       const property = await this.propertyModel
