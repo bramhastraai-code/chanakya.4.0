@@ -1,111 +1,110 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
-  IsString,
-  IsOptional,
   IsEmail,
-  IsEnum,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
   IsDateString,
+  IsEnum,
   IsNumber,
-  Min,
-  IsUrl,
   IsArray,
+  IsUrl,
 } from 'class-validator';
 
 export class UpdateProfileDto {
-  @ApiPropertyOptional({ example: 'Arpan Dangla' })
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   name?: string;
 
-  @ApiPropertyOptional({ example: 'arpan@example.com' })
+  @ApiPropertyOptional()
   @IsEmail()
   @IsOptional()
   email?: string;
 
-  @ApiPropertyOptional({ example: '+919876543210' })
-  @IsString()
+  @ApiPropertyOptional()
+  @IsPhoneNumber('IN')
   @IsOptional()
   phoneNumber?: string;
 
-  @ApiPropertyOptional({ enum: ['Male', 'Female', 'Other'] })
-  @IsEnum(['Male', 'Female', 'Other'])
+  @ApiPropertyOptional()
+  @IsString()
   @IsOptional()
   gender?: string;
 
-  @ApiPropertyOptional({ example: '1990-01-15' })
+  @ApiPropertyOptional()
   @IsDateString()
   @IsOptional()
   dateOfBirth?: string;
 
-  @ApiPropertyOptional({ example: 'Mumbai, Maharashtra' })
+  @ApiPropertyOptional({ description: 'City, State' })
   @IsString()
   @IsOptional()
   location?: string;
 }
 
 export class UpdateSocialLinksDto {
-  @ApiPropertyOptional({ example: 'https://facebook.com/arpandangla' })
+  @ApiPropertyOptional()
   @IsUrl()
   @IsOptional()
   facebook?: string;
 
-  @ApiPropertyOptional({ example: 'https://instagram.com/arpandangla' })
+  @ApiPropertyOptional()
   @IsUrl()
   @IsOptional()
   instagram?: string;
 
-  @ApiPropertyOptional({ example: 'https://twitter.com/arpandangla' })
+  @ApiPropertyOptional()
   @IsUrl()
   @IsOptional()
   twitter?: string;
 
-  @ApiPropertyOptional({ example: 'https://linkedin.com/in/arpandangla' })
+  @ApiPropertyOptional()
   @IsUrl()
   @IsOptional()
   linkedin?: string;
 
-  @ApiPropertyOptional({ example: 'https://youtube.com/@arpandangla' })
+  @ApiPropertyOptional()
   @IsUrl()
   @IsOptional()
   youtube?: string;
 }
 
 export class UpdateWebsiteDto {
-  @ApiProperty({ example: 'https://arpanbdotos.com/' })
+  @ApiPropertyOptional()
   @IsUrl()
-  websiteUrl: string;
+  @IsOptional()
+  websiteUrl?: string;
 }
 
 export class UpdateBusinessInfoDto {
-  @ApiPropertyOptional({ example: 'MAH/RERA/12345/2023' })
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   licenseNumber?: string;
 
-  @ApiPropertyOptional({ example: 5 })
+  @ApiPropertyOptional()
   @IsNumber()
-  @Min(0)
   @IsOptional()
   yearsOfExperience?: number;
 
-  @ApiPropertyOptional({ example: 'Real Estate Solutions' })
+  @ApiPropertyOptional()
   @IsString()
   @IsOptional()
   agencyName?: string;
 
-  @ApiPropertyOptional({ example: 10 })
+  @ApiPropertyOptional()
   @IsNumber()
-  @Min(0)
   @IsOptional()
   teamSize?: number;
 
-  @ApiPropertyOptional({ example: ['Residential', 'Commercial', 'Luxury'] })
+  @ApiPropertyOptional()
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   specializations?: string[];
 
-  @ApiPropertyOptional({ example: ['Mumbai', 'Navi Mumbai', 'Thane'] })
+  @ApiPropertyOptional()
   @IsArray()
   @IsString({ each: true })
   @IsOptional()

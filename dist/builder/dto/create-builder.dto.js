@@ -12,161 +12,100 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateBuilderDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
-const class_transformer_1 = require("class-transformer");
 class CreateBuilderDto {
 }
 exports.CreateBuilderDto = CreateBuilderDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'The name of the builder',
-        example: 'John Doe Constructions',
-    }),
+    (0, swagger_1.ApiProperty)({ example: 'John Doe' }),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateBuilderDto.prototype, "name", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'The description of the builder',
-        example: 'John Doe Constructions description',
-    }),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateBuilderDto.prototype, "description", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'The phone number of the builder',
-        example: '+1234567890',
-    }),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateBuilderDto.prototype, "phone", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'The email address of the builder',
-        example: 'builder@example.com',
-    }),
+    (0, swagger_1.ApiProperty)({ example: 'builder@example.com' }),
     (0, class_validator_1.IsEmail)(),
-    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateBuilderDto.prototype, "email", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'The alternate phone number of the builder',
-        example: '+0987654321',
-    }),
-    (0, class_validator_1.IsOptional)(),
+    (0, swagger_1.ApiProperty)({ example: '+919876543210' }),
+    (0, class_validator_1.IsPhoneNumber)('IN'),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CreateBuilderDto.prototype, "alternatePhone", void 0);
+], CreateBuilderDto.prototype, "phoneNumber", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Number)
-], CreateBuilderDto.prototype, "latitude", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Number)
-], CreateBuilderDto.prototype, "longitude", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, swagger_1.ApiProperty)({ example: 'SecurePass@123', minLength: 8 }),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.MinLength)(8),
+    (0, class_validator_1.Matches)(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/, {
+        message: 'Password must contain uppercase, lowercase, and number',
+    }),
     __metadata("design:type", String)
+], CreateBuilderDto.prototype, "password", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'ABC Constructions' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    __metadata("design:type", String)
+], CreateBuilderDto.prototype, "companyName", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'https://example.com/logo.png' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBuilderDto.prototype, "companyLogo", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 2010 }),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateBuilderDto.prototype, "establishedYear", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'RERA123456' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBuilderDto.prototype, "reraNumber", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'GSTIN123456' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBuilderDto.prototype, "gstin", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Object)
 ], CreateBuilderDto.prototype, "address", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateBuilderDto.prototype, "city", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateBuilderDto.prototype, "state", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateBuilderDto.prototype, "country", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateBuilderDto.prototype, "pinCode", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'The logo URL of the builder',
-        example: 'http://example.com/logo.png',
-    }),
+    (0, swagger_1.ApiPropertyOptional)({ example: 'Jane Doe' }),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateBuilderDto.prototype, "logo", void 0);
+], CreateBuilderDto.prototype, "contactPerson", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'List of inquiry IDs associated with the builder',
-        type: [String],
-    }),
-    (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_transformer_1.Type)(() => String),
-    (0, class_validator_1.IsMongoId)({ each: true }),
-    __metadata("design:type", Array)
-], CreateBuilderDto.prototype, "inquiries", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'The owner of the builder (Customer ID)',
-        type: String,
-        example: '60f7f5f6c8d3c7f1b0f1d1b4',
-    }),
-    (0, class_validator_1.IsOptional)(),
-    (0, class_validator_1.IsMongoId)(),
-    __metadata("design:type", String)
-], CreateBuilderDto.prototype, "owner", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'The user ID who created the builder',
-        example: '60f7f5f6c8d3c7f1b0f1d1b2',
-    }),
+    (0, swagger_1.ApiPropertyOptional)({ example: 'contact@abc.com' }),
+    (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateBuilderDto.prototype, "createdBy", void 0);
+], CreateBuilderDto.prototype, "contactEmail", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'The user ID who last updated the builder',
-        example: '60f7f5f6c8d3c7f1b0f1d1b3',
-    }),
+    (0, swagger_1.ApiPropertyOptional)({ example: '+919876543211' }),
+    (0, class_validator_1.IsPhoneNumber)('IN'),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateBuilderDto.prototype, "updatedBy", void 0);
+], CreateBuilderDto.prototype, "contactPhone", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: 'Number of views for the builder',
-        example: 100,
-    }),
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Number)
-], CreateBuilderDto.prototype, "views", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)({
-        description: ' builder from the date ',
-        example: 100,
-    }),
-    (0, class_validator_1.IsNumber)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", Number)
-], CreateBuilderDto.prototype, "since", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)({
-        description: 'status',
-        example: 'active',
-    }),
+    (0, swagger_1.ApiPropertyOptional)({ example: 'Leading builder in the city' }),
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateBuilderDto.prototype, "status", void 0);
+], CreateBuilderDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: 'https://abc.com' }),
+    (0, class_validator_1.IsUrl)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBuilderDto.prototype, "websiteUrl", void 0);
 //# sourceMappingURL=create-builder.dto.js.map

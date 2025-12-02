@@ -17,14 +17,12 @@ const project_module_1 = require("./project/project.module");
 const amenity_module_1 = require("./amenity/amenity.module");
 const inquiry_module_1 = require("./inquiry/inquiry.module");
 const platform_express_1 = require("@nestjs/platform-express");
+const builder_module_1 = require("./builder/builder.module");
 const search_filter_module_1 = require("./search-filter/search-filter.module");
 const s3_module_1 = require("./s3/s3.module");
-const short_video_module_1 = require("./short-video/short-video.module");
 const websocket_module_1 = require("./websocket/websocket.module");
 const schedule_1 = require("@nestjs/schedule");
 const firebase_module_1 = require("./firebase/firebase.module");
-const video_module_1 = require("./video/video.module");
-const agent_module_1 = require("./agent/agent.module");
 const notification_module_1 = require("./notification/notification.module");
 const core_module_1 = require("./core/core.module");
 const agent_profile_module_1 = require("./profiles/agent/agent-profile.module");
@@ -40,6 +38,7 @@ const ai_module_1 = require("./ai/ai.module");
 const website_module_1 = require("./website/website.module");
 const subscription_module_1 = require("./subscription/subscription.module");
 const dashboard_module_1 = require("./dashboard/dashboard.module");
+const agent_module_1 = require("./agent/agent.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -64,7 +63,9 @@ exports.AppModule = AppModule = __decorate([
             }),
             core_module_1.CoreModule,
             agent_profile_module_1.AgentProfileModule,
+            agent_module_1.AgentModule,
             builder_profile_module_1.BuilderProfileModule,
+            builder_module_1.BuilderModule,
             customer_profile_module_1.UserProfileModule,
             super_admin_profile_module_1.SuperAdminProfileModule,
             lead_module_1.LeadModule,
@@ -83,12 +84,9 @@ exports.AppModule = AppModule = __decorate([
             inquiry_module_1.InquiryModule,
             search_filter_module_1.SearchFilterModule,
             s3_module_1.S3Module,
-            short_video_module_1.ShortVideoModule,
             websocket_module_1.WebsocketModule,
             schedule_1.ScheduleModule.forRoot(),
             firebase_module_1.FirebaseModule,
-            video_module_1.VideoModule,
-            agent_module_1.AgentModule,
             notification_module_1.NotificationModule,
         ],
     })

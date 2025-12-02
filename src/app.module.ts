@@ -9,15 +9,12 @@ import { ProjectModule } from './project/project.module';
 import { AmenityModule } from './amenity/amenity.module';
 import { InquiryModule } from './inquiry/inquiry.module';
 import { MulterModule } from '@nestjs/platform-express';
-
+import { BuilderModule } from './builder/builder.module';
 import { SearchFilterModule } from './search-filter/search-filter.module';
 import { S3Module } from './s3/s3.module';
-import { ShortVideoModule } from './short-video/short-video.module';
 import { WebsocketModule } from './websocket/websocket.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FirebaseModule } from './firebase/firebase.module';
-import { VideoModule } from './video/video.module';
-import { AgentModule } from './agent/agent.module';
 import { NotificationModule } from './notification/notification.module';
 
 // Phase 1-10: New V1 Modules
@@ -35,6 +32,7 @@ import { AiModule } from './ai/ai.module';
 import { WebsiteModule } from './website/website.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { AgentModule } from './agent/agent.module';
 
 @Module({
   imports: [
@@ -61,7 +59,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
 
     // Phase 2: Profile Management
     AgentProfileModule,
+    AgentModule,
     BuilderProfileModule,
+    BuilderModule,
     UserProfileModule,
     SuperAdminProfileModule,
 
@@ -85,12 +85,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
 
     SearchFilterModule,
     S3Module,
-    ShortVideoModule,
     WebsocketModule,
     ScheduleModule.forRoot(),
     FirebaseModule,
-    VideoModule,
-    AgentModule,
     NotificationModule,
   ],
 })

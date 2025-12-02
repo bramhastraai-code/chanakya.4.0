@@ -1,33 +1,32 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-
-export type AgentSubscriptionDocument = AgentSubscription & Document;
+import { User } from 'src/core/entities/user.entity';
+import { SubscriptionPlan } from './subscription-plan.entity';
 
 @Schema({ timestamps: true })
-export class AgentSubscription {
+export class AgentSubscription extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  agent: Types.ObjectId;
+  agent: User;
 
   @Prop({ type: Types.ObjectId, ref: 'SubscriptionPlan', required: true })
-  plan: Types.ObjectId;
+  plan: SubscriptionPlan;
 
-  @Prop()
+  @Prop({ required: true })
   startDate: Date;
 
-  @Prop()
+  @Prop({ required: true })
   endDate: Date;
 
-  @Prop({ default: 'active' })
-  status: string; // active|expired|cancelled
+  @Prop({
+    required: true,
+    enum: ['active', 'expired', 'cancelled'],
+    default: 'active',
+  })
+  status: string;
 
-  @Prop()
-  paymentId: string;
-
-  @Prop()
+  @Prop({ required: true })
   amount: number;
-
-  @Prop({ default: 0 })
-  commissionSaved: number;
 }
 
-export const AgentSubscriptionSchema = SchemaFactory.createForClass(AgentSubscription);
+export const AgentSubscriptionSchema =
+  SchemaFactory.createForClass(AgentSubscription);

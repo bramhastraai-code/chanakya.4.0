@@ -17,6 +17,7 @@ exports.S3Module = S3Module = __decorate([
     (0, common_1.Module)({
         providers: [s3_service_1.S3Service],
         controllers: [s3_controller_1.S3Controller],
+        exports: [s3_service_1.S3Service],
     })
 ], S3Module);
 //# sourceMappingURL=s3.module.js.map

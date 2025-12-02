@@ -1,45 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type SubscriptionPlanDocument = SubscriptionPlan & Document;
-
 @Schema({ timestamps: true })
-export class SubscriptionPlan {
+export class SubscriptionPlan extends Document {
   @Prop({ required: true })
   name: string;
-
-  @Prop()
-  displayName: string;
 
   @Prop({ required: true })
   price: number;
 
-  @Prop()
-  duration: number; // days
-
-  @Prop([String])
-  features: string[];
-
-  @Prop()
-  commissionRate: number;
-
-  @Prop()
-  maxListings: number;
-
-  @Prop()
-  maxLeads: number;
-
-  @Prop()
-  aiToolsAccess: boolean;
-
-  @Prop()
-  websiteBuilder: boolean;
-
-  @Prop()
-  priority: number;
+  @Prop({ required: true })
+  duration: number; // in days
 
   @Prop({ default: true })
   isActive: boolean;
+
+  @Prop()
+  features: string[];
+
+  @Prop()
+  description: string;
 }
 
-export const SubscriptionPlanSchema = SchemaFactory.createForClass(SubscriptionPlan);
+export const SubscriptionPlanSchema =
+  SchemaFactory.createForClass(SubscriptionPlan);

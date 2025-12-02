@@ -1,22 +1,23 @@
 export declare class CreateBuilderDto {
     name: string;
-    description: string;
-    phone: string;
     email: string;
-    alternatePhone?: string;
-    latitude?: number;
-    longitude?: number;
-    address?: string;
-    city?: string;
-    state?: string;
-    country?: string;
-    pinCode?: string;
-    logo?: string;
-    inquiries?: string[];
-    owner?: string;
-    createdBy?: string;
-    updatedBy?: string;
-    views?: number;
-    since?: number;
-    status: string;
+    phoneNumber: string;
+    password: string;
+    companyName: string;
+    companyLogo?: string;
+    establishedYear?: number;
+    reraNumber?: string;
+    gstin?: string;
+    address?: {
+        street?: string;
+        city?: string;
+        state?: string;
+        pincode?: string;
+        country?: string;
+    };
+    contactPerson?: string;
+    contactEmail?: string;
+    contactPhone?: string;
+    description?: string;
+    websiteUrl?: string;
 }

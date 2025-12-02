@@ -1,12 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-
-export type AgentStatsDocument = AgentStats & Document;
+import { User } from 'src/core/entities/user.entity';
 
 @Schema({ timestamps: true })
-export class AgentStats {
-  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
-  agent: Types.ObjectId;
+export class AgentStats extends Document {
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true, unique: true })
+  agent: User;
 
   @Prop({ default: 0 })
   views: number;
