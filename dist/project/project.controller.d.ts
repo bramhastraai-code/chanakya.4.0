@@ -2,6 +2,7 @@ import { ProjectService } from './project.service';
 import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Response } from 'src/common/interceptor/response.interface';
+import { ProjectCategory } from './enum/project.enum';
 import { GetProjectByAffordabilityDto, GetProjectByCategoryDto } from './dto/ProjectCategory.dto';
 import { FeaturedProjectDto } from './dto/featuredProject.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -10,7 +11,7 @@ import { Status } from 'src/common/enum/status.enum';
 export declare class ProjectController {
     private readonly projectService;
     constructor(projectService: ProjectService);
-    create(createProjectDto: CreateProjectDto): Promise<Response<Project>>;
+    create(createProjectDto: CreateProjectDto, user: any): Promise<Response<Project>>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<Response<{
         projects: Project[];
         totalPages: number;
@@ -19,7 +20,7 @@ export declare class ProjectController {
         pageNumber: number;
     }>>;
     findOne(id: string): Promise<Response<Project>>;
-    update(id: string, updateProjectDto: UpdateProjectDto): Promise<Response<Project>>;
+    update(id: string, updateProjectDto: UpdateProjectDto, user: any): Promise<Response<Project>>;
     remove(id: string): Promise<Response<Project>>;
     projectList(): Promise<{
         data: {
@@ -66,8 +67,15 @@ export declare class ProjectController {
         }[];
         message: string;
     }>;
-    createBuilderProject(createProjectDto: CreateProjectDto): Promise<Response<Project>>;
+    createBuilderProject(createProjectDto: CreateProjectDto, user: any): Promise<Response<Project>>;
     getProjectsByBuilderId(builderId: string): Promise<Response<Project[]>>;
-    updateProject(projectId: string, updateProjectDto: UpdateProjectDto): Promise<Response<Project>>;
+    updateProject(projectId: string, updateProjectDto: UpdateProjectDto, user: any): Promise<Response<Project>>;
     deleteProject(projectId: string): Promise<Response<Project>>;
+    getPublicProjects(pageSize?: string, pageNumber?: string, city?: string, category?: ProjectCategory): Promise<Response<{
+        projects: Project[];
+        totalPages: number;
+        totalProjects: number;
+        pageSize: number;
+        pageNumber: number;
+    }>>;
 }

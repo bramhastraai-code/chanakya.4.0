@@ -19,7 +19,7 @@ const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const user_entity_1 = require("../user/entity/user.entity");
+const user_entity_1 = require("src/user/entity/user.entity");
 let AuthService = class AuthService {
     constructor(userModel, jwt, config) {
         this.userModel = userModel;

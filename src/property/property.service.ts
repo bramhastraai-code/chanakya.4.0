@@ -4,7 +4,6 @@ import { Model } from 'mongoose';
 import { Property } from './entities/property.entity';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { Customer } from 'src/customer/entities/customer.entity';
 import { Amenity } from 'src/amenity/entities/amenity.entity';
 import { Status } from 'src/common/enum/status.enum';
 
@@ -205,60 +204,7 @@ export class PropertyService {
     }
     return properties;
   }
-  // PropertyCardList
 
-  async getPropertyById(id: string): Promise<any> {
-    const property = await this.propertyModel
-      .findById(id)
-      .populate({
-        path: 'customer', // Assuming crmDetails references a Customer model
-        model: Customer.name, // Reference the Customer model
-      })
-      .populate({
-        strictPopulate: false,
-        path: 'amenities',
-        model: Amenity.name,
-      })
-      .populate({
-        strictPopulate: false,
-        path: 'facilities',
-        model: Amenity.name,
-      })
-      .populate({
-        path: 'builderId',
-        strictPopulate: false,
-      })
-      .populate({
-        path: 'projectId',
-        strictPopulate: false,
-      })
-      .populate({
-        path: 'createdBy',
-        strictPopulate: false,
-      })
-      .populate({
-        path: 'updatedBy',
-        strictPopulate: false,
-      }) // Populate other fields as needed
-      .exec();
-
-    if (!property) {
-      throw new NotFoundException(`Property with ID ${id} not found`);
-    }
-
-    // Mapping Mongoose Document to DTO
-    return {
-      property,
-      crmDetails: {
-        crmName: 'crm name',
-        crmProfileImageUrl: 'crm image',
-        crmResponseTime: 'response tu=ime',
-        crmMobile: '999999999999',
-        crmRole: 'role',
-      },
-      // Handle case where crmDetails is not available
-    };
-  }
   async getPropertiesByProjectId(projectId: string): Promise<Property[]> {
     const properties = await this.propertyModel
       .find({ projectId })

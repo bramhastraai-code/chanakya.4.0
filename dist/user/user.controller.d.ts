@@ -1,6 +1,6 @@
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entity/user.entity';
+import { User } from 'src/core/entities/user.entity';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 import { Types } from 'mongoose';

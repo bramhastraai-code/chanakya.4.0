@@ -38,7 +38,7 @@ export class ProfileFactory {
       case UserRole.CUSTOMER:
         return await this.createUserProfile(userId, additionalData);
 
-      case UserRole.SUPER_ADMIN:
+      case UserRole.ADMIN:
         return await this.createSuperAdminProfile(userId, additionalData);
 
       default:
@@ -60,7 +60,7 @@ export class ProfileFactory {
       case UserRole.CUSTOMER:
         return await this.customerProfileModel.findOne({ userId }).exec();
 
-      case UserRole.SUPER_ADMIN:
+      case UserRole.ADMIN:
         return await this.superAdminProfileModel.findOne({ userId }).exec();
 
       default:
@@ -123,7 +123,7 @@ export class ProfileFactory {
       userId,
       name: data.name || '',
       department: data.department || 'Administration',
-      permissions: data.permissions || ['all'],
+      permissions: data.permissions || [],
     });
 
     return await profile.save();

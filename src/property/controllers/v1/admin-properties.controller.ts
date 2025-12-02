@@ -26,7 +26,7 @@ import { UserRole } from 'src/common/enum/user-role.enum';
 @ApiBearerAuth()
 @Controller('admin/properties')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminPropertiesController {
   constructor(private readonly approvalService: PropertyApprovalService) {}
 

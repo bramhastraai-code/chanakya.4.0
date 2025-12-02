@@ -12,7 +12,6 @@ const search_filter_service_1 = require("./search-filter.service");
 const search_filter_controller_1 = require("./search-filter.controller");
 const property_entity_1 = require("../property/entities/property.entity");
 const mongoose_1 = require("@nestjs/mongoose");
-const customer_entity_1 = require("../customer/entities/customer.entity");
 const amenity_entity_1 = require("../amenity/entities/amenity.entity");
 const project_entity_1 = require("../project/entities/project.entity");
 const search_record_entity_1 = require("./entity/search-record.entity");
@@ -26,7 +25,6 @@ exports.SearchFilterModule = SearchFilterModule = __decorate([
                 { name: search_record_entity_1.SearchRecord.name, schema: search_record_entity_1.SearchRecordSchema },
                 { name: property_entity_1.Property.name, schema: property_entity_1.PropertySchema },
                 { name: project_entity_1.Project.name, schema: project_entity_1.ProjectSchema },
-                { name: customer_entity_1.Customer.name, schema: customer_entity_1.CustomerSchema },
                 { name: amenity_entity_1.Amenity.name, schema: amenity_entity_1.AmenitySchema },
             ]),
         ],

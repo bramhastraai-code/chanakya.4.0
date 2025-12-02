@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Amenity } from 'src/amenity/entities/amenity.entity';
-import { Builder } from 'src/builder/entities/builder.entity';
-import { User } from 'src/user/entity/user.entity';
+import { User } from 'src/core/entities/user.entity';
+
 import { ProjectAffordability, ProjectCategory } from '../enum/project.enum';
 import { Status } from 'src/common/enum/status.enum';
 import {
@@ -27,10 +27,10 @@ export class Project extends Document {
   // Referencing Builder entity
   @Prop({
     type: () => MongooseSchema.Types.ObjectId,
-    ref: 'Builder',
+    ref: 'User',
     required: true,
   })
-  builder: Builder;
+  builder: User;
 
   @Prop({ required: true })
   projectType: string;

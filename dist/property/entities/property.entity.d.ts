@@ -1,5 +1,4 @@
 import { Document, Types } from 'mongoose';
-import { Customer } from 'src/customer/entities/customer.entity';
 import { Project } from 'src/project/entities/project.entity';
 import { BHKConfiguration, FacingDirection, FurnishingStatus, OfferVariant, PGAvailableFor, PlotType, PropertyCategory, PropertyPurpose, PropertyStatus, PropertyType, TagVariant } from '../enum/property.enum';
 import { Status } from 'src/common/enum/status.enum';
@@ -64,10 +63,10 @@ export declare class Property extends Document {
         description: string;
     }[];
     featured?: boolean;
-    builderId?: Customer;
+    builderId?: Types.ObjectId;
     projectId?: Project;
     ownerId: Types.ObjectId;
-    customer?: Customer;
+    customer?: Types.ObjectId;
     createdBy?: Types.ObjectId;
     updatedBy?: Types.ObjectId;
     approvalStatus: string;

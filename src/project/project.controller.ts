@@ -22,6 +22,7 @@ import {
   ApiQuery,
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ProjectService } from './project.service';
 import { Project } from './entities/project.entity';
@@ -36,7 +37,11 @@ import { FeaturedProjectDto } from './dto/featuredProject.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectDetailDto } from './dto/project-detail.dto';
 import { Status } from 'src/common/enum/status.enum';
-import { AuthGuard } from '@nestjs/passport';
+import { jwtGuard } from 'src/core/guards/jwt.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { UserRole } from 'src/common/enum/user-role.enum';
+import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -44,16 +49,30 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new project' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.AGENT, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Create a new project (requires builder/agent/admin role)',
+  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The project has been successfully created.',
     type: Project,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request' })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - insufficient permissions',
+  })
   async create(
     @Body() createProjectDto: CreateProjectDto,
+    @CurrentUser() user: any,
   ): Promise<Response<Project>> {
+    // Set createdBy and updatedBy from authenticated user
+    createProjectDto.createdBy = user.userId;
+    createProjectDto.updatedBy = user.userId;
+
     const data = await this.projectService.create(createProjectDto);
     return { data, message: 'created successfully' };
   }
@@ -177,7 +196,12 @@ export class ProjectController {
   }
 
   @Patch('project/:id')
-  @ApiOperation({ summary: 'Update a project by ID' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.AGENT, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Update a project by ID (requires builder/agent/admin role)',
+  })
   @ApiParam({
     name: 'id',
     description: 'Project ID',
@@ -192,16 +216,29 @@ export class ProjectController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - insufficient permissions',
+  })
   async update(
     @Param('id') id: string,
     @Body() updateProjectDto: UpdateProjectDto,
+    @CurrentUser() user: any,
   ): Promise<Response<Project>> {
+    // Set updatedBy from authenticated user
+    updateProjectDto.updatedBy = user.userId;
+
     const data = await this.projectService.update(id, updateProjectDto);
     return { data, message: 'updated successfully' };
   }
 
   @Delete('project/:id')
-  @ApiOperation({ summary: 'Delete a project by ID' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.AGENT, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete a project by ID (requires builder/agent/admin role)',
+  })
   @ApiParam({
     name: 'id',
     description: 'Project ID',
@@ -214,6 +251,10 @@ export class ProjectController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - insufficient permissions',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id') id: string): Promise<Response<Project>> {
@@ -405,17 +446,30 @@ export class ProjectController {
   }
 
   @Post('builder-projects')
-  @UseGuards(AuthGuard('builder-jwt'))
-  @ApiOperation({ summary: 'Create a new project (builder endpoint)' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.AGENT, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Create a new project (requires builder/agent/admin role)',
+  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'The project has been successfully created.',
     type: Project,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request' })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - insufficient permissions',
+  })
   async createBuilderProject(
     @Body() createProjectDto: CreateProjectDto,
+    @CurrentUser() user: any,
   ): Promise<Response<Project>> {
+    // Set createdBy and updatedBy from authenticated user
+    createProjectDto.createdBy = user.userId;
+    createProjectDto.updatedBy = user.userId;
+
     const data = await this.projectService.create(createProjectDto);
     return { data, message: 'Project created successfully' };
   }
@@ -459,8 +513,13 @@ export class ProjectController {
    * @returns The updated project
    */
   @Patch('builder-projects/:projectId')
-  @UseGuards(AuthGuard('builder-jwt'))
-  @ApiOperation({ summary: 'Update a project by projectId' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.AGENT, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:
+      'Update a project by projectId (requires builder/agent/admin role)',
+  })
   @ApiParam({
     name: 'projectId',
     required: true,
@@ -476,10 +535,18 @@ export class ProjectController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - insufficient permissions',
+  })
   async updateProject(
     @Param('projectId') projectId: string,
     @Body() updateProjectDto: UpdateProjectDto,
+    @CurrentUser() user: any,
   ): Promise<Response<Project>> {
+    // Set updatedBy from authenticated user
+    updateProjectDto.updatedBy = user.userId;
+
     const data = await this.projectService.update(projectId, updateProjectDto);
     return { data, message: 'Project updated successfully' };
   }
@@ -490,8 +557,13 @@ export class ProjectController {
    * @returns The deleted project
    */
   @Delete('builder-projects/:projectId')
-  @UseGuards(AuthGuard('builder-jwt'))
-  @ApiOperation({ summary: 'Delete a project by projectId (builder endpoint)' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.BUILDER, UserRole.AGENT, UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary:
+      'Delete a project by projectId (requires builder/agent/admin role)',
+  })
   @ApiParam({
     name: 'projectId',
     required: true,
@@ -506,11 +578,76 @@ export class ProjectController {
     status: HttpStatus.NOT_FOUND,
     description: 'Project not found',
   })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - insufficient permissions',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteProject(
     @Param('projectId') projectId: string,
   ): Promise<Response<Project>> {
     const data = await this.projectService.remove(projectId);
     return { data, message: 'Project deleted successfully' };
+  }
+
+  @Get('public')
+  @ApiOperation({
+    summary:
+      'Get all active projects for public/website access (no auth required)',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    required: false,
+    type: String,
+    description: 'Number of projects per page',
+    example: '20',
+  })
+  @ApiQuery({
+    name: 'pageNumber',
+    required: false,
+    type: String,
+    description: 'Current page number',
+    example: '1',
+  })
+  @ApiQuery({
+    name: 'city',
+    required: false,
+    type: String,
+    description: 'Filter by city',
+  })
+  @ApiQuery({
+    name: 'category',
+    required: false,
+    enum: ProjectCategory,
+    description: 'Filter by category',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of active projects for public access',
+    type: [Project],
+  })
+  async getPublicProjects(
+    @Query('pageSize') pageSize: string = '20',
+    @Query('pageNumber') pageNumber: string = '1',
+    @Query('city') city?: string,
+    @Query('category') category?: ProjectCategory,
+  ): Promise<
+    Response<{
+      projects: Project[];
+      totalPages: number;
+      totalProjects: number;
+      pageSize: number;
+      pageNumber: number;
+    }>
+  > {
+    const data = await this.projectService.findAll(
+      pageSize,
+      pageNumber,
+      'createdAt',
+      'desc',
+      undefined,
+      Status.ACTIVE,
+    );
+    return { data, message: 'Public projects retrieved successfully' };
   }
 }

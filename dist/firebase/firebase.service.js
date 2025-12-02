@@ -19,17 +19,17 @@ const websocket_gateway_1 = require("../websocket/websocket.gateway");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const firebase_admin_1 = require("./firebase.admin");
-const customer_entity_1 = require("../customer/entities/customer.entity");
+const user_entity_1 = require("../core/entities/user.entity");
 let NotificationService = NotificationService_1 = class NotificationService {
-    constructor(firebaseAdmin, webSocketGateway, customerModel) {
+    constructor(firebaseAdmin, webSocketGateway, userModel) {
         this.firebaseAdmin = firebaseAdmin;
         this.webSocketGateway = webSocketGateway;
-        this.customerModel = customerModel;
+        this.userModel = userModel;
         this.logger = new common_1.Logger(NotificationService_1.name);
     }
     async sendPushNotification(userId, title, body, data) {
         try {
-            const user = await this.customerModel.findById(userId).select('fcmToken');
+            const user = await this.userModel.findById(userId).select('fcmToken');
             console.log(`Sending notification to user ${userId} with FCM token: ${user?.fcmToken}`);
             if (!user || !user.fcmToken) {
                 this.logger.warn(`No FCM token found for user ${userId}`);
@@ -51,7 +51,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
     }
     async sendToMultipleUsers(userIds, title, body, data) {
         try {
-            const users = await this.customerModel
+            const users = await this.userModel
                 .find({ _id: { $in: userIds } })
                 .select('fcmToken');
             const validTokens = users
@@ -90,7 +90,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
         return true;
     }
     async updateFcmToken(userId, token) {
-        await this.customerModel.findByIdAndUpdate(userId, {
+        await this.userModel.findByIdAndUpdate(userId, {
             fcmToken: token,
         });
         this.logger.log(`Updated FCM token for user ${userId}`);
@@ -99,7 +99,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
 exports.NotificationService = NotificationService;
 exports.NotificationService = NotificationService = NotificationService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __param(2, (0, mongoose_1.InjectModel)(customer_entity_1.Customer.name)),
+    __param(2, (0, mongoose_1.InjectModel)(user_entity_1.User.name)),
     __metadata("design:paramtypes", [firebase_admin_1.FirebaseAdmin,
         websocket_gateway_1.WebSocketGatewayHandler,
         mongoose_2.Model])

@@ -1,7 +1,6 @@
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Amenity } from 'src/amenity/entities/amenity.entity';
-import { Builder } from 'src/builder/entities/builder.entity';
-import { User } from 'src/user/entity/user.entity';
+import { User } from 'src/core/entities/user.entity';
 import { ProjectAffordability, ProjectCategory } from '../enum/project.enum';
 import { Status } from 'src/common/enum/status.enum';
 import { BHKConfiguration, OfferVariant, TagVariant } from 'src/property/enum/property.enum';
@@ -11,7 +10,7 @@ export declare class Project extends Document {
     projectName: string;
     thumbnail: string;
     description: string;
-    builder: Builder;
+    builder: User;
     projectType: string;
     projectCategory: ProjectCategory;
     projectAffordability: ProjectAffordability;

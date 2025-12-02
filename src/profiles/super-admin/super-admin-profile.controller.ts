@@ -24,11 +24,11 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
 import { S3Service } from 'src/s3/s3.service';
 
-@ApiTags('Super Admin Profile')
+@ApiTags('Profile')
 @ApiBearerAuth()
 @Controller('admin/profile')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class SuperAdminProfileController {
   constructor(
     private readonly profileService: SuperAdminProfileService,

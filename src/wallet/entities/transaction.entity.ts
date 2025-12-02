@@ -1,15 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Customer } from 'src/customer/entities/customer.entity';
 import { Property } from 'src/property/entities/property.entity';
 import { TransactionType, TransactionStatus } from '../enum/transaction.enum';
+import { User } from 'src/core/entities/user.entity';
 
 export type TransactionDocument = Transaction & Document;
 
 @Schema({ timestamps: { createdAt: 'createdAt' } })
 export class Transaction {
-  @Prop({ type: Types.ObjectId, ref: 'Customer', required: true })
-  user: Customer;
+  @Prop({ type: Types.ObjectId, ref: 'User', required: true })
+  user: User;
 
   @Prop({ type: String, enum: TransactionType, required: true })
   type: TransactionType;
@@ -26,7 +26,11 @@ export class Transaction {
   @Prop({ type: Types.ObjectId, ref: 'Bounty' })
   bounty?: Types.ObjectId;
 
-  @Prop({ type: String, enum: TransactionStatus, default: TransactionStatus.PENDING })
+  @Prop({
+    type: String,
+    enum: TransactionStatus,
+    default: TransactionStatus.PENDING,
+  })
   status: TransactionStatus;
 
   @Prop({ type: Number, required: true })

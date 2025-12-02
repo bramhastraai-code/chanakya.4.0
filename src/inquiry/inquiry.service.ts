@@ -4,13 +4,11 @@ import { Model } from 'mongoose';
 import { Inquiry } from './entities/inquiry.entity';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { UpdateInquiryDto } from './dto/update-inquiry.dto';
-import { Customer } from 'src/customer/entities/customer.entity';
 
 @Injectable()
 export class InquiryService {
   constructor(
     @InjectModel(Inquiry.name) private readonly inquiryModel: Model<Inquiry>,
-    @InjectModel(Customer.name) private customerModel: Model<Customer>,
   ) {}
   async create(createInquiryDto: CreateInquiryDto): Promise<Inquiry> {
     try {
@@ -109,5 +107,4 @@ export class InquiryService {
     }
     return result;
   }
-  
 }

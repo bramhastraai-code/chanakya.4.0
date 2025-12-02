@@ -28,7 +28,7 @@ import { SubmissionStatus } from '../../enum/bounty.enum';
 @ApiBearerAuth()
 @Controller('admin/bounties')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminBountyController {
   constructor(private readonly bountyService: BountyV1Service) {}
 

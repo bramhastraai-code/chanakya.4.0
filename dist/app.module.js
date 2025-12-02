@@ -11,28 +11,18 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const config_1 = require("@nestjs/config");
 const nestjs_razorpay_1 = require("nestjs-razorpay");
-const user_module_1 = require("./user/user.module");
 const role_module_1 = require("./role/role.module");
 const property_module_1 = require("./property/property.module");
 const project_module_1 = require("./project/project.module");
-const banner_module_1 = require("./banner/banner.module");
 const amenity_module_1 = require("./amenity/amenity.module");
-const saved_module_1 = require("./saved/saved.module");
 const inquiry_module_1 = require("./inquiry/inquiry.module");
-const blog_module_1 = require("./blog/blog.module");
-const customer_module_1 = require("./customer/customer.module");
 const platform_express_1 = require("@nestjs/platform-express");
-const builder_module_1 = require("./builder/builder.module");
 const search_filter_module_1 = require("./search-filter/search-filter.module");
 const s3_module_1 = require("./s3/s3.module");
-const order_module_1 = require("./order/order.module");
-const plan_module_1 = require("./plan/plan.module");
 const short_video_module_1 = require("./short-video/short-video.module");
-const agent_inquiry_module_1 = require("./agent-inquiry/agent-inquiry.module");
 const websocket_module_1 = require("./websocket/websocket.module");
 const schedule_1 = require("@nestjs/schedule");
 const firebase_module_1 = require("./firebase/firebase.module");
-const user_behavior_module_1 = require("./user-behavior/user-behavior.module");
 const video_module_1 = require("./video/video.module");
 const agent_module_1 = require("./agent/agent.module");
 const notification_module_1 = require("./notification/notification.module");
@@ -86,27 +76,17 @@ exports.AppModule = AppModule = __decorate([
             website_module_1.WebsiteModule,
             subscription_module_1.SubscriptionModule,
             dashboard_module_1.DashboardModule,
-            user_module_1.UserModule,
             role_module_1.RoleModule,
             property_module_1.PropertyModule,
             project_module_1.ProjectModule,
-            banner_module_1.BannerModule,
             amenity_module_1.AmenityModule,
-            saved_module_1.SavedModule,
             inquiry_module_1.InquiryModule,
-            blog_module_1.BlogModule,
-            customer_module_1.CustomerModule,
-            builder_module_1.BuilderModule,
             search_filter_module_1.SearchFilterModule,
             s3_module_1.S3Module,
-            order_module_1.OrderModule,
-            plan_module_1.PlanModule,
             short_video_module_1.ShortVideoModule,
-            agent_inquiry_module_1.AgentInquiryModule,
             websocket_module_1.WebsocketModule,
             schedule_1.ScheduleModule.forRoot(),
             firebase_module_1.FirebaseModule,
-            user_behavior_module_1.UserBehaviorModule,
             video_module_1.VideoModule,
             agent_module_1.AgentModule,
             notification_module_1.NotificationModule,

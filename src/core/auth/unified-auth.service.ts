@@ -133,11 +133,24 @@ export class UnifiedAuthService {
       throw new UnauthorizedException('Invalid email or password');
     }
 
-    // Get profile
-    const profile = await this.profileFactory.getProfile(
+    // Get profile (create if doesn't exist for backward compatibility)
+    let profile = await this.profileFactory.getProfile(
       user._id as Types.ObjectId,
       user.role,
     );
+
+    // If profile doesn't exist, create it (for users created before profile system)
+    if (!profile) {
+      profile = await this.profileFactory.createProfile(
+        user._id as Types.ObjectId,
+        user.role,
+        {
+          name: user.name || user.email.split('@')[0],
+          city: user.city,
+          state: user.state,
+        },
+      );
+    }
 
     // Generate tokens
     const { accessToken, refreshToken } = await this.generateTokens(
@@ -513,11 +526,7 @@ export class UnifiedAuthService {
   /**
    * Generate JWT tokens with role payload
    */
-  private async generateTokens(
-    userId: Types.ObjectId,
-    email: string,
-    role: UserRole,
-  ) {
+  async generateTokens(userId: Types.ObjectId, email: string, role: UserRole) {
     const payload = {
       sub: userId.toString(),
       email,
@@ -540,10 +549,7 @@ export class UnifiedAuthService {
   /**
    * Update refresh token in database
    */
-  private async updateRefreshToken(
-    userId: Types.ObjectId,
-    refreshToken: string,
-  ) {
+  async updateRefreshToken(userId: Types.ObjectId, refreshToken: string) {
     const hashedRefreshToken = await argon.hash(refreshToken);
     await this.userModel.findByIdAndUpdate(userId, {
       refreshToken: hashedRefreshToken,
@@ -580,7 +586,16 @@ export class UnifiedAuthService {
       throw new NotFoundException('User not found');
     }
 
-    const profile = await this.profileFactory.getProfile(userId, role);
+    let profile = await this.profileFactory.getProfile(userId, role);
+
+    // If profile doesn't exist, create it (for users created before profile system)
+    if (!profile) {
+      profile = await this.profileFactory.createProfile(userId, role, {
+        name: user.name || user.email.split('@')[0],
+        city: user.city,
+        state: user.state,
+      });
+    }
 
     return {
       user: {

@@ -207,7 +207,7 @@ export class PropertyController {
   @ApiParam({ name: 'id', description: 'Property ID' })
   @ApiOkResponse({ type: PropertyDetailDto })
   async getPropertyById(@Param('id') id: string): Promise<Response<any>> {
-    const data = await this.propertyService.getPropertyById(id);
+    const data = await this.propertyService.findOne(id);
     return { data, message: 'retrieve successfully ' };
   }
 

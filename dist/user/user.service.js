@@ -16,14 +16,14 @@ exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const user_entity_1 = require("./entity/user.entity");
+const user_entity_1 = require("../core/entities/user.entity");
 const argon = require("argon2");
-const auth_service_1 = require("../auth/auth.service");
+const unified_auth_service_1 = require("../core/auth/unified-auth.service");
 const status_enum_1 = require("../common/enum/status.enum");
 let UserService = class UserService {
-    constructor(userModel, auth) {
+    constructor(userModel, authService) {
         this.userModel = userModel;
-        this.auth = auth;
+        this.authService = authService;
     }
     async findAll(pageSize, pageNumber, sortBy = 'name', sortOrder = 'asc', searchQuery, role, status) {
         try {
@@ -97,8 +97,8 @@ let UserService = class UserService {
             const createdUser = new this.userModel(createUserDto);
             const response = await createdUser.save();
             console.log('user cr4ate', createUserDto);
-            const { refreshToken } = await this.auth.generateTokens(createdUser._id, createdUser.email);
-            await this.auth.updateRefreshToken(createdUser._id, refreshToken);
+            const { refreshToken } = await this.authService.generateTokens(createdUser._id, createdUser.email, createdUser.role);
+            await this.authService.updateRefreshToken(createdUser._id, refreshToken);
             return response;
         }
         catch (error) {
@@ -154,6 +154,6 @@ exports.UserService = UserService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_entity_1.User.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
-        auth_service_1.AuthService])
+        unified_auth_service_1.UnifiedAuthService])
 ], UserService);
 //# sourceMappingURL=user.service.js.map

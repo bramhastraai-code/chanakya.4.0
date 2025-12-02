@@ -10,10 +10,10 @@ exports.UserModule = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const mongoose_1 = require("@nestjs/mongoose");
-const user_entity_1 = require("./entity/user.entity");
+const user_entity_1 = require("../core/entities/user.entity");
 const user_controller_1 = require("./user.controller");
 const jwt_1 = require("@nestjs/jwt");
-const auth_service_1 = require("../auth/auth.service");
+const unified_auth_service_1 = require("../core/auth/unified-auth.service");
 let UserModule = class UserModule {
 };
 exports.UserModule = UserModule;
@@ -24,7 +24,7 @@ exports.UserModule = UserModule = __decorate([
             mongoose_1.MongooseModule.forFeature([{ name: user_entity_1.User.name, schema: user_entity_1.UserSchema }]),
         ],
         controllers: [user_controller_1.UserController],
-        providers: [user_service_1.UserService, auth_service_1.AuthService],
+        providers: [user_service_1.UserService, unified_auth_service_1.UnifiedAuthService],
         exports: [user_service_1.UserService],
     })
 ], UserModule);

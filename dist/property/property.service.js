@@ -17,7 +17,6 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const property_entity_1 = require("./entities/property.entity");
-const customer_entity_1 = require("../customer/entities/customer.entity");
 const amenity_entity_1 = require("../amenity/entities/amenity.entity");
 let PropertyService = class PropertyService {
     constructor(propertyModel) {
@@ -186,54 +185,6 @@ let PropertyService = class PropertyService {
             throw new common_1.NotFoundException('No properties found.');
         }
         return properties;
-    }
-    async getPropertyById(id) {
-        const property = await this.propertyModel
-            .findById(id)
-            .populate({
-            path: 'customer',
-            model: customer_entity_1.Customer.name,
-        })
-            .populate({
-            strictPopulate: false,
-            path: 'amenities',
-            model: amenity_entity_1.Amenity.name,
-        })
-            .populate({
-            strictPopulate: false,
-            path: 'facilities',
-            model: amenity_entity_1.Amenity.name,
-        })
-            .populate({
-            path: 'builderId',
-            strictPopulate: false,
-        })
-            .populate({
-            path: 'projectId',
-            strictPopulate: false,
-        })
-            .populate({
-            path: 'createdBy',
-            strictPopulate: false,
-        })
-            .populate({
-            path: 'updatedBy',
-            strictPopulate: false,
-        })
-            .exec();
-        if (!property) {
-            throw new common_1.NotFoundException(`Property with ID ${id} not found`);
-        }
-        return {
-            property,
-            crmDetails: {
-                crmName: 'crm name',
-                crmProfileImageUrl: 'crm image',
-                crmResponseTime: 'response tu=ime',
-                crmMobile: '999999999999',
-                crmRole: 'role',
-            },
-        };
     }
     async getPropertiesByProjectId(projectId) {
         const properties = await this.propertyModel

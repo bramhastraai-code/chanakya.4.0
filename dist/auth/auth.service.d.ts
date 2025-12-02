@@ -10,21 +10,13 @@ export declare class AuthService {
     private config;
     constructor(userModel: Model<User>, jwt: JwtService, config: ConfigService);
     login(dto: UpdateAuthDto, res: Response): Promise<{
-        email: string;
-        _id: Types.ObjectId;
+        email: any;
+        _id: any;
         accessToken: string;
         refreshToken: string;
-        user: import("mongoose").Document<unknown, {}, User, {}, {}> & User & {
-            _id: Types.ObjectId;
-        } & {
-            __v: number;
-        };
+        user: any;
     }>;
-    resetPassword(id: string, password: string): Promise<import("mongoose").Document<unknown, {}, User, {}, {}> & User & {
-        _id: Types.ObjectId;
-    } & {
-        __v: number;
-    }>;
+    resetPassword(id: string, password: string): Promise<any>;
     generateTokens(userId: Types.ObjectId, email: string): Promise<{
         accessToken: string;
         refreshToken: string;
@@ -33,10 +25,6 @@ export declare class AuthService {
     refreshToken(_id: Types.ObjectId, refreshToken: string, res: Response): Promise<{
         accessToken: string;
         refreshToken: string;
-        user: import("mongoose").Document<unknown, {}, User, {}, {}> & User & {
-            _id: Types.ObjectId;
-        } & {
-            __v: number;
-        };
+        user: any;
     }>;
 }

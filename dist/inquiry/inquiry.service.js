@@ -17,11 +17,9 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const inquiry_entity_1 = require("./entities/inquiry.entity");
-const customer_entity_1 = require("../customer/entities/customer.entity");
 let InquiryService = class InquiryService {
-    constructor(inquiryModel, customerModel) {
+    constructor(inquiryModel) {
         this.inquiryModel = inquiryModel;
-        this.customerModel = customerModel;
     }
     async create(createInquiryDto) {
         try {
@@ -89,8 +87,6 @@ exports.InquiryService = InquiryService;
 exports.InquiryService = InquiryService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(inquiry_entity_1.Inquiry.name)),
-    __param(1, (0, mongoose_1.InjectModel)(customer_entity_1.Customer.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model,
-        mongoose_2.Model])
+    __metadata("design:paramtypes", [mongoose_2.Model])
 ], InquiryService);
 //# sourceMappingURL=inquiry.service.js.map

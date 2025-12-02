@@ -13,8 +13,7 @@ exports.ProjectSchema = exports.Project = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const amenity_entity_1 = require("../../amenity/entities/amenity.entity");
-const builder_entity_1 = require("../../builder/entities/builder.entity");
-const user_entity_1 = require("../../user/entity/user.entity");
+const user_entity_1 = require("../../core/entities/user.entity");
 const project_enum_1 = require("../enum/project.enum");
 const status_enum_1 = require("../../common/enum/status.enum");
 const property_enum_1 = require("../../property/enum/property.enum");
@@ -37,10 +36,10 @@ __decorate([
 __decorate([
     (0, mongoose_1.Prop)({
         type: () => mongoose_2.Schema.Types.ObjectId,
-        ref: 'Builder',
+        ref: 'User',
         required: true,
     }),
-    __metadata("design:type", builder_entity_1.Builder)
+    __metadata("design:type", user_entity_1.User)
 ], Project.prototype, "builder", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),

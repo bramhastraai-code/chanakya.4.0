@@ -11,13 +11,12 @@ import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PropertyService } from 'src/property/property.service';
 import { Status } from 'src/common/enum/status.enum';
-import { Customer } from 'src/customer/entities/customer.entity';
 
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
-    @InjectModel(Customer.name) private customerModel: Model<Customer>,
+
     private readonly propertyService: PropertyService,
   ) {}
 

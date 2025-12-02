@@ -16,26 +16,10 @@ exports.SearchFilterController = void 0;
 const common_1 = require("@nestjs/common");
 const search_filter_service_1 = require("./search-filter.service");
 const swagger_1 = require("@nestjs/swagger");
-const filter_dto_1 = require("./dto/filter.dto");
 const create_search_filter_dto_1 = require("./dto/create-search-filter.dto");
 let SearchFilterController = class SearchFilterController {
     constructor(searchFilterService) {
         this.searchFilterService = searchFilterService;
-    }
-    async getPropertyList(filterDto) {
-        const data = await this.searchFilterService.PropertyCardList(filterDto);
-        return { data, message: 'retrieve successfully' };
-    }
-    async getProperties(filterDto) {
-        const data = await this.searchFilterService.PropertyCardList_v2(filterDto);
-        return { data, message: 'retrieve successfully' };
-    }
-    async getSuggestions(query) {
-        return this.searchFilterService.getSuggestions(query);
-    }
-    async storeSearch(createSearchDto) {
-        const { userId, term } = createSearchDto;
-        return this.searchFilterService.storeSearch(userId, term);
     }
     async searchSuggestions(term, paginationDto) {
         if (!term || term.trim() === '') {
@@ -46,51 +30,6 @@ let SearchFilterController = class SearchFilterController {
     }
 };
 exports.SearchFilterController = SearchFilterController;
-__decorate([
-    (0, common_1.Get)('list'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get filtered list of properties or projects' }),
-    __param(0, (0, common_1.Query)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [filter_dto_1.PropertyFilterDto]),
-    __metadata("design:returntype", Promise)
-], SearchFilterController.prototype, "getPropertyList", null);
-__decorate([
-    (0, common_1.Get)('search-filter'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get filtered property listings' }),
-    __param(0, (0, common_1.Query)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [filter_dto_1.PropertyFilter_V2_Dto]),
-    __metadata("design:returntype", Promise)
-], SearchFilterController.prototype, "getProperties", null);
-__decorate([
-    (0, common_1.Get)('suggestions'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get auto-complete search suggestions' }),
-    (0, swagger_1.ApiQuery)({
-        name: 'query',
-        type: String,
-        description: 'Search term to get suggestions for',
-    }),
-    (0, swagger_1.ApiResponse)({
-        status: 200,
-        description: 'List of search suggestions',
-        type: [String],
-    }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid query parameter' }),
-    __param(0, (0, common_1.Query)('query')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], SearchFilterController.prototype, "getSuggestions", null);
-__decorate([
-    (0, common_1.Post)('store'),
-    (0, swagger_1.ApiOperation)({ summary: 'Store a search term for history and suggestions' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Search term successfully stored' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid input' }),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_search_filter_dto_1.CreateSearchDto]),
-    __metadata("design:returntype", Promise)
-], SearchFilterController.prototype, "storeSearch", null);
 __decorate([
     (0, common_1.Get)('search-suggestions'),
     __param(0, (0, common_1.Query)('term')),

@@ -68,7 +68,7 @@ export class AgentKycController {
 @ApiBearerAuth()
 @Controller('admin/kyc')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminKycController {
   constructor(private readonly kycService: KycService) {}
 

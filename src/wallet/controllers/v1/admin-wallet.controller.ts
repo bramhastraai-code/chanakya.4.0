@@ -28,7 +28,7 @@ import { Types } from 'mongoose';
 @ApiBearerAuth()
 @Controller('admin/wallet')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminWalletController {
   constructor(private readonly walletService: WalletV1Service) {}
 

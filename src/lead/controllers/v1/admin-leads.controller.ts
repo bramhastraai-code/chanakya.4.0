@@ -28,7 +28,7 @@ import { LeadStatus } from '../../enum/lead-status.enum';
 @ApiBearerAuth()
 @Controller('admin/leads')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminLeadsController {
   constructor(private readonly leadService: LeadV1Service) {}
 

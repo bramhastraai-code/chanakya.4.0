@@ -19,6 +19,10 @@ const amenity_service_1 = require("./amenity.service");
 const amenity_entity_1 = require("./entities/amenity.entity");
 const create_amenity_dto_1 = require("./dto/create-amenity.dto");
 const update_amenity_dto_1 = require("./dto/update-amenity.dto");
+const jwt_guard_1 = require("../core/guards/jwt.guard");
+const roles_guard_1 = require("../common/guards/roles.guard");
+const roles_decorator_1 = require("../common/decorators/roles.decorator");
+const user_role_enum_1 = require("../common/enum/user-role.enum");
 let AmenityController = class AmenityController {
     constructor(amenityService) {
         this.amenityService = amenityService;
@@ -96,13 +100,20 @@ let AmenityController = class AmenityController {
 exports.AmenityController = AmenityController;
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new amenity' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new amenity (admin only)' }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.CREATED,
         description: 'Amenity created successfully',
         type: amenity_entity_1.Amenity,
     }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid input' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - admin only',
+    }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_amenity_dto_1.CreateAmenityDto]),
@@ -110,7 +121,10 @@ __decorate([
 ], AmenityController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)('amenity/:id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Update an existing amenity' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Update an existing amenity (admin only)' }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.OK,
         description: 'Amenity updated successfully',
@@ -121,6 +135,10 @@ __decorate([
         description: 'Amenity not found',
     }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid input' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - admin only',
+    }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),

@@ -1,13 +1,13 @@
 import { WebSocketGatewayHandler } from '../websocket/websocket.gateway';
 import { Model } from 'mongoose';
 import { FirebaseAdmin } from './firebase.admin';
-import { Customer } from 'src/customer/entities/customer.entity';
+import { User } from 'src/core/entities/user.entity';
 export declare class NotificationService {
     private readonly firebaseAdmin;
     private readonly webSocketGateway;
-    private customerModel;
+    private userModel;
     private readonly logger;
-    constructor(firebaseAdmin: FirebaseAdmin, webSocketGateway: WebSocketGatewayHandler, customerModel: Model<Customer>);
+    constructor(firebaseAdmin: FirebaseAdmin, webSocketGateway: WebSocketGatewayHandler, userModel: Model<User>);
     sendPushNotification(userId: string, title: string, body: string, data?: Record<string, string>): Promise<boolean>;
     sendToMultipleUsers(userIds: string[], title: string, body: string, data?: Record<string, string>): Promise<false | import("firebase-admin/lib/messaging/messaging-api").BatchResponse>;
     sendHybridNotification(userId: string, title: string, body: string, data?: Record<string, string>): Promise<boolean>;

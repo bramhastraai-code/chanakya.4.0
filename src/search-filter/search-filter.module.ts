@@ -6,10 +6,7 @@ import {
   PropertySchema,
 } from 'src/property/entities/property.entity';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  Customer,
-  CustomerSchema,
-} from 'src/customer/entities/customer.entity';
+
 import { Amenity, AmenitySchema } from 'src/amenity/entities/amenity.entity';
 import { Project, ProjectSchema } from 'src/project/entities/project.entity';
 import {
@@ -23,7 +20,6 @@ import {
       { name: SearchRecord.name, schema: SearchRecordSchema },
       { name: Property.name, schema: PropertySchema },
       { name: Project.name, schema: ProjectSchema },
-      { name: Customer.name, schema: CustomerSchema },
       { name: Amenity.name, schema: AmenitySchema },
     ]),
   ],

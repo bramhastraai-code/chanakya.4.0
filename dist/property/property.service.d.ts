@@ -18,7 +18,6 @@ export declare class PropertyService {
     update(id: string, updatePropertyDto: UpdatePropertyDto): Promise<Property>;
     remove(id: string): Promise<void>;
     getPropertySummaries(): Promise<Property[]>;
-    getPropertyById(id: string): Promise<any>;
     getPropertiesByProjectId(projectId: string): Promise<Property[]>;
     getPropertiesByCity(city: string): Promise<Property[]>;
     getFormattedProperties(): Promise<any[]>;

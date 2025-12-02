@@ -12,7 +12,7 @@ const mongoose_1 = require("@nestjs/mongoose");
 const inquiry_controller_1 = require("./inquiry.controller");
 const inquiry_service_1 = require("./inquiry.service");
 const inquiry_entity_1 = require("./entities/inquiry.entity");
-const customer_entity_1 = require("../customer/entities/customer.entity");
+const user_entity_1 = require("../core/entities/user.entity");
 let InquiryModule = class InquiryModule {
 };
 exports.InquiryModule = InquiryModule;
@@ -21,7 +21,7 @@ exports.InquiryModule = InquiryModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forFeature([
                 { name: inquiry_entity_1.Inquiry.name, schema: inquiry_entity_1.InquirySchema },
-                { name: customer_entity_1.Customer.name, schema: customer_entity_1.CustomerSchema },
+                { name: user_entity_1.User.name, schema: user_entity_1.UserSchema },
             ]),
         ],
         controllers: [inquiry_controller_1.InquiryController],

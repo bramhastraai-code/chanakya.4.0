@@ -12,8 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuilderSchema = exports.Builder = void 0;
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
-const customer_entity_1 = require("../../customer/entities/customer.entity");
-const user_entity_1 = require("../../user/entity/user.entity");
+const user_entity_1 = require("../../core/entities/user.entity");
 let Builder = class Builder extends mongoose_2.Document {
 };
 exports.Builder = Builder;
@@ -94,8 +93,8 @@ __decorate([
     __metadata("design:type", Number)
 ], Builder.prototype, "totalProject", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'Customer', default: null }),
-    __metadata("design:type", customer_entity_1.Customer)
+    (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User', default: null }),
+    __metadata("design:type", user_entity_1.User)
 ], Builder.prototype, "owner", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ type: mongoose_2.Types.ObjectId, ref: 'User' }),

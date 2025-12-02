@@ -127,7 +127,7 @@ export class SubscriptionController {
 @ApiBearerAuth()
 @Controller('admin/subscriptions')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminSubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 

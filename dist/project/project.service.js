@@ -19,11 +19,9 @@ const mongoose_2 = require("mongoose");
 const project_entity_1 = require("./entities/project.entity");
 const property_service_1 = require("../property/property.service");
 const status_enum_1 = require("../common/enum/status.enum");
-const customer_entity_1 = require("../customer/entities/customer.entity");
 let ProjectService = class ProjectService {
-    constructor(projectModel, customerModel, propertyService) {
+    constructor(projectModel, propertyService) {
         this.projectModel = projectModel;
-        this.customerModel = customerModel;
         this.propertyService = propertyService;
     }
     async create(createProjectDto) {
@@ -421,9 +419,7 @@ exports.ProjectService = ProjectService;
 exports.ProjectService = ProjectService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(project_entity_1.Project.name)),
-    __param(1, (0, mongoose_1.InjectModel)(customer_entity_1.Customer.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
-        mongoose_2.Model,
         property_service_1.PropertyService])
 ], ProjectService);
 //# sourceMappingURL=project.service.js.map

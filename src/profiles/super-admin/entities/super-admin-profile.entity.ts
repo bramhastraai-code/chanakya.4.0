@@ -12,8 +12,8 @@ export class SuperAdminProfile extends Document {
   @Prop()
   profileImage?: string;
 
-  @Prop({ type: [String], default: [] })
-  permissions: string[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Role' }], default: [] })
+  permissions: Types.ObjectId[];
 
   @Prop()
   department?: string;

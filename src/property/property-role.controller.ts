@@ -434,7 +434,7 @@ export class BuilderPropertyController {
 @ApiBearerAuth()
 @Controller('admin/properties')
 @UseGuards(jwtGuard, RolesGuard)
-@Roles(UserRole.ADMIN, UserRole.SUPER_ADMIN)
+@Roles(UserRole.ADMIN)
 export class AdminPropertyController {
   constructor(private readonly propertyService: PropertyEnhancedService) {}
 

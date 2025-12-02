@@ -10,6 +10,7 @@ import {
   NotFoundException,
   InternalServerErrorException,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -19,12 +20,17 @@ import {
   ApiOkResponse,
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AmenityService } from './amenity.service';
 import { Amenity } from './entities/amenity.entity';
 import { CreateAmenityDto } from './dto/create-amenity.dto';
 import { UpdateAmenityDto } from './dto/update-amenity.dto';
 import { Response } from 'src/common/interceptor/response.interface';
+import { jwtGuard } from 'src/core/guards/jwt.guard';
+import { RolesGuard } from 'src/common/guards/roles.guard';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import { UserRole } from 'src/common/enum/user-role.enum';
 
 @ApiTags('amenities')
 @Controller('amenities')
@@ -32,13 +38,20 @@ export class AmenityController {
   constructor(private readonly amenityService: AmenityService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new amenity' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new amenity (admin only)' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Amenity created successfully',
     type: Amenity,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input' })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - admin only',
+  })
   async create(
     @Body() createAmenityDto: CreateAmenityDto,
   ): Promise<Response<Amenity>> {
@@ -52,7 +65,10 @@ export class AmenityController {
   }
 
   @Patch('amenity/:id')
-  @ApiOperation({ summary: 'Update an existing amenity' })
+  @UseGuards(jwtGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update an existing amenity (admin only)' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Amenity updated successfully',
@@ -63,6 +79,10 @@ export class AmenityController {
     description: 'Amenity not found',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input' })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Forbidden - admin only',
+  })
   async update(
     @Param('id') id: string,
     @Body() updateAmenityDto: UpdateAmenityDto,

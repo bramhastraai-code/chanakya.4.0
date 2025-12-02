@@ -12,7 +12,7 @@ const firebase_controller_1 = require("./firebase.controller");
 const firebase_admin_1 = require("./firebase.admin");
 const firebase_service_1 = require("./firebase.service");
 const mongoose_1 = require("@nestjs/mongoose");
-const customer_entity_1 = require("../customer/entities/customer.entity");
+const user_entity_1 = require("../core/entities/user.entity");
 const websocket_module_1 = require("../websocket/websocket.module");
 let FirebaseModule = class FirebaseModule {
 };
@@ -21,9 +21,7 @@ exports.FirebaseModule = FirebaseModule = __decorate([
     (0, common_1.Module)({
         imports: [
             websocket_module_1.WebsocketModule,
-            mongoose_1.MongooseModule.forFeature([
-                { name: customer_entity_1.Customer.name, schema: customer_entity_1.CustomerSchema },
-            ]),
+            mongoose_1.MongooseModule.forFeature([{ name: user_entity_1.User.name, schema: user_entity_1.UserSchema }]),
         ],
         controllers: [firebase_controller_1.FirebaseController],
         providers: [firebase_service_1.NotificationService, firebase_admin_1.FirebaseAdmin],

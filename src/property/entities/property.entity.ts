@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Customer } from 'src/customer/entities/customer.entity';
+
 import { Project } from 'src/project/entities/project.entity';
-import { User } from 'src/user/entity/user.entity';
+import { User } from 'src/core/entities/user.entity';
 import {
   BHKConfiguration,
   FacingDirection,
@@ -204,8 +204,8 @@ export class Property extends Document {
   featured?: boolean;
 
   // Relations
-  @Prop({ type: Types.ObjectId, ref: 'Customer' })
-  builderId?: Customer;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  builderId?: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'Project' })
   projectId?: Project;
@@ -214,8 +214,8 @@ export class Property extends Document {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   ownerId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'Customer' })
-  customer?: Customer;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  customer?: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
   createdBy?: Types.ObjectId;

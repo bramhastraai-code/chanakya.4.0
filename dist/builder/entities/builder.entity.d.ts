@@ -1,6 +1,5 @@
 import { Document, Types } from 'mongoose';
-import { Customer } from 'src/customer/entities/customer.entity';
-import { User } from 'src/user/entity/user.entity';
+import { User } from 'src/core/entities/user.entity';
 export declare class Builder extends Document {
     name: string;
     description: string;
@@ -21,7 +20,7 @@ export declare class Builder extends Document {
     views?: number;
     since?: number;
     totalProject?: number;
-    owner?: Customer;
+    owner?: User;
     createdBy: User;
     updatedBy: User;
     createdAt: Date;

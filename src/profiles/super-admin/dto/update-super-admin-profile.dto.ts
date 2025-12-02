@@ -8,7 +8,7 @@ export class UpdateSuperAdminProfileDto {
   name?: string;
 
   @ApiPropertyOptional({
-    example: ['users:manage', 'properties:approve', 'kyc:review'],
+    example: ['60d5ecb8b392d7001f8e8e8e', '60d5ecb8b392d7001f8e8e8f'],
   })
   @IsArray()
   @IsString({ each: true })

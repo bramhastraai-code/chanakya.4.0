@@ -4,7 +4,7 @@ import { WebSocketGatewayHandler } from '../websocket/websocket.gateway';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FirebaseAdmin } from './firebase.admin';
-import { Customer } from 'src/customer/entities/customer.entity';
+import { User } from 'src/core/entities/user.entity';
 
 @Injectable()
 export class NotificationService {
@@ -13,7 +13,7 @@ export class NotificationService {
   constructor(
     private readonly firebaseAdmin: FirebaseAdmin,
     private readonly webSocketGateway: WebSocketGatewayHandler,
-    @InjectModel(Customer.name) private customerModel: Model<Customer>,
+    @InjectModel(User.name) private userModel: Model<User>,
   ) {}
 
   async sendPushNotification(
@@ -23,7 +23,7 @@ export class NotificationService {
     data?: Record<string, string>,
   ) {
     try {
-      const user = await this.customerModel.findById(userId).select('fcmToken');
+      const user = await this.userModel.findById(userId).select('fcmToken');
       console.log(
         `Sending notification to user ${userId} with FCM token: ${user?.fcmToken}`,
       );
@@ -54,7 +54,7 @@ export class NotificationService {
     data?: Record<string, string>,
   ) {
     try {
-      const users = await this.customerModel
+      const users = await this.userModel
         .find({ _id: { $in: userIds } })
         .select('fcmToken');
 
@@ -112,7 +112,7 @@ export class NotificationService {
   }
 
   async updateFcmToken(userId: string, token: string) {
-    await this.customerModel.findByIdAndUpdate(userId, {
+    await this.userModel.findByIdAndUpdate(userId, {
       fcmToken: token,
     });
     this.logger.log(`Updated FCM token for user ${userId}`);

@@ -5,12 +5,10 @@ import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PropertyService } from 'src/property/property.service';
 import { Status } from 'src/common/enum/status.enum';
-import { Customer } from 'src/customer/entities/customer.entity';
 export declare class ProjectService {
     private projectModel;
-    private customerModel;
     private readonly propertyService;
-    constructor(projectModel: Model<Project>, customerModel: Model<Customer>, propertyService: PropertyService);
+    constructor(projectModel: Model<Project>, propertyService: PropertyService);
     create(createProjectDto: CreateProjectDto): Promise<Project>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<{
         projects: Project[];

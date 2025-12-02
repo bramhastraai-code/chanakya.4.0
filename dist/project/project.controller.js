@@ -24,12 +24,18 @@ const featuredProject_dto_1 = require("./dto/featuredProject.dto");
 const update_project_dto_1 = require("./dto/update-project.dto");
 const project_detail_dto_1 = require("./dto/project-detail.dto");
 const status_enum_1 = require("../common/enum/status.enum");
-const passport_1 = require("@nestjs/passport");
+const jwt_guard_1 = require("../core/guards/jwt.guard");
+const roles_guard_1 = require("../common/guards/roles.guard");
+const roles_decorator_1 = require("../common/decorators/roles.decorator");
+const user_role_enum_1 = require("../common/enum/user-role.enum");
+const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 let ProjectController = class ProjectController {
     constructor(projectService) {
         this.projectService = projectService;
     }
-    async create(createProjectDto) {
+    async create(createProjectDto, user) {
+        createProjectDto.createdBy = user.userId;
+        createProjectDto.updatedBy = user.userId;
         const data = await this.projectService.create(createProjectDto);
         return { data, message: 'created successfully' };
     }
@@ -48,7 +54,8 @@ let ProjectController = class ProjectController {
             message: 'retrieve successfully',
         };
     }
-    async update(id, updateProjectDto) {
+    async update(id, updateProjectDto, user) {
+        updateProjectDto.updatedBy = user.userId;
         const data = await this.projectService.update(id, updateProjectDto);
         return { data, message: 'updated successfully' };
     }
@@ -118,7 +125,9 @@ let ProjectController = class ProjectController {
         const data = await this.projectService.searchProjects(keyword);
         return { data, message: 'retrieved successfully' };
     }
-    async createBuilderProject(createProjectDto) {
+    async createBuilderProject(createProjectDto, user) {
+        createProjectDto.createdBy = user.userId;
+        createProjectDto.updatedBy = user.userId;
         const data = await this.projectService.create(createProjectDto);
         return { data, message: 'Project created successfully' };
     }
@@ -131,7 +140,8 @@ let ProjectController = class ProjectController {
             throw error;
         }
     }
-    async updateProject(projectId, updateProjectDto) {
+    async updateProject(projectId, updateProjectDto, user) {
+        updateProjectDto.updatedBy = user.userId;
         const data = await this.projectService.update(projectId, updateProjectDto);
         return { data, message: 'Project updated successfully' };
     }
@@ -139,20 +149,34 @@ let ProjectController = class ProjectController {
         const data = await this.projectService.remove(projectId);
         return { data, message: 'Project deleted successfully' };
     }
+    async getPublicProjects(pageSize = '20', pageNumber = '1', city, category) {
+        const data = await this.projectService.findAll(pageSize, pageNumber, 'createdAt', 'desc', undefined, status_enum_1.Status.ACTIVE);
+        return { data, message: 'Public projects retrieved successfully' };
+    }
 };
 exports.ProjectController = ProjectController;
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new project' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.AGENT, user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create a new project (requires builder/agent/admin role)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.CREATED,
         description: 'The project has been successfully created.',
         type: project_entity_1.Project,
     }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Bad request' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - insufficient permissions',
+    }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_project_dto_1.CreateProjectDto]),
+    __metadata("design:paramtypes", [create_project_dto_1.CreateProjectDto, Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "create", null);
 __decorate([
@@ -253,7 +277,12 @@ __decorate([
 ], ProjectController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)('project/:id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Update a project by ID' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.AGENT, user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Update a project by ID (requires builder/agent/admin role)',
+    }),
     (0, swagger_1.ApiParam)({
         name: 'id',
         description: 'Project ID',
@@ -268,15 +297,25 @@ __decorate([
         status: common_1.HttpStatus.NOT_FOUND,
         description: 'Project not found',
     }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - insufficient permissions',
+    }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_project_dto_1.UpdateProjectDto]),
+    __metadata("design:paramtypes", [String, update_project_dto_1.UpdateProjectDto, Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)('project/:id'),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete a project by ID' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.AGENT, user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Delete a project by ID (requires builder/agent/admin role)',
+    }),
     (0, swagger_1.ApiParam)({
         name: 'id',
         description: 'Project ID',
@@ -289,6 +328,10 @@ __decorate([
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.NOT_FOUND,
         description: 'Project not found',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - insufficient permissions',
     }),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __param(0, (0, common_1.Param)('id')),
@@ -459,17 +502,26 @@ __decorate([
 ], ProjectController.prototype, "searchProjects", null);
 __decorate([
     (0, common_1.Post)('builder-projects'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('builder-jwt')),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new project (builder endpoint)' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.AGENT, user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create a new project (requires builder/agent/admin role)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.CREATED,
         description: 'The project has been successfully created.',
         type: project_entity_1.Project,
     }),
     (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Bad request' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - insufficient permissions',
+    }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_project_dto_1.CreateProjectDto]),
+    __metadata("design:paramtypes", [create_project_dto_1.CreateProjectDto, Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "createBuilderProject", null);
 __decorate([
@@ -496,8 +548,12 @@ __decorate([
 ], ProjectController.prototype, "getProjectsByBuilderId", null);
 __decorate([
     (0, common_1.Patch)('builder-projects/:projectId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('builder-jwt')),
-    (0, swagger_1.ApiOperation)({ summary: 'Update a project by projectId' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.AGENT, user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Update a project by projectId (requires builder/agent/admin role)',
+    }),
     (0, swagger_1.ApiParam)({
         name: 'projectId',
         required: true,
@@ -513,16 +569,25 @@ __decorate([
         status: common_1.HttpStatus.NOT_FOUND,
         description: 'Project not found',
     }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - insufficient permissions',
+    }),
     __param(0, (0, common_1.Param)('projectId')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_project_dto_1.UpdateProjectDto]),
+    __metadata("design:paramtypes", [String, update_project_dto_1.UpdateProjectDto, Object]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "updateProject", null);
 __decorate([
     (0, common_1.Delete)('builder-projects/:projectId'),
-    (0, common_1.UseGuards)((0, passport_1.AuthGuard)('builder-jwt')),
-    (0, swagger_1.ApiOperation)({ summary: 'Delete a project by projectId (builder endpoint)' }),
+    (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER, user_role_enum_1.UserRole.AGENT, user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Delete a project by projectId (requires builder/agent/admin role)',
+    }),
     (0, swagger_1.ApiParam)({
         name: 'projectId',
         required: true,
@@ -537,12 +602,60 @@ __decorate([
         status: common_1.HttpStatus.NOT_FOUND,
         description: 'Project not found',
     }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.FORBIDDEN,
+        description: 'Forbidden - insufficient permissions',
+    }),
     (0, common_1.HttpCode)(common_1.HttpStatus.NO_CONTENT),
     __param(0, (0, common_1.Param)('projectId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "deleteProject", null);
+__decorate([
+    (0, common_1.Get)('public'),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get all active projects for public/website access (no auth required)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'pageSize',
+        required: false,
+        type: String,
+        description: 'Number of projects per page',
+        example: '20',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'pageNumber',
+        required: false,
+        type: String,
+        description: 'Current page number',
+        example: '1',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'city',
+        required: false,
+        type: String,
+        description: 'Filter by city',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'category',
+        required: false,
+        enum: project_enum_1.ProjectCategory,
+        description: 'Filter by category',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'List of active projects for public access',
+        type: [project_entity_1.Project],
+    }),
+    __param(0, (0, common_1.Query)('pageSize')),
+    __param(1, (0, common_1.Query)('pageNumber')),
+    __param(2, (0, common_1.Query)('city')),
+    __param(3, (0, common_1.Query)('category')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getPublicProjects", null);
 exports.ProjectController = ProjectController = __decorate([
     (0, swagger_1.ApiTags)('projects'),
     (0, common_1.Controller)('projects'),

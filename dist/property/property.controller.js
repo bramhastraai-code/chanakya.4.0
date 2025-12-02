@@ -89,7 +89,7 @@ let PropertyController = class PropertyController {
         }
     }
     async getPropertyById(id) {
-        const data = await this.propertyService.getPropertyById(id);
+        const data = await this.propertyService.findOne(id);
         return { data, message: 'retrieve successfully ' };
     }
     async getPropertyByCity(city) {
