@@ -29,11 +29,26 @@ let ResponseInterceptor = class ResponseInterceptor {
             const status = error instanceof common_1.HttpException
                 ? error.getStatus()
                 : common_1.HttpStatus.INTERNAL_SERVER_ERROR;
-            return (0, rxjs_1.throwError)(() => error).pipe((0, operators_1.map)((err) => ({
-                status,
-                message: err.message || 'Internal server error',
-                data: null,
-            })));
+            let message = 'Internal server error';
+            let errorDetails = null;
+            if (error instanceof common_1.HttpException) {
+                const response = error.getResponse();
+                if (typeof response === 'string') {
+                    message = response;
+                }
+                else if (typeof response === 'object' && response !== null) {
+                    message = response.message || error.message;
+                    errorDetails = response;
+                }
+            }
+            else if (error instanceof Error) {
+                message = error.message;
+            }
+            return (0, rxjs_1.throwError)(() => new common_1.HttpException({
+                statusCode: status,
+                message: message,
+                error: errorDetails || error.name || 'Error',
+            }, status));
         }));
     }
 };

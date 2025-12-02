@@ -113,6 +113,30 @@ export class AgentController {
     return { success: true, message: 'Website updated successfully', data };
   }
 
+  @Get('profile/business-info')
+  @ApiOperation({ summary: 'Get business information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Business info retrieved successfully',
+  })
+  async getBusinessInfo(@CurrentUser() user: any) {
+    const data: any = await this.agentService.getProfile(user.userId);
+    // Extract business-related fields from profile
+    const businessInfo = {
+      company: data.company || '',
+      experienceYears: data.experienceYears || 0,
+      specialization: data.specialization || [],
+      serviceAreas: data.serviceAreas || [],
+      city: data.city || '',
+      state: data.state || '',
+    };
+    return {
+      success: true,
+      message: 'Business information retrieved successfully',
+      data: businessInfo,
+    };
+  }
+
   @Put('profile/business-info')
   @ApiOperation({ summary: 'Update business information' })
   @ApiResponse({

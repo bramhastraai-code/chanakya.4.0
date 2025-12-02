@@ -13,7 +13,10 @@ async function bootstrap() {
         whitelist: true,
     }));
     app.setGlobalPrefix('v1');
-    app.enableCors({ origin: '*' });
+    app.enableCors({
+        origin: true,
+        credentials: true,
+    });
     const config = new swagger_1.DocumentBuilder()
         .addBearerAuth()
         .setTitle('chanakya connect Api')

@@ -15,7 +15,10 @@ async function bootstrap() {
   );
 
   app.setGlobalPrefix('v1');
-  app.enableCors({ origin: '*' });
+  app.enableCors({
+    origin: true, // Allow all origins (or specify your frontend URL)
+    credentials: true, // Allow cookies
+  });
 
   const config = new DocumentBuilder()
     .addBearerAuth()

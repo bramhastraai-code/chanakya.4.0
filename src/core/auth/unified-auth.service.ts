@@ -26,7 +26,7 @@ import {
   ChangePasswordDto,
 } from './dto/auth.dto';
 import { UserRole } from 'src/common/enum/user-role.enum';
-import assignedEmail from 'src/common/utils/email.utils';
+import { BrevoEmailService } from 'src/common/services/brevo-email.service';
 
 @Injectable()
 export class UnifiedAuthService {
@@ -36,6 +36,7 @@ export class UnifiedAuthService {
     private jwt: JwtService,
     private config: ConfigService,
     private profileFactory: ProfileFactory,
+    private brevoEmailService: BrevoEmailService,
   ) {}
 
   /**
@@ -172,7 +173,7 @@ export class UnifiedAuthService {
    * Send OTP to email
    */
   async sendOtp(dto: SendOtpDto) {
-    const { email } = dto;
+    const email = dto.email.toLowerCase().trim();
 
     // Generate 6-digit OTP
     const otp = randomInt(100000, 999999).toString();
@@ -183,19 +184,17 @@ export class UnifiedAuthService {
     await this.otpModel.deleteMany({ email });
 
     // Save new OTP
-    await this.otpModel.create({ email, otp, expiresIn });
+    const createdOtp = await this.otpModel.create({ email, otp, expiresIn });
+    console.log(
+      `[Debug] OTP generated for ${email}: ${otp}, Expires: ${expiresIn}, ID: ${createdOtp._id}`,
+    );
 
     // Send OTP via email
     try {
-      assignedEmail({
+      await this.brevoEmailService.sendOtpEmail({
         to: email,
+        otp,
         subject: 'Your OTP for Chanakya AI',
-        text: `Your OTP for verification is: ${otp}. Valid for 5 minutes.`,
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-        assigned_by: 'Chanakya AI',
-        total_leads: 0,
-        assigned_to: email,
       });
     } catch (err) {
       console.error('Error sending OTP email:', err);
@@ -212,13 +211,18 @@ export class UnifiedAuthService {
    * Verify OTP (without login)
    */
   async verifyOtp(dto: VerifyOtpDto) {
-    const { email, otp } = dto;
+    const email = dto.email.toLowerCase().trim();
+    const { otp } = dto;
 
     // Find latest OTP for this email
     const otpRecord = await this.otpModel
       .findOne({ email })
       .sort({ createdAt: -1 })
       .exec();
+
+    console.log(
+      `[Debug] VerifyOtp for ${email}: Input=${otp}, Found=${otpRecord?.otp}, Expires=${otpRecord?.expiresIn}`,
+    );
 
     if (!otpRecord) {
       throw new BadRequestException('OTP not found. Please request a new OTP.');
@@ -235,12 +239,16 @@ export class UnifiedAuthService {
     await this.otpModel.deleteOne({ _id: otpRecord._id });
 
     // Mark email as verified if user exists
-    await this.userModel.findOneAndUpdate({ email }, { isEmailVerified: true });
+    const data = await this.userModel.findOneAndUpdate(
+      { email },
+      { isEmailVerified: true },
+    );
 
     return {
       message: 'OTP verified successfully',
       email,
       verified: true,
+      data,
     };
   }
 
@@ -248,13 +256,18 @@ export class UnifiedAuthService {
    * Login with OTP (passwordless)
    */
   async loginWithOtp(dto: LoginWithOtpDto) {
-    const { email, otp } = dto;
+    const email = dto.email.toLowerCase().trim();
+    const { otp } = dto;
 
     // Verify OTP first
     const otpRecord = await this.otpModel
       .findOne({ email })
       .sort({ createdAt: -1 })
       .exec();
+
+    console.log(
+      `[Debug] LoginWithOtp for ${email}: Input=${otp}, Found=${otpRecord?.otp}, Expires=${otpRecord?.expiresIn}`,
+    );
 
     if (!otpRecord) {
       throw new BadRequestException('OTP not found. Please request a new OTP.');
@@ -320,14 +333,13 @@ export class UnifiedAuthService {
     });
 
     return {
-      message: newUser ? 'Account created successfully' : 'Login successful',
-      newUser,
       user: {
         id: user._id,
         email: user.email,
         phoneNumber: user.phoneNumber,
         role: user.role,
         isEmailVerified: user.isEmailVerified,
+        isKycVerified: (profile as any)?.isKycVerified || false,
       },
       profile,
       accessToken,
@@ -361,13 +373,18 @@ export class UnifiedAuthService {
    * Reset password with OTP
    */
   async resetPassword(dto: ResetPasswordDto) {
-    const { email, otp, newPassword } = dto;
+    const email = dto.email.toLowerCase().trim();
+    const { otp, newPassword } = dto;
 
     // Verify OTP
     const otpRecord = await this.otpModel
       .findOne({ email })
       .sort({ createdAt: -1 })
       .exec();
+
+    console.log(
+      `[Debug] ResetPassword for ${email}: Input=${otp}, Found=${otpRecord?.otp}, Expires=${otpRecord?.expiresIn}`,
+    );
 
     if (!otpRecord) {
       throw new BadRequestException('OTP not found. Please request a new OTP.');
@@ -398,6 +415,7 @@ export class UnifiedAuthService {
     return {
       message: 'Password reset successful',
       email,
+      data: user,
     };
   }
 
@@ -543,15 +561,10 @@ export class UnifiedAuthService {
     await this.otpModel.create({ email, otp, expiresIn });
 
     try {
-      assignedEmail({
+      await this.brevoEmailService.sendOtpEmail({
         to: email,
+        otp,
         subject: 'Welcome to Chanakya AI - Verify Your Email',
-        text: `Your verification OTP is: ${otp}. Valid for 30 minutes.`,
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-        assigned_by: 'Chanakya AI',
-        total_leads: 0,
-        assigned_to: email,
       });
     } catch (err) {
       console.error('Error sending verification email:', err);

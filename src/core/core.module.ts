@@ -27,6 +27,7 @@ import { UnifiedAuthController } from './auth/unified-auth.controller';
 import { ProfileFactory } from './services/profile-factory.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { BrevoEmailService } from 'src/common/services/brevo-email.service';
 
 @Module({
   imports: [
@@ -49,7 +50,12 @@ import { PassportModule } from '@nestjs/passport';
     }),
   ],
   controllers: [UnifiedAuthController],
-  providers: [UnifiedAuthService, ProfileFactory, JwtStrategy],
-  exports: [UnifiedAuthService, ProfileFactory],
+  providers: [
+    UnifiedAuthService,
+    ProfileFactory,
+    JwtStrategy,
+    BrevoEmailService,
+  ],
+  exports: [UnifiedAuthService, ProfileFactory, BrevoEmailService],
 })
 export class CoreModule {}

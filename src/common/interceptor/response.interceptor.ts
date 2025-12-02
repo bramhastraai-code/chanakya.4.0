@@ -37,16 +37,40 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
         return apiResponse;
       }),
       catchError((error) => {
+        // Extract status code
         const status =
           error instanceof HttpException
             ? error.getStatus()
             : HttpStatus.INTERNAL_SERVER_ERROR;
-        return throwError(() => error).pipe(
-          map((err: any) => ({
-            status,
-            message: err.message || 'Internal server error',
-            data: null,
-          })),
+
+        // Extract error message and details
+        let message = 'Internal server error';
+        let errorDetails = null;
+
+        if (error instanceof HttpException) {
+          const response = error.getResponse();
+          if (typeof response === 'string') {
+            message = response;
+          } else if (typeof response === 'object' && response !== null) {
+            message = (response as any).message || error.message;
+            errorDetails = response;
+          }
+        } else if (error instanceof Error) {
+          // For non-HTTP errors, show the actual error message
+          message = error.message;
+        }
+
+        // Return the error in the standard format
+        return throwError(
+          () =>
+            new HttpException(
+              {
+                statusCode: status,
+                message: message,
+                error: errorDetails || error.name || 'Error',
+              },
+              status,
+            ),
         );
       }),
     );
