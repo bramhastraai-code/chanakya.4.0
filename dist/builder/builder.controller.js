@@ -17,8 +17,6 @@ const common_1 = require("@nestjs/common");
 const passport_1 = require("@nestjs/passport");
 const swagger_1 = require("@nestjs/swagger");
 const status_enum_1 = require("../common/enum/status.enum");
-const refresh_token_dto_1 = require("../customer-auth/dto/refresh-token.dto");
-const update_customer_auth_dto_1 = require("../customer-auth/dto/update-customer-auth.dto");
 const project_service_1 = require("../project/project.service");
 const builder_service_1 = require("./builder.service");
 const create_builder_dto_1 = require("./dto/create-builder.dto");
@@ -28,32 +26,6 @@ let BuilderController = class BuilderController {
     constructor(builderService, projectService) {
         this.builderService = builderService;
         this.projectService = projectService;
-    }
-    async sendOtp_less(phoneNumber) {
-        try {
-            if (!phoneNumber) {
-                throw new common_1.BadRequestException('Phone number is required');
-            }
-            const data = await this.builderService.sendOtp_less(phoneNumber);
-            return { data, message: 'OTP sent successfully' };
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    async verifyOtp_less(phoneNumber, requestId, otp) {
-        try {
-            const data = await this.builderService.verifyOtp_less(phoneNumber, requestId, otp);
-            return { data, message: 'OTP verified successfully ' };
-        }
-        catch (error) {
-            throw error;
-        }
-    }
-    async refreshToken(dto, res) {
-        const userId = dto.userId;
-        const data = await this.builderService.refreshToken(userId, dto.refreshToken, res);
-        return { data, message: 'Token refreshed successfully' };
     }
     async create(createBuilderDto) {
         try {
@@ -184,57 +156,6 @@ let BuilderController = class BuilderController {
     }
 };
 exports.BuilderController = BuilderController;
-__decorate([
-    (0, common_1.Post)('send-otp-less'),
-    (0, swagger_1.ApiOperation)({ summary: 'Send OTP to a phone number' }),
-    (0, swagger_1.ApiBody)({ type: update_customer_auth_dto_1.UpdateCustomerAuthDto }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'OTP sent successfully' }),
-    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid phone number' }),
-    (0, swagger_1.ApiResponse)({ status: 500, description: 'Internal server error' }),
-    __param(0, (0, common_1.Body)('phoneNumber')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], BuilderController.prototype, "sendOtp_less", null);
-__decorate([
-    (0, common_1.Post)('/verify-otp-less'),
-    (0, swagger_1.ApiOperation)({ summary: 'Verify OTP and authenticate user' }),
-    (0, swagger_1.ApiBody)({
-        schema: {
-            type: 'object',
-            properties: {
-                phoneNumber: { type: 'string', example: '+15551234567' },
-                requestId: {
-                    type: 'string',
-                    example: '6492d9f9be434d3281527225032f611b',
-                },
-                otp: { type: 'string', example: '8482' },
-            },
-        },
-    }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'OTP verification successful.' }),
-    (0, swagger_1.ApiResponse)({
-        status: 400,
-        description: 'Invalid OTP or phone number mismatch.',
-    }),
-    __param(0, (0, common_1.Body)('phoneNumber')),
-    __param(1, (0, common_1.Body)('requestId')),
-    __param(2, (0, common_1.Body)('otp')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
-    __metadata("design:returntype", Promise)
-], BuilderController.prototype, "verifyOtp_less", null);
-__decorate([
-    (0, common_1.Post)('refresh-token'),
-    (0, swagger_1.ApiOperation)({ summary: 'Refresh access token' }),
-    (0, swagger_1.ApiBody)({ type: refresh_token_dto_1.RefreshTokenDto }),
-    (0, swagger_1.ApiResponse)({ status: 200, description: 'Token refreshed successfully' }),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Res)({ passthrough: true })),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [refresh_token_dto_1.RefreshTokenDto, Object]),
-    __metadata("design:returntype", Promise)
-], BuilderController.prototype, "refreshToken", null);
 __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new builder' }),

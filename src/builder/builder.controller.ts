@@ -25,11 +25,8 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { Response as Resp } from 'express';
 import { Status } from 'src/common/enum/status.enum';
 import { Response } from 'src/common/interceptor/response.interface';
-import { RefreshTokenDto } from 'src/customer-auth/dto/refresh-token.dto';
-import { UpdateCustomerAuthDto } from 'src/customer-auth/dto/update-customer-auth.dto';
 import { ProjectService } from 'src/project/project.service';
 import { BuilderService } from './builder.service';
 import { CreateBuilderDto } from './dto/create-builder.dto';
@@ -42,84 +39,6 @@ export class BuilderController {
     private readonly builderService: BuilderService,
     private projectService: ProjectService,
   ) {}
-
-  @Post('send-otp-less')
-  @ApiOperation({ summary: 'Send OTP to a phone number' })
-  @ApiBody({ type: UpdateCustomerAuthDto })
-  @ApiResponse({ status: 200, description: 'OTP sent successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid phone number' })
-  @ApiResponse({ status: 500, description: 'Internal server error' })
-  async sendOtp_less(@Body('phoneNumber') phoneNumber: string) {
-    try {
-      if (!phoneNumber) {
-        throw new BadRequestException('Phone number is required');
-      }
-
-      const data = await this.builderService.sendOtp_less(phoneNumber);
-      return { data, message: 'OTP sent successfully' };
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Post('/verify-otp-less')
-  @ApiOperation({ summary: 'Verify OTP and authenticate user' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        phoneNumber: { type: 'string', example: '+15551234567' },
-        requestId: {
-          type: 'string',
-          example: '6492d9f9be434d3281527225032f611b',
-        },
-        otp: { type: 'string', example: '8482' },
-      },
-    },
-  })
-  @ApiResponse({ status: 200, description: 'OTP verification successful.' })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid OTP or phone number mismatch.',
-  })
-  async verifyOtp_less(
-    @Body('phoneNumber') phoneNumber: string,
-    @Body('requestId') requestId: string,
-    @Body('otp') otp: string,
-  ) {
-    try {
-      const data = await this.builderService.verifyOtp_less(
-        phoneNumber,
-        requestId,
-        otp,
-      );
-      return { data, message: 'OTP verified successfully ' };
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @Post('refresh-token')
-  @ApiOperation({ summary: 'Refresh access token' })
-  @ApiBody({ type: RefreshTokenDto })
-  @ApiResponse({ status: 200, description: 'Token refreshed successfully' })
-  async refreshToken(
-    @Body() dto: RefreshTokenDto,
-    @Res({ passthrough: true }) res: Resp,
-  ): Promise<
-    Response<{
-      accessToken: string;
-      refreshToken: string;
-    }>
-  > {
-    const userId = dto.userId; // Ensure userId is cast to Types.ObjectId
-    const data = await this.builderService.refreshToken(
-      userId,
-      dto.refreshToken,
-      res,
-    );
-    return { data, message: 'Token refreshed successfully' };
-  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new builder' })

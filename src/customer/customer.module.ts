@@ -12,13 +12,9 @@ import { Inquiry, InquirySchema } from 'src/inquiry/entities/inquiry.entity';
 import { ProjectService } from 'src/project/project.service';
 import { PropertyService } from 'src/property/property.service';
 import { InquiryService } from 'src/inquiry/inquiry.service';
-import { BrokerController } from './broker.controller';
-import { BrokerService } from './broker.service';
 import { WebSocketGatewayHandler } from 'src/websocket/websocket.gateway';
 import { NotificationService } from 'src/firebase/firebase.service';
 import { FirebaseAdmin } from 'src/firebase/firebase.admin';
-import { BuildersService } from './builder.service';
-import { BuildersController } from './builder.controller';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -28,13 +24,11 @@ import { BuildersController } from './builder.controller';
       { name: Inquiry.name, schema: InquirySchema },
     ]),
   ],
-  controllers: [CustomerController, BrokerController, BuildersController],
+  controllers: [CustomerController],
   providers: [
-    BuildersService,
     FirebaseAdmin,
     NotificationService,
     CustomerService,
-    BrokerService,
     ProjectService,
     PropertyService,
     InquiryService,

@@ -1,7 +1,5 @@
-import { Response as Resp } from 'express';
 import { Status } from 'src/common/enum/status.enum';
 import { Response } from 'src/common/interceptor/response.interface';
-import { RefreshTokenDto } from 'src/customer-auth/dto/refresh-token.dto';
 import { ProjectService } from 'src/project/project.service';
 import { BuilderService } from './builder.service';
 import { CreateBuilderDto } from './dto/create-builder.dto';
@@ -11,18 +9,6 @@ export declare class BuilderController {
     private readonly builderService;
     private projectService;
     constructor(builderService: BuilderService, projectService: ProjectService);
-    sendOtp_less(phoneNumber: string): Promise<{
-        data: any;
-        message: string;
-    }>;
-    verifyOtp_less(phoneNumber: string, requestId: string, otp: string): Promise<{
-        data: any;
-        message: string;
-    }>;
-    refreshToken(dto: RefreshTokenDto, res: Resp): Promise<Response<{
-        accessToken: string;
-        refreshToken: string;
-    }>>;
     create(createBuilderDto: CreateBuilderDto): Promise<Response<Builder>>;
     findAll(pageSize?: string, pageNumber?: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<Response<{
         builders: Builder[];
