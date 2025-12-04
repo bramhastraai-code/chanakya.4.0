@@ -1,13 +1,21 @@
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from 'src/core/entities/user.entity';
-import { BuilderProfile } from 'src/profiles/builder/entities/builder-profile.entity';
+import { BuilderProfile } from './entities/builder-profile.entity';
 import { CreateBuilderDto } from './dto/create-builder.dto';
 import { UpdateBuilderDto } from './dto/update-builder.dto';
 import { UserRole } from 'src/common/enum/user-role.enum';
+import { Property } from 'src/property/entities/property.entity';
+import { Project } from 'src/project/entities/project.entity';
+import { Inquiry } from 'src/inquiry/entities/inquiry.entity';
+import { Bounty } from 'src/bounty/entities/bounty.entity';
 export declare class BuilderService {
     private userModel;
     private builderProfileModel;
-    constructor(userModel: Model<UserDocument>, builderProfileModel: Model<BuilderProfile>);
+    private propertyModel;
+    private projectModel;
+    private inquiryModel;
+    private bountyModel;
+    constructor(userModel: Model<UserDocument>, builderProfileModel: Model<BuilderProfile>, propertyModel: Model<Property>, projectModel: Model<Project>, inquiryModel: Model<Inquiry>, bountyModel: Model<Bounty>);
     create(createBuilderDto: CreateBuilderDto): Promise<{
         user: import("mongoose").Document<unknown, {}, UserDocument, {}, {}> & User & import("mongoose").Document<Types.ObjectId, any, any, Record<string, any>, {}> & Required<{
             _id: Types.ObjectId;
@@ -890,5 +898,92 @@ export declare class BuilderService {
         _id: Types.ObjectId;
     }> & {
         __v: number;
+    }>;
+    updateProfile(userId: string, dto: any): Promise<import("mongoose").Document<unknown, {}, BuilderProfile, {}, {}> & BuilderProfile & Required<{
+        _id: Types.ObjectId;
+    }> & {
+        __v: number;
+    }>;
+    updateSocialLinks(userId: string, dto: any): Promise<{
+        socialLinks: {
+            website?: string;
+            facebook?: string;
+            instagram?: string;
+            linkedin?: string;
+        };
+    }>;
+    updateCompanyLogo(userId: string, logoUrl: string): Promise<{
+        companyLogo: string;
+    }>;
+    getStatistics(userId: string): Promise<{
+        totalProjects: number;
+        ongoingProjects: number;
+        completedProjects: number;
+        rating: number;
+        isVerified: boolean;
+    }>;
+    getBuilderProperties(builderId: string, page?: number, limit?: number): Promise<{
+        properties: (import("mongoose").FlattenMaps<Property> & Required<{
+            _id: Types.ObjectId;
+        }> & {
+            __v: number;
+        })[];
+        pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    getBuilderProjects(builderId: string, page?: number, limit?: number): Promise<{
+        projects: (import("mongoose").FlattenMaps<Project> & Required<{
+            _id: Types.ObjectId;
+        }> & {
+            __v: number;
+        })[];
+        pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    getBuilderInquiries(builderId: string, page?: number, limit?: number): Promise<{
+        inquiries: (import("mongoose").FlattenMaps<Inquiry> & Required<{
+            _id: Types.ObjectId;
+        }> & {
+            __v: number;
+        })[];
+        pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
+    }>;
+    getBuilderBounties(builderId: string, page?: number, limit?: number): Promise<{
+        bounties: (import("mongoose").FlattenMaps<{
+            title: string;
+            description: string;
+            rewardAmount: number;
+            type: import("../bounty/enum/bounty.enum").BountyType;
+            status: import("../bounty/enum/bounty.enum").BountyStatus;
+            requirements: string[];
+            expiryDate?: Date;
+            createdBy: Types.ObjectId;
+            project: Types.ObjectId;
+            createdAt: Date;
+            updatedAt: Date;
+        }> & {
+            _id: Types.ObjectId;
+        } & {
+            __v: number;
+        })[];
+        pagination: {
+            total: number;
+            page: number;
+            limit: number;
+            totalPages: number;
+        };
     }>;
 }

@@ -36,9 +36,8 @@ export class UserLeadsController {
   async create(@CurrentUser() user: any, @Body() dto: CreateLeadDto) {
     const data = await this.leadService.create(user.userId, dto, 'mobile_app');
     return {
-      success: true,
-      message: 'Your inquiry has been submitted successfully',
       data,
+      message: 'Your inquiry has been submitted successfully',
     };
   }
 
@@ -50,8 +49,8 @@ export class UserLeadsController {
   async getMyLeads(@CurrentUser() user: any, @Query() filters: any) {
     const data = await this.leadService.findByUser(user.userId, filters);
     return {
-      success: true,
       data,
+      message: 'Leads retrieved successfully',
     };
   }
 
@@ -62,8 +61,8 @@ export class UserLeadsController {
   async findOne(@Param('id') id: string) {
     const data = await this.leadService.findOne(id);
     return {
-      success: true,
       data,
+      message: 'Lead details retrieved successfully',
     };
   }
 }

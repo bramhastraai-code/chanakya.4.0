@@ -9,6 +9,7 @@ import {
   IsPhoneNumber,
   Matches,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { UserRole } from 'src/common/enum/user-role.enum';
 
 export class RegisterDto {
@@ -23,6 +24,7 @@ export class RegisterDto {
   email: string;
 
   @ApiProperty({ example: '+919876543210' })
+  @Transform(({ value }) => value?.trim())
   @IsPhoneNumber('IN')
   @IsNotEmpty()
   phoneNumber: string;
@@ -65,6 +67,7 @@ export class RegisterDto {
 
 export class LoginDto {
   @ApiProperty({ example: 'john@example.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -82,6 +85,7 @@ export class LoginDto {
 
 export class SendOtpDto {
   @ApiProperty({ example: 'john@example.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -89,6 +93,7 @@ export class SendOtpDto {
 
 export class VerifyOtpDto {
   @ApiProperty({ example: 'john@example.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsNotEmpty()
   email: string;

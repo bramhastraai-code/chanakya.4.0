@@ -4,9 +4,10 @@ import { CreateAmenityDto } from './dto/create-amenity.dto';
 import { UpdateAmenityDto } from './dto/update-amenity.dto';
 export declare class AmenityService {
     private readonly amenityModel;
+    private readonly logger;
     constructor(amenityModel: Model<Amenity>);
     create(createAmenityDto: CreateAmenityDto): Promise<Amenity>;
-    update(id: string, updateAmenityDto: UpdateAmenityDto): Promise<Amenity | null>;
+    update(id: string, updateAmenityDto: UpdateAmenityDto): Promise<Amenity>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string): Promise<{
         amenities: Amenity[];
         totalPages: number;
@@ -14,12 +15,12 @@ export declare class AmenityService {
         pageSize: number;
         pageNumber: number;
     }>;
-    findOne(id: string): Promise<Amenity | null>;
+    findOne(id: string): Promise<Amenity>;
     remove(id: string): Promise<{
         deletedCount: number;
     }>;
     AmenityList(): Promise<{
-        value: import("mongoose").Types.ObjectId;
+        value: string;
         label: string;
     }[]>;
 }

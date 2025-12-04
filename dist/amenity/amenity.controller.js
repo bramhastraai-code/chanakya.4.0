@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AmenityController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AmenityController = void 0;
 const common_1 = require("@nestjs/common");
@@ -20,17 +21,19 @@ const amenity_entity_1 = require("./entities/amenity.entity");
 const create_amenity_dto_1 = require("./dto/create-amenity.dto");
 const update_amenity_dto_1 = require("./dto/update-amenity.dto");
 const jwt_guard_1 = require("../core/guards/jwt.guard");
+const common_2 = require("@nestjs/common");
 const roles_guard_1 = require("../common/guards/roles.guard");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const user_role_enum_1 = require("../common/enum/user-role.enum");
-let AmenityController = class AmenityController {
+let AmenityController = AmenityController_1 = class AmenityController {
     constructor(amenityService) {
         this.amenityService = amenityService;
+        this.logger = new common_2.Logger(AmenityController_1.name);
     }
     async create(createAmenityDto) {
         try {
             const data = await this.amenityService.create(createAmenityDto);
-            console.log('amenities create', data);
+            this.logger.log(`Amenity created: ${data._id}`);
             return { data, message: 'amenities created' };
         }
         catch (error) {
@@ -253,9 +256,9 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AmenityController.prototype, "amenityList", null);
-exports.AmenityController = AmenityController = __decorate([
+exports.AmenityController = AmenityController = AmenityController_1 = __decorate([
     (0, swagger_1.ApiTags)('amenities'),
-    (0, common_1.Controller)('amenities'),
+    (0, common_1.Controller)('amenity'),
     __metadata("design:paramtypes", [amenity_service_1.AmenityService])
 ], AmenityController);
 //# sourceMappingURL=amenity.controller.js.map

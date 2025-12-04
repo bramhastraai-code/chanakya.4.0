@@ -4,30 +4,62 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
+  Logger,
 } from '@nestjs/common';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
-@Catch(HttpException)
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  private readonly logger = new Logger(HttpExceptionFilter.name);
+
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const status = exception.getStatus();
-    const exceptionResponse = exception.getResponse();
+    const request = ctx.getRequest<Request>();
 
+    let status = HttpStatus.INTERNAL_SERVER_ERROR;
     let errorCode = 'SERVER_ERROR';
     let message = 'An error occurred';
     let details = {};
 
-    if (typeof exceptionResponse === 'object') {
-      const responseObj = exceptionResponse as any;
-      message = responseObj.message || message;
-      errorCode = responseObj.error || this.getErrorCode(status);
-      details = responseObj.details || {};
+    if (exception instanceof HttpException) {
+      status = exception.getStatus();
+      const exceptionResponse = exception.getResponse();
+
+      if (typeof exceptionResponse === 'object') {
+        const responseObj = exceptionResponse as any;
+        message = responseObj.message || message;
+        errorCode = responseObj.error || this.getErrorCode(status);
+        details = responseObj.details || {};
+      } else {
+        message = exceptionResponse as string;
+        errorCode = this.getErrorCode(status);
+      }
+    } else if (exception instanceof Error) {
+      // Handle standard JavaScript errors (e.g., MongoDB errors, validation errors)
+      message = exception.message;
+      errorCode = 'SERVER_ERROR';
+      
+      // Log the full error with stack trace for debugging
+      this.logger.error(
+        `Unhandled Error: ${exception.message}`,
+        exception.stack,
+        `${request.method} ${request.url}`,
+      );
     } else {
-      message = exceptionResponse as string;
-      errorCode = this.getErrorCode(status);
+      // Handle completely unknown errors
+      this.logger.error(
+        'Unknown error occurred',
+        JSON.stringify(exception),
+        `${request.method} ${request.url}`,
+      );
+      message = 'An unexpected error occurred';
     }
+
+    // Log all errors for monitoring
+    this.logger.warn(
+      `${request.method} ${request.url} - ${status} - ${errorCode}: ${Array.isArray(message) ? message.join(', ') : message}`,
+    );
 
     response.status(status).json({
       success: false,
@@ -36,6 +68,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
         message: Array.isArray(message) ? message.join(', ') : message,
         details,
       },
+      timestamp: new Date().toISOString(),
+      path: request.url,
     });
   }
 

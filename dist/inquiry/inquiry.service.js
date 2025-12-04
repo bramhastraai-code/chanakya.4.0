@@ -17,9 +17,13 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const inquiry_entity_1 = require("./entities/inquiry.entity");
+const property_entity_1 = require("../property/entities/property.entity");
+const project_entity_1 = require("../project/entities/project.entity");
 let InquiryService = class InquiryService {
-    constructor(inquiryModel) {
+    constructor(inquiryModel, propertyModel, projectModel) {
         this.inquiryModel = inquiryModel;
+        this.propertyModel = propertyModel;
+        this.projectModel = projectModel;
     }
     async create(createInquiryDto) {
         try {
@@ -40,7 +44,7 @@ let InquiryService = class InquiryService {
         }
         return updatedInquiry;
     }
-    async findAll(pageSize = '10', pageNumber = '1', sortBy = 'createdAt', sortOrder = 'desc', searchQuery, inquiryType, status) {
+    async findAll(pageSize = '10', pageNumber = '1', sortBy = 'createdAt', sortOrder = 'desc', searchQuery, inquiryType, status, projectId, propertyId, builderId) {
         const limit = parseInt(pageSize, 10);
         const skip = (parseInt(pageNumber, 10) - 1) * limit;
         const query = {};
@@ -56,6 +60,25 @@ let InquiryService = class InquiryService {
         }
         if (status) {
             query.status = status;
+        }
+        if (projectId) {
+            query.projectId = new mongoose_2.Types.ObjectId(projectId);
+        }
+        if (propertyId) {
+            query.propertyId = new mongoose_2.Types.ObjectId(propertyId);
+        }
+        if (builderId) {
+            const builderObjectId = new mongoose_2.Types.ObjectId(builderId);
+            const builderProjects = await this.projectModel
+                .find({ builder: builderObjectId })
+                .distinct('_id');
+            const builderProperties = await this.propertyModel
+                .find({ builder: builderObjectId })
+                .distinct('_id');
+            query.$or = [
+                { projectId: { $in: builderProjects } },
+                { propertyId: { $in: builderProperties } },
+            ];
         }
         const inquiries = await this.inquiryModel
             .find(query)
@@ -87,6 +110,10 @@ exports.InquiryService = InquiryService;
 exports.InquiryService = InquiryService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(inquiry_entity_1.Inquiry.name)),
-    __metadata("design:paramtypes", [mongoose_2.Model])
+    __param(1, (0, mongoose_1.InjectModel)(property_entity_1.Property.name)),
+    __param(2, (0, mongoose_1.InjectModel)(project_entity_1.Project.name)),
+    __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model])
 ], InquiryService);
 //# sourceMappingURL=inquiry.service.js.map

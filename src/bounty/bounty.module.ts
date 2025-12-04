@@ -5,9 +5,8 @@ import {
   BountySubmission,
   BountySubmissionSchema,
 } from './entities/bounty-submission.entity';
-import { BountyV1Service } from './services/bounty-v1.service';
-import { UserBountyController } from './controllers/v1/user-bounty.controller';
-import { AdminBountyController } from './controllers/v1/admin-bounty.controller';
+import { BountyService } from './bounty.service';
+import { BountyController } from './bounty.controller';
 import { WalletModule } from '../wallet/wallet.module';
 import { Project, ProjectSchema } from '../project/entities/project.entity';
 
@@ -20,8 +19,8 @@ import { Project, ProjectSchema } from '../project/entities/project.entity';
     ]),
     WalletModule,
   ],
-  controllers: [UserBountyController, AdminBountyController],
-  providers: [BountyV1Service],
-  exports: [BountyV1Service],
+  controllers: [BountyController],
+  providers: [BountyService],
+  exports: [BountyService],
 })
 export class BountyModule {}

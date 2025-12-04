@@ -24,19 +24,14 @@ const schedule_1 = require("@nestjs/schedule");
 const firebase_module_1 = require("./firebase/firebase.module");
 const notification_module_1 = require("./notification/notification.module");
 const core_module_1 = require("./core/core.module");
-const agent_profile_module_1 = require("./profiles/agent/agent-profile.module");
-const builder_profile_module_1 = require("./profiles/builder/builder-profile.module");
-const customer_profile_module_1 = require("./profiles/customer/customer-profile.module");
-const super_admin_profile_module_1 = require("./profiles/super-admin/super-admin-profile.module");
+const customer_profile_module_1 = require("./customer/customer-profile.module");
+const super_admin_profile_module_1 = require("./super-admin/super-admin-profile.module");
 const lead_module_1 = require("./lead/lead.module");
 const requirement_module_1 = require("./requirement/requirement.module");
 const bounty_module_1 = require("./bounty/bounty.module");
 const wallet_module_1 = require("./wallet/wallet.module");
 const kyc_module_1 = require("./kyc/kyc.module");
-const ai_module_1 = require("./ai/ai.module");
-const website_module_1 = require("./website/website.module");
 const subscription_module_1 = require("./subscription/subscription.module");
-const dashboard_module_1 = require("./dashboard/dashboard.module");
 const agent_module_1 = require("./agent/agent.module");
 let AppModule = class AppModule {
 };
@@ -61,9 +56,7 @@ exports.AppModule = AppModule = __decorate([
                 }),
             }),
             core_module_1.CoreModule,
-            agent_profile_module_1.AgentProfileModule,
             agent_module_1.AgentModule,
-            builder_profile_module_1.BuilderProfileModule,
             builder_module_1.BuilderModule,
             customer_profile_module_1.UserProfileModule,
             super_admin_profile_module_1.SuperAdminProfileModule,
@@ -73,7 +66,6 @@ exports.AppModule = AppModule = __decorate([
             wallet_module_1.WalletModule,
             kyc_module_1.KycModule,
             subscription_module_1.SubscriptionModule,
-            dashboard_module_1.DashboardModule,
             property_module_1.PropertyModule,
             project_module_1.ProjectModule,
             amenity_module_1.AmenityModule,
@@ -84,8 +76,6 @@ exports.AppModule = AppModule = __decorate([
             schedule_1.ScheduleModule.forRoot(),
             firebase_module_1.FirebaseModule,
             notification_module_1.NotificationModule,
-            ai_module_1.AiModule,
-            website_module_1.WebsiteModule,
         ],
     })
 ], AppModule);

@@ -8,7 +8,7 @@ export declare class InquiryController {
     constructor(inquiryService: InquiryService);
     create(createInquiryDto: CreateInquiryDto): Promise<Response<Inquiry>>;
     update(id: string, updateInquiryDto: UpdateInquiryDto): Promise<Inquiry>;
-    findAll(pageSize?: string, pageNumber?: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, inquiryType?: 'common' | 'groupBuy' | 'agentSelection' | 'quickBuy' | 'siteVisit', status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED'): Promise<Response<{
+    findAll(pageSize?: string, pageNumber?: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, inquiryType?: 'common' | 'groupBuy' | 'agentSelection' | 'quickBuy' | 'siteVisit', status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED', projectId?: string, propertyId?: string, builderId?: string): Promise<Response<{
         inquiries: Inquiry[];
         totalPages: number;
         totalInquiries: number;

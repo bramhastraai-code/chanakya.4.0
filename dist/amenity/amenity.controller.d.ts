@@ -5,6 +5,7 @@ import { UpdateAmenityDto } from './dto/update-amenity.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 export declare class AmenityController {
     private readonly amenityService;
+    private readonly logger;
     constructor(amenityService: AmenityService);
     create(createAmenityDto: CreateAmenityDto): Promise<Response<Amenity>>;
     update(id: string, updateAmenityDto: UpdateAmenityDto): Promise<Amenity>;

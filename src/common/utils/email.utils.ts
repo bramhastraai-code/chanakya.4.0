@@ -1,4 +1,7 @@
 import * as nodemailer from 'nodemailer';
+import { Logger } from '@nestjs/common';
+
+const logger = new Logger('EmailUtils');
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
@@ -209,9 +212,9 @@ const assignedEmail = ({
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error);
+      logger.error(`Failed to send email: ${error.message}`, error.stack);
     } else {
-      console.log('Email sent: ' + info.response);
+      logger.log(`Email sent: ${info.response}`);
       return;
     }
   });

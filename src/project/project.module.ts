@@ -11,6 +11,10 @@ import {
   Property,
   PropertySchema,
 } from 'src/property/entities/property.entity';
+import {
+  BookmarkedProperty,
+  BookmarkedPropertySchema,
+} from 'src/property/entities/bookmarked-property.entity';
 import { PropertyService } from 'src/property/property.service';
 import { S3Service } from 'src/s3/s3.service';
 
@@ -19,7 +23,7 @@ import { S3Service } from 'src/s3/s3.service';
     MongooseModule.forFeature([
       { name: Project.name, schema: ProjectSchema },
       { name: Property.name, schema: PropertySchema },
-
+      { name: BookmarkedProperty.name, schema: BookmarkedPropertySchema },
       { name: Amenity.name, schema: AmenitySchema },
       { name: User.name, schema: UserSchema },
       { name: Bounty.name, schema: BountySchema },

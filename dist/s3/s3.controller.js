@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var S3Controller_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Controller = void 0;
 const common_1 = require("@nestjs/common");
@@ -19,9 +20,11 @@ const s3_service_1 = require("./s3.service");
 const swagger_1 = require("@nestjs/swagger");
 const uploadfile_s3_dto_1 = require("./dto/uploadfile.s3.dto");
 const UploadFiles_s3_dto_1 = require("./dto/UploadFiles.s3.dto");
-let S3Controller = class S3Controller {
+const common_2 = require("@nestjs/common");
+let S3Controller = S3Controller_1 = class S3Controller {
     constructor(s3Service) {
         this.s3Service = s3Service;
+        this.logger = new common_2.Logger(S3Controller_1.name);
     }
     async uploadFile(file, uploadFileDto) {
         if (!file) {
@@ -38,7 +41,7 @@ let S3Controller = class S3Controller {
         return { data, message: 'Uploaded multiple images successfully' };
     }
     async deleteFile(key) {
-        console.log('Received key:', key);
+        this.logger.log(`Deleting file with key: ${key}`);
         const data = await this.s3Service.deleteFile(key);
         return { data, message: 'File deleted successfully' };
     }
@@ -212,7 +215,7 @@ __decorate([
     __metadata("design:paramtypes", [Object, String]),
     __metadata("design:returntype", Promise)
 ], S3Controller.prototype, "uploadPDF", null);
-exports.S3Controller = S3Controller = __decorate([
+exports.S3Controller = S3Controller = S3Controller_1 = __decorate([
     (0, swagger_1.ApiTags)('S3'),
     (0, common_1.Controller)('s3'),
     __metadata("design:paramtypes", [s3_service_1.S3Service])

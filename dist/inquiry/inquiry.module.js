@@ -13,6 +13,8 @@ const inquiry_controller_1 = require("./inquiry.controller");
 const inquiry_service_1 = require("./inquiry.service");
 const inquiry_entity_1 = require("./entities/inquiry.entity");
 const user_entity_1 = require("../core/entities/user.entity");
+const property_entity_1 = require("../property/entities/property.entity");
+const project_entity_1 = require("../project/entities/project.entity");
 let InquiryModule = class InquiryModule {
 };
 exports.InquiryModule = InquiryModule;
@@ -22,6 +24,8 @@ exports.InquiryModule = InquiryModule = __decorate([
             mongoose_1.MongooseModule.forFeature([
                 { name: inquiry_entity_1.Inquiry.name, schema: inquiry_entity_1.InquirySchema },
                 { name: user_entity_1.User.name, schema: user_entity_1.UserSchema },
+                { name: property_entity_1.Property.name, schema: property_entity_1.PropertySchema },
+                { name: project_entity_1.Project.name, schema: project_entity_1.ProjectSchema },
             ]),
         ],
         controllers: [inquiry_controller_1.InquiryController],

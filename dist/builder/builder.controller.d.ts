@@ -2,16 +2,53 @@ import { BuilderService } from './builder.service';
 import { CreateBuilderDto } from './dto/create-builder.dto';
 import { UpdateBuilderDto } from './dto/update-builder.dto';
 import { UserRole } from 'src/common/enum/user-role.enum';
+import { S3Service } from 'src/s3/s3.service';
 export declare class BuilderController {
     private readonly builderService;
-    constructor(builderService: BuilderService);
+    private readonly s3Service;
+    constructor(builderService: BuilderService, s3Service: S3Service);
     getProfile(user: any): Promise<{
-        success: boolean;
-        data: import("mongoose").FlattenMaps<import("../profiles/builder/entities/builder-profile.entity").BuilderProfile> & Required<{
+        data: import("mongoose").FlattenMaps<import("./entities/builder-profile.entity").BuilderProfile> & Required<{
             _id: import("mongoose").Types.ObjectId;
         }> & {
             __v: number;
         };
+        message: string;
+    }>;
+    updateProfile(user: any, dto: any): Promise<{
+        data: import("mongoose").Document<unknown, {}, import("./entities/builder-profile.entity").BuilderProfile, {}, {}> & import("./entities/builder-profile.entity").BuilderProfile & Required<{
+            _id: import("mongoose").Types.ObjectId;
+        }> & {
+            __v: number;
+        };
+        message: string;
+    }>;
+    updateSocialLinks(user: any, dto: any): Promise<{
+        data: {
+            socialLinks: {
+                website?: string;
+                facebook?: string;
+                instagram?: string;
+                linkedin?: string;
+            };
+        };
+        message: string;
+    }>;
+    uploadLogo(user: any, file: Express.Multer.File): Promise<{
+        data: {
+            companyLogo: string;
+        };
+        message: string;
+    }>;
+    getStatistics(user: any): Promise<{
+        data: {
+            totalProjects: number;
+            ongoingProjects: number;
+            completedProjects: number;
+            rating: number;
+            isVerified: boolean;
+        };
+        message: string;
     }>;
 }
 export declare class BuilderAdminController {
@@ -23,7 +60,7 @@ export declare class BuilderAdminController {
         }> & {
             __v: number;
         };
-        profile: import("mongoose").Document<unknown, {}, import("../profiles/builder/entities/builder-profile.entity").BuilderProfile, {}, {}> & import("../profiles/builder/entities/builder-profile.entity").BuilderProfile & Required<{
+        profile: import("mongoose").Document<unknown, {}, import("./entities/builder-profile.entity").BuilderProfile, {}, {}> & import("./entities/builder-profile.entity").BuilderProfile & Required<{
             _id: import("mongoose").Types.ObjectId;
         }> & {
             __v: number;
@@ -31,7 +68,7 @@ export declare class BuilderAdminController {
     }>;
     findAll(page?: number, limit?: number, search?: string, sort?: string, order?: 'asc' | 'desc', isActive?: boolean): Promise<{
         data: {
-            profile: import("mongoose").FlattenMaps<import("../profiles/builder/entities/builder-profile.entity").BuilderProfile> & Required<{
+            profile: import("mongoose").FlattenMaps<import("./entities/builder-profile.entity").BuilderProfile> & Required<{
                 _id: import("mongoose").Types.ObjectId;
             }> & {
                 __v: number;
@@ -323,7 +360,7 @@ export declare class BuilderAdminController {
         };
     }>;
     findOne(id: string): Promise<{
-        profile: import("mongoose").FlattenMaps<import("../profiles/builder/entities/builder-profile.entity").BuilderProfile> & Required<{
+        profile: import("mongoose").FlattenMaps<import("./entities/builder-profile.entity").BuilderProfile> & Required<{
             _id: import("mongoose").Types.ObjectId;
         }> & {
             __v: number;
@@ -608,7 +645,7 @@ export declare class BuilderAdminController {
         __v: number;
     }>;
     update(id: string, updateBuilderDto: UpdateBuilderDto): Promise<{
-        profile: import("mongoose").FlattenMaps<import("../profiles/builder/entities/builder-profile.entity").BuilderProfile> & Required<{
+        profile: import("mongoose").FlattenMaps<import("./entities/builder-profile.entity").BuilderProfile> & Required<{
             _id: import("mongoose").Types.ObjectId;
         }> & {
             __v: number;
@@ -893,6 +930,82 @@ export declare class BuilderAdminController {
         __v: number;
     }>;
     remove(id: string): Promise<{
+        message: string;
+    }>;
+    getBuilderProperties(id: string, page?: number, limit?: number): Promise<{
+        data: {
+            properties: (import("mongoose").FlattenMaps<import("../property/entities/property.entity").Property> & Required<{
+                _id: import("mongoose").Types.ObjectId;
+            }> & {
+                __v: number;
+            })[];
+            pagination: {
+                total: number;
+                page: number;
+                limit: number;
+                totalPages: number;
+            };
+        };
+        message: string;
+    }>;
+    getBuilderProjects(id: string, page?: number, limit?: number): Promise<{
+        data: {
+            projects: (import("mongoose").FlattenMaps<import("../project/entities/project.entity").Project> & Required<{
+                _id: import("mongoose").Types.ObjectId;
+            }> & {
+                __v: number;
+            })[];
+            pagination: {
+                total: number;
+                page: number;
+                limit: number;
+                totalPages: number;
+            };
+        };
+        message: string;
+    }>;
+    getBuilderInquiries(id: string, page?: number, limit?: number): Promise<{
+        data: {
+            inquiries: (import("mongoose").FlattenMaps<import("../inquiry/entities/inquiry.entity").Inquiry> & Required<{
+                _id: import("mongoose").Types.ObjectId;
+            }> & {
+                __v: number;
+            })[];
+            pagination: {
+                total: number;
+                page: number;
+                limit: number;
+                totalPages: number;
+            };
+        };
+        message: string;
+    }>;
+    getBuilderBounties(id: string, page?: number, limit?: number): Promise<{
+        data: {
+            bounties: (import("mongoose").FlattenMaps<{
+                title: string;
+                description: string;
+                rewardAmount: number;
+                type: import("../bounty/enum/bounty.enum").BountyType;
+                status: import("../bounty/enum/bounty.enum").BountyStatus;
+                requirements: string[];
+                expiryDate?: Date;
+                createdBy: import("mongoose").Types.ObjectId;
+                project: import("mongoose").Types.ObjectId;
+                createdAt: Date;
+                updatedAt: Date;
+            }> & {
+                _id: import("mongoose").Types.ObjectId;
+            } & {
+                __v: number;
+            })[];
+            pagination: {
+                total: number;
+                page: number;
+                limit: number;
+                totalPages: number;
+            };
+        };
         message: string;
     }>;
 }

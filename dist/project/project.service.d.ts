@@ -10,6 +10,7 @@ export declare class ProjectService {
     private projectModel;
     private bountyModel;
     private readonly propertyService;
+    private readonly logger;
     constructor(projectModel: Model<Project>, bountyModel: Model<Bounty>, propertyService: PropertyService);
     create(createProjectDto: CreateProjectDto): Promise<Project>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<{

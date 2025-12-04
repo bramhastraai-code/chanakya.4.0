@@ -43,8 +43,8 @@ export class NotificationController {
       unreadOnly,
     );
     return {
-      success: true,
       data,
+      message: 'Notifications retrieved successfully',
     };
   }
 
@@ -57,7 +57,7 @@ export class NotificationController {
   async markAsRead(@Param('id') id: string, @CurrentUser() user: any) {
     await this.notificationService.markAsRead(id, user.userId);
     return {
-      success: true,
+      data: null,
       message: 'Notification marked as read',
     };
   }
@@ -71,7 +71,7 @@ export class NotificationController {
   async markAllAsRead(@CurrentUser() user: any) {
     await this.notificationService.markAllAsRead(user.userId);
     return {
-      success: true,
+      data: null,
       message: 'All notifications marked as read',
     };
   }

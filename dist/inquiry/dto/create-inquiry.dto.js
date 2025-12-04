@@ -40,6 +40,7 @@ __decorate([
         description: 'Phone number of the customer',
         required: false,
     }),
+    (0, class_transformer_1.Transform)(({ value }) => value?.trim()),
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)

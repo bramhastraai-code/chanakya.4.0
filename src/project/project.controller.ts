@@ -23,11 +23,13 @@ import {
   ApiInternalServerErrorResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { Types } from 'mongoose';
 import { ProjectService } from './project.service';
 import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
+import { Logger } from '@nestjs/common';
 import {
   GetProjectByAffordabilityDto,
   GetProjectByCategoryDto,
@@ -45,6 +47,8 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 @ApiTags('projects')
 @Controller('projects')
 export class ProjectController {
+  private readonly logger = new Logger(ProjectController.name);
+
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
@@ -68,9 +72,14 @@ export class ProjectController {
     @Body() createProjectDto: CreateProjectDto,
     @CurrentUser() user: any,
   ): Promise<Response<Project>> {
-    // Set createdBy and updatedBy from authenticated user
-    createProjectDto.createdBy = user.userId;
-    createProjectDto.updatedBy = user.userId;
+    // Convert userId string to ObjectId and set createdBy and updatedBy from authenticated user
+    const userObjectId = new Types.ObjectId(user.userId);
+    createProjectDto.createdBy = userObjectId.toString();
+    createProjectDto.updatedBy = userObjectId.toString();
+
+    if (user.role === UserRole.BUILDER) {
+      createProjectDto.builder = userObjectId.toString();
+    }
 
     const data = await this.projectService.create(createProjectDto);
     return { data, message: 'created successfully' };
@@ -122,9 +131,8 @@ export class ProjectController {
   async getProjectsWithActiveBounties() {
     const projects = await this.projectService.findProjectsWithActiveBounties();
     return {
-      success: true,
-      message: 'Projects with active bounties retrieved successfully.',
       data: projects,
+      message: 'Projects with active bounties retrieved successfully.',
     };
   }
 
@@ -276,8 +284,13 @@ export class ProjectController {
     @Body() updateProjectDto: UpdateProjectDto,
     @CurrentUser() user: any,
   ): Promise<Response<Project>> {
-    // Set updatedBy from authenticated user
-    updateProjectDto.updatedBy = user.userId;
+    // Convert userId string to ObjectId and set updatedBy from authenticated user
+    const userObjectId = new Types.ObjectId(user.userId);
+    updateProjectDto.updatedBy = userObjectId.toString();
+
+    if (user.role === UserRole.BUILDER) {
+      updateProjectDto.builder = userObjectId.toString();
+    }
 
     const data = await this.projectService.update(id, updateProjectDto);
     return { data, message: 'updated successfully' };
@@ -375,13 +388,13 @@ export class ProjectController {
     @Query() getProjectByAffordabilityDto: GetProjectByAffordabilityDto,
   ): Promise<Response<FeaturedProjectDto[]>> {
     const { affordability, city } = getProjectByAffordabilityDto;
-    console.log(affordability);
+    this.logger.log(`Getting projects by affordability: ${affordability}, city: ${city}`);
 
     const data = await this.projectService.getProjectsByAffordability(
       affordability,
       city,
     );
-    console.log(data);
+    this.logger.log(`Retrieved ${data.length} projects`);
 
     return { data, message: 'retrieve successfully' };
   }
@@ -518,8 +531,13 @@ export class ProjectController {
     @CurrentUser() user: any,
   ): Promise<Response<Project>> {
     // Set createdBy and updatedBy from authenticated user
-    createProjectDto.createdBy = user.userId;
-    createProjectDto.updatedBy = user.userId;
+    const userObjectId = new Types.ObjectId(user.userId);
+    createProjectDto.createdBy = userObjectId.toString();
+    createProjectDto.updatedBy = userObjectId.toString();
+
+    if (user.role === UserRole.BUILDER) {
+      createProjectDto.builder = userObjectId.toString();
+    }
 
     const data = await this.projectService.create(createProjectDto);
     return { data, message: 'Project created successfully' };
@@ -595,8 +613,13 @@ export class ProjectController {
     @Body() updateProjectDto: UpdateProjectDto,
     @CurrentUser() user: any,
   ): Promise<Response<Project>> {
-    // Set updatedBy from authenticated user
-    updateProjectDto.updatedBy = user.userId;
+    // Convert userId string to ObjectId and set updatedBy from authenticated user
+    const userObjectId = new Types.ObjectId(user.userId);
+    updateProjectDto.updatedBy = userObjectId.toString();
+
+    if (user.role === UserRole.BUILDER) {
+      updateProjectDto.builder = userObjectId.toString();
+    }
 
     const data = await this.projectService.update(projectId, updateProjectDto);
     return { data, message: 'Project updated successfully' };

@@ -1,14 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { Inquiry } from './entities/inquiry.entity';
 import { CreateInquiryDto } from './dto/create-inquiry.dto';
 import { UpdateInquiryDto } from './dto/update-inquiry.dto';
+import { Property } from '../property/entities/property.entity';
+import { Project } from '../project/entities/project.entity';
 
 @Injectable()
 export class InquiryService {
   constructor(
     @InjectModel(Inquiry.name) private readonly inquiryModel: Model<Inquiry>,
+    @InjectModel(Property.name) private readonly propertyModel: Model<Property>,
+    @InjectModel(Project.name) private readonly projectModel: Model<Project>,
   ) {}
   async create(createInquiryDto: CreateInquiryDto): Promise<Inquiry> {
     try {
@@ -49,7 +53,10 @@ export class InquiryService {
       | 'agentSelection'
       | 'quickBuy'
       | 'siteVisit',
-    status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED', // Optional status filter
+    status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED',
+    projectId?: string,
+    propertyId?: string,
+    builderId?: string,
   ): Promise<{
     inquiries: Inquiry[];
     totalPages: number;
@@ -76,6 +83,37 @@ export class InquiryService {
 
     if (status) {
       query.status = status;
+    }
+
+    // Filter by projectId directly
+    if (projectId) {
+      query.projectId = new Types.ObjectId(projectId);
+    }
+
+    // Filter by propertyId directly
+    if (propertyId) {
+      query.propertyId = new Types.ObjectId(propertyId);
+    }
+
+    // Filter by builderId - find projects/properties by builder, then filter inquiries
+    if (builderId) {
+      const builderObjectId = new Types.ObjectId(builderId);
+      
+      // Find all projects by this builder
+      const builderProjects = await this.projectModel
+        .find({ builder: builderObjectId })
+        .distinct('_id');
+      
+      // Find all properties by this builder
+      const builderProperties = await this.propertyModel
+        .find({ builder: builderObjectId })
+        .distinct('_id');
+      
+      // Filter inquiries that reference these projects or properties
+      query.$or = [
+        { projectId: { $in: builderProjects } },
+        { propertyId: { $in: builderProperties } },
+      ];
     }
 
     const inquiries = await this.inquiryModel

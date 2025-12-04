@@ -54,8 +54,9 @@ export class AgentController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a new agent (Admin)' })
   @ApiResponse({ status: 201, description: 'Agent created successfully' })
-  create(@Body() createAgentDto: CreateAgentDto) {
-    return this.agentService.create(createAgentDto);
+  async create(@Body() createAgentDto: CreateAgentDto) {
+    const data = await this.agentService.create(createAgentDto);
+    return { data, message: 'Agent created successfully' };
   }
 
   @Get()
@@ -69,6 +70,25 @@ export class AgentController {
   @ApiQuery({ name: 'sort', required: false, type: String })
   @ApiQuery({ name: 'order', required: false, enum: ['asc', 'desc'] })
   @ApiQuery({ name: 'isActive', required: false, type: Boolean })
+  @ApiQuery({
+    name: 'projectId',
+    required: false,
+    type: String,
+    description:
+      'Filter agents who created properties/projects in this project',
+  })
+  @ApiQuery({
+    name: 'propertyId',
+    required: false,
+    type: String,
+    description: 'Filter agent who created this property',
+  })
+  @ApiQuery({
+    name: 'builderId',
+    required: false,
+    type: String,
+    description: 'Filter agents by builder association',
+  })
   findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
@@ -76,6 +96,9 @@ export class AgentController {
     @Query('sort') sort?: string,
     @Query('order') order?: 'asc' | 'desc',
     @Query('isActive') isActive?: boolean,
+    @Query('projectId') projectId?: string,
+    @Query('propertyId') propertyId?: string,
+    @Query('builderId') builderId?: string,
   ) {
     return this.agentService.findAll(
       page,
@@ -83,7 +106,9 @@ export class AgentController {
       search,
       sort,
       order,
-      isActive !== undefined ? { isActive } : undefined,
+      isActive !== undefined
+        ? { isActive, projectId, propertyId, builderId }
+        : { projectId, propertyId, builderId },
     );
   }
 
@@ -115,7 +140,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Get agent dashboard statistics' })
   async getStats(@CurrentUser() user: any) {
     const data = await this.agentService.getDashboardStats(user.userId);
-    return { success: true, data };
+    return { data, message: 'Dashboard statistics retrieved successfully' };
   }
 
   @Get('dashboard/listings-summary')
@@ -123,7 +148,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Get listings summary' })
   async getListingsSummary(@CurrentUser() user: any) {
     const data = await this.agentService.getListingsSummary(user.userId);
-    return { success: true, data };
+    return { data, message: 'Listings summary retrieved successfully' };
   }
 
   @Get('profile')
@@ -131,7 +156,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Get agent profile' })
   async getProfile(@CurrentUser() user: any) {
     const data = await this.agentService.getProfile(user.userId);
-    return { success: true, data };
+    return { data, message: 'Profile retrieved successfully' };
   }
 
   @Put('profile')
@@ -142,7 +167,7 @@ export class AgentController {
     @Body() updateDto: UpdateProfileDto,
   ) {
     const data = await this.agentService.updateProfile(user.userId, updateDto);
-    return { success: true, message: 'Profile updated successfully', data };
+    return { data, message: 'Profile updated successfully' };
   }
 
   @Put('profile/social-links')
@@ -156,11 +181,7 @@ export class AgentController {
       user.userId,
       socialLinksDto,
     );
-    return {
-      success: true,
-      message: 'Social links updated successfully',
-      data,
-    };
+    return { data, message: 'Social links updated successfully' };
   }
 
   @Put('profile/website')
@@ -171,7 +192,7 @@ export class AgentController {
     @Body() websiteDto: UpdateWebsiteDto,
   ) {
     const data = await this.agentService.updateWebsite(user.userId, websiteDto);
-    return { success: true, message: 'Website updated successfully', data };
+    return { data, message: 'Website updated successfully' };
   }
 
   @Get('profile/business-info')
@@ -188,9 +209,8 @@ export class AgentController {
       state: data.state || '',
     };
     return {
-      success: true,
-      message: 'Business information retrieved successfully',
       data: businessInfo,
+      message: 'Business information retrieved successfully',
     };
   }
 
@@ -205,11 +225,7 @@ export class AgentController {
       user.userId,
       businessDto,
     );
-    return {
-      success: true,
-      message: 'Business information updated successfully',
-      data,
-    };
+    return { data, message: 'Business information updated successfully' };
   }
 
   @Post('profile/image')
@@ -229,11 +245,15 @@ export class AgentController {
       user.userId,
       imageResult.url,
     );
-    return {
-      success: true,
-      message: 'Profile image uploaded successfully',
-      data,
-    };
+    return { data, message: 'Profile image uploaded successfully' };
+  }
+
+  @Get('profile/statistics')
+  @Roles(UserRole.AGENT)
+  @ApiOperation({ summary: 'Get agent profile statistics' })
+  async getStatistics(@CurrentUser() user: any) {
+    const data = await this.agentService.getStatistics(user.userId);
+    return { data, message: 'Statistics retrieved successfully' };
   }
 
   @Get('subscriptions/plans')
@@ -241,7 +261,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Get subscription plans' })
   async getPlans() {
     const data = await this.agentService.getPlans();
-    return { success: true, data };
+    return { data, message: 'Subscription plans retrieved successfully' };
   }
 
   @Get('subscriptions/current')
@@ -249,7 +269,7 @@ export class AgentController {
   @ApiOperation({ summary: 'Get current subscription' })
   async getCurrent(@CurrentUser() user: any) {
     const data = await this.agentService.getCurrentSubscription(user.userId);
-    return { success: true, data };
+    return { data, message: 'Current subscription retrieved successfully' };
   }
 
   @Post('subscriptions/purchase/:planId')
@@ -262,9 +282,8 @@ export class AgentController {
       planId,
     );
     return {
-      success: true,
-      message: 'Subscription purchased successfully',
       data,
+      message: 'Subscription purchased successfully',
     };
   }
 }

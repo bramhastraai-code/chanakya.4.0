@@ -28,13 +28,16 @@ import { CreateAmenityDto } from './dto/create-amenity.dto';
 import { UpdateAmenityDto } from './dto/update-amenity.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 import { jwtGuard } from 'src/core/guards/jwt.guard';
+import { Logger } from '@nestjs/common';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
 
 @ApiTags('amenities')
-@Controller('amenities')
+@Controller('amenity')
 export class AmenityController {
+  private readonly logger = new Logger(AmenityController.name);
+
   constructor(private readonly amenityService: AmenityService) {}
 
   @Post()
@@ -57,7 +60,7 @@ export class AmenityController {
   ): Promise<Response<Amenity>> {
     try {
       const data = await this.amenityService.create(createAmenityDto);
-      console.log('amenities create', data);
+      this.logger.log(`Amenity created: ${data._id}`);
       return { data, message: 'amenities created' };
     } catch (error) {
       throw error;

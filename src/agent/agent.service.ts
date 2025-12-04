@@ -7,10 +7,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { User, UserDocument } from 'src/core/entities/user.entity';
-import { AgentProfile } from 'src/profiles/agent/entities/agent-profile.entity';
+import { AgentProfile } from './entities/agent-profile.entity';
 import { SubscriptionPlan } from 'src/subscription/entities/subscription-plan.entity';
 import { AgentSubscription } from 'src/subscription/entities/agent-subscription.entity';
-import { AgentStats } from 'src/dashboard/entities/agent-stats.entity';
+import { AgentStats } from './entities/agent-stats.entity';
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import * as argon from 'argon2';
@@ -21,6 +21,8 @@ import {
   UpdateSocialLinksDto,
   UpdateWebsiteDto,
 } from './dto/update-profile.dto';
+import { Property } from 'src/property/entities/property.entity';
+import { Project } from 'src/project/entities/project.entity';
 
 @Injectable()
 export class AgentService {
@@ -33,6 +35,8 @@ export class AgentService {
     @InjectModel(AgentSubscription.name)
     private agentSubscriptionModel: Model<AgentSubscription>,
     @InjectModel(AgentStats.name) private agentStatsModel: Model<AgentStats>,
+    @InjectModel(Property.name) private propertyModel: Model<Property>,
+    @InjectModel(Project.name) private projectModel: Model<Project>,
   ) {}
 
   // --- Admin CRUD Operations ---
@@ -102,6 +106,50 @@ export class AgentService {
     if (filter) {
       if (filter.isActive !== undefined) {
         query.isActive = filter.isActive === 'true';
+      }
+
+      // Filter by propertyId - find agent who created this property
+      if (filter.propertyId) {
+        const property = await this.propertyModel.findById(filter.propertyId);
+        if (property && property.createdBy) {
+          query._id = property.createdBy;
+        } else {
+          // No property found or no creator, return empty
+          return {
+            data: [],
+            meta: { total: 0, page, limit, totalPages: 0 },
+          };
+        }
+      }
+
+      // Filter by projectId - find agents who created properties in this project
+      if (filter.projectId) {
+        const properties = await this.propertyModel
+          .find({ project: new Types.ObjectId(filter.projectId) })
+          .distinct('createdBy');
+        if (properties.length > 0) {
+          query._id = { $in: properties };
+        } else {
+          return {
+            data: [],
+            meta: { total: 0, page, limit, totalPages: 0 },
+          };
+        }
+      }
+
+      // Filter by builderId - find agents associated with builder's properties
+      if (filter.builderId) {
+        const properties = await this.propertyModel
+          .find({ builder: new Types.ObjectId(filter.builderId) })
+          .distinct('createdBy');
+        if (properties.length > 0) {
+          query._id = { $in: properties };
+        } else {
+          return {
+            data: [],
+            meta: { total: 0, page, limit, totalPages: 0 },
+          };
+        }
       }
     }
 
@@ -336,6 +384,27 @@ export class AgentService {
     );
     if (!profile) throw new NotFoundException('Agent profile not found');
     return { profileImage: profile.profileImage };
+  }
+
+  async getStatistics(agentId: string) {
+    const profile = await this.agentProfileModel
+      .findOne({ userId: agentId })
+      .exec();
+
+    if (!profile) {
+      throw new NotFoundException('Agent profile not found');
+    }
+
+    return {
+      walletBalance: profile.walletBalance,
+      pendingEarnings: profile.pendingEarnings,
+      lifetimeEarnings: profile.lifetimeEarnings,
+      totalDeals: profile.totalDeals,
+      activeListings: profile.activeListings,
+      rating: profile.rating,
+      isVerified: profile.isVerified,
+      isKycVerified: profile.isKycVerified,
+    };
   }
 
   async getPlans() {

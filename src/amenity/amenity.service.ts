@@ -1,7 +1,7 @@
 import {
   ConflictException,
   Injectable,
-  InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,50 +12,47 @@ import { UpdateAmenityDto } from './dto/update-amenity.dto';
 
 @Injectable()
 export class AmenityService {
+  private readonly logger = new Logger(AmenityService.name);
+
   constructor(
     @InjectModel(Amenity.name) private readonly amenityModel: Model<Amenity>,
   ) {}
 
   async create(createAmenityDto: CreateAmenityDto): Promise<Amenity> {
-    try {
-      console.count('issie1');
+    this.logger.log(`Creating amenity: ${createAmenityDto.name}`);
 
-      const checkAmenity = await this.amenityModel.findOne({
-        name: createAmenityDto.name,
-      });
-      if (checkAmenity) {
-        throw new ConflictException('amenity is already available');
-      }
-      console.log('amenity service create ', createAmenityDto);
-      const createdAmenity = new this.amenityModel(createAmenityDto);
-      return await createdAmenity.save();
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while creating the amenity.',
+    const existingAmenity = await this.amenityModel.findOne({
+      name: createAmenityDto.name,
+    });
+    
+    if (existingAmenity) {
+      throw new ConflictException(
+        `Amenity with name '${createAmenityDto.name}' already exists`,
       );
     }
+
+    const createdAmenity = new this.amenityModel(createAmenityDto);
+    return await createdAmenity.save();
   }
 
   async update(
     id: string,
     updateAmenityDto: UpdateAmenityDto,
-  ): Promise<Amenity | null> {
-    try {
-      const updatedAmenity = await this.amenityModel
-        .findByIdAndUpdate(id, updateAmenityDto, {
-          new: true,
-          runValidators: true,
-        })
-        .exec();
-      if (!updatedAmenity) {
-        throw new NotFoundException('Amenity not found');
-      }
-      return updatedAmenity;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while updating the amenity.',
-      );
+  ): Promise<Amenity> {
+    this.logger.log(`Updating amenity with ID: ${id}`);
+
+    const updatedAmenity = await this.amenityModel
+      .findByIdAndUpdate(id, updateAmenityDto, {
+        new: true,
+        runValidators: true,
+      })
+      .exec();
+      
+    if (!updatedAmenity) {
+      throw new NotFoundException(`Amenity with ID '${id}' not found`);
     }
+    
+    return updatedAmenity;
   }
 
   async findAll(
@@ -71,73 +68,70 @@ export class AmenityService {
     pageSize: number;
     pageNumber: number;
   }> {
-    try {
-      const size = parseInt(pageSize, 10) || 10;
-      const page = parseInt(pageNumber, 10) || 1;
-      const skip = (page - 1) * size;
+    const size = parseInt(pageSize, 10) || 10;
+    const page = parseInt(pageNumber, 10) || 1;
+    const skip = (page - 1) * size;
 
-      const query: any = {};
-      if (searchQuery) {
-        query.$or = [{ name: { $regex: searchQuery, $options: 'i' } }];
-      }
-
-      const totalAmenities = await this.amenityModel.countDocuments(query);
-      const totalPages = Math.ceil(totalAmenities / size);
-
-      const amenities = await this.amenityModel
-        .find(query)
-        .skip(skip)
-        .limit(size)
-        .sort({ [sortBy]: sortOrder })
-        .exec();
-
-      return {
-        amenities,
-        totalPages,
-        totalAmenities,
-        pageSize: size,
-        pageNumber: page,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving amenities.',
-      );
+    const query: any = {};
+    if (searchQuery) {
+      query.$or = [{ name: { $regex: searchQuery, $options: 'i' } }];
     }
+
+    this.logger.log(
+      `Fetching amenities - Page: ${page}, Size: ${size}, Search: ${searchQuery || 'none'}`,
+    );
+
+    const totalAmenities = await this.amenityModel.countDocuments(query);
+    const totalPages = Math.ceil(totalAmenities / size);
+
+    const amenities = await this.amenityModel
+      .find(query)
+      .skip(skip)
+      .limit(size)
+      .sort({ [sortBy]: sortOrder })
+      .exec();
+
+    return {
+      amenities,
+      totalPages,
+      totalAmenities,
+      pageSize: size,
+      pageNumber: page,
+    };
   }
 
-  async findOne(id: string): Promise<Amenity | null> {
-    try {
-      const amenity = await this.amenityModel.findById(id).exec();
-      if (!amenity) {
-        throw new NotFoundException('Amenity not found');
-      }
-      return amenity;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving the amenity.',
-      );
+  async findOne(id: string): Promise<Amenity> {
+    this.logger.log(`Fetching amenity with ID: ${id}`);
+
+    const amenity = await this.amenityModel.findById(id).exec();
+    
+    if (!amenity) {
+      throw new NotFoundException(`Amenity with ID '${id}' not found`);
     }
+    
+    return amenity;
   }
 
   async remove(id: string): Promise<{ deletedCount: number }> {
-    try {
-      const result = await this.amenityModel.deleteOne({ _id: id }).exec();
-      if (result.deletedCount === 0) {
-        throw new NotFoundException('Amenity not found');
-      }
-      return result;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while deleting the amenity.',
-      );
+    this.logger.log(`Deleting amenity with ID: ${id}`);
+
+    const result = await this.amenityModel.deleteOne({ _id: id }).exec();
+    
+    if (result.deletedCount === 0) {
+      throw new NotFoundException(`Amenity with ID '${id}' not found`);
     }
+    
+    return result;
   }
-  async AmenityList() {
+
+  async AmenityList(): Promise<{ value: string; label: string }[]> {
+    this.logger.log('Fetching amenity list');
+
     const amenities = await this.amenityModel.find().exec();
-    const data = amenities.map((amenity) => ({
-      value: amenity._id, // assuming name is the value you want
-      label: amenity.name, // or any other field for the label
+    
+    return amenities.map((amenity) => ({
+      value: amenity._id.toString(),
+      label: amenity.name,
     }));
-    return data;
   }
 }

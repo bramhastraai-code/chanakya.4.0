@@ -8,12 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PermissionsGuard = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const permission_utils_1 = require("../utils/permission.utils");
-const role_service_1 = require("../../role/role.service");
+const role_service_1 = require("src/role/role.service");
 let PermissionsGuard = class PermissionsGuard {
     constructor(reflector, roleService) {
         this.reflector = reflector;
@@ -37,7 +38,6 @@ let PermissionsGuard = class PermissionsGuard {
 exports.PermissionsGuard = PermissionsGuard;
 exports.PermissionsGuard = PermissionsGuard = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [core_1.Reflector,
-        role_service_1.RoleService])
+    __metadata("design:paramtypes", [core_1.Reflector, typeof (_a = typeof role_service_1.RoleService !== "undefined" && role_service_1.RoleService) === "function" ? _a : Object])
 ], PermissionsGuard);
 //# sourceMappingURL=permission.guard.js.map

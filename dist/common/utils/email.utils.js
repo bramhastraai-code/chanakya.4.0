@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer = require("nodemailer");
+const common_1 = require("@nestjs/common");
+const logger = new common_1.Logger('EmailUtils');
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -201,10 +203,10 @@ const assignedEmail = ({ to, subject, text, date, time, assigned_by, total_leads
     };
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            console.log(error);
+            logger.error(`Failed to send email: ${error.message}`, error.stack);
         }
         else {
-            console.log('Email sent: ' + info.response);
+            logger.log(`Email sent: ${info.response}`);
             return;
         }
     });

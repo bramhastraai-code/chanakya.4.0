@@ -4,6 +4,7 @@ import { UploadFilesDto } from './dto/UploadFiles.s3.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 export declare class S3Controller {
     private readonly s3Service;
+    private readonly logger;
     constructor(s3Service: S3Service);
     uploadFile(file: Express.Multer.File, uploadFileDto: UploadFileDto): Promise<Response<{
         url: string;

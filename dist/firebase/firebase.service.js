@@ -30,7 +30,7 @@ let NotificationService = NotificationService_1 = class NotificationService {
     async sendPushNotification(userId, title, body, data) {
         try {
             const user = await this.userModel.findById(userId).select('fcmToken');
-            console.log(`Sending notification to user ${userId} with FCM token: ${user?.fcmToken}`);
+            this.logger.log(`Sending notification to user ${userId} with FCM token: ${user?.fcmToken}`);
             if (!user || !user.fcmToken) {
                 this.logger.warn(`No FCM token found for user ${userId}`);
                 return false;

@@ -44,8 +44,8 @@ export class AgentLeadsController {
   async getMyLeads(@CurrentUser() user: any, @Query() filters: any) {
     const data = await this.leadService.findByAgent(user.userId, filters);
     return {
-      success: true,
       data,
+      message: 'Leads retrieved successfully',
     };
   }
 
@@ -58,8 +58,8 @@ export class AgentLeadsController {
   async getMyStats(@CurrentUser() user: any) {
     const data = await this.leadService.getAgentStats(user.userId);
     return {
-      success: true,
       data,
+      message: 'Statistics retrieved successfully',
     };
   }
 
@@ -70,8 +70,8 @@ export class AgentLeadsController {
   async findOne(@Param('id') id: string) {
     const data = await this.leadService.findOne(id);
     return {
-      success: true,
       data,
+      message: 'Lead details retrieved successfully',
     };
   }
 
@@ -89,9 +89,8 @@ export class AgentLeadsController {
   ) {
     const data = await this.leadService.update(id, user.userId, dto);
     return {
-      success: true,
-      message: 'Lead updated successfully',
       data,
+      message: 'Lead updated successfully',
     };
   }
 
@@ -106,8 +105,8 @@ export class AgentLeadsController {
   ) {
     const data = await this.leadService.addActivity(id, user.userId, dto);
     return {
-      success: true,
-      ...data,
+      data,
+      message: 'Activity added successfully',
     };
   }
 
@@ -121,9 +120,8 @@ export class AgentLeadsController {
       true,
     );
     return {
-      success: true,
-      message: 'Lead marked as qualified',
       data,
+      message: 'Lead marked as qualified',
     };
   }
 
@@ -137,9 +135,8 @@ export class AgentLeadsController {
       false,
     );
     return {
-      success: true,
-      message: 'Lead marked as unqualified',
       data,
+      message: 'Lead marked as unqualified',
     };
   }
 }

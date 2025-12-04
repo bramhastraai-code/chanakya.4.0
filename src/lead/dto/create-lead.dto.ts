@@ -7,6 +7,7 @@ import {
   IsMongoId,
   Min,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateLeadDto {
   @ApiProperty({ example: 'Rajesh Kumar' })
@@ -14,10 +15,12 @@ export class CreateLeadDto {
   customerName: string;
 
   @ApiProperty({ example: '+919876543210' })
+  @Transform(({ value }) => value?.trim())
   @IsString()
   customerPhone: string;
 
   @ApiPropertyOptional({ example: 'rajesh@example.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsOptional()
   customerEmail?: string;

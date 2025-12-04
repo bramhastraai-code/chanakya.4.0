@@ -12,6 +12,7 @@ const property_service_1 = require("./property.service");
 const property_controller_1 = require("./property.controller");
 const mongoose_1 = require("@nestjs/mongoose");
 const property_entity_1 = require("./entities/property.entity");
+const bookmarked_property_entity_1 = require("./entities/bookmarked-property.entity");
 const s3_service_1 = require("../s3/s3.service");
 let PropertyModule = class PropertyModule {
 };
@@ -21,9 +22,17 @@ exports.PropertyModule = PropertyModule = __decorate([
         imports: [
             mongoose_1.MongooseModule.forFeature([
                 { name: property_entity_1.Property.name, schema: property_entity_1.PropertySchema },
+                { name: bookmarked_property_entity_1.BookmarkedProperty.name, schema: bookmarked_property_entity_1.BookmarkedPropertySchema },
             ]),
         ],
-        controllers: [property_controller_1.PropertyController],
+        controllers: [
+            property_controller_1.PropertyController,
+            property_controller_1.UserPropertyController,
+            property_controller_1.AgentPropertyController,
+            property_controller_1.BuilderPropertyController,
+            property_controller_1.AdminPropertyController,
+            property_controller_1.PublicPropertiesController,
+        ],
         providers: [property_service_1.PropertyService, s3_service_1.S3Service],
         exports: [property_service_1.PropertyService],
     })

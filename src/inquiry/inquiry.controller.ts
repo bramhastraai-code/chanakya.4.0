@@ -132,6 +132,24 @@ export class InquiryController {
     enum: ['PENDING', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'],
     description: 'Filter by inquiry status',
   })
+  @ApiQuery({
+    name: 'projectId',
+    type: String,
+    required: false,
+    description: 'Filter inquiries by project ID',
+  })
+  @ApiQuery({
+    name: 'propertyId',
+    type: String,
+    required: false,
+    description: 'Filter inquiries by property ID',
+  })
+  @ApiQuery({
+    name: 'builderId',
+    type: String,
+    required: false,
+    description: 'Filter inquiries by builder ID (via project/property)',
+  })
   @ApiOkResponse({
     description: 'List of inquiries retrieved successfully',
     type: [Inquiry],
@@ -154,6 +172,9 @@ export class InquiryController {
       | 'siteVisit',
     @Query('status')
     status?: 'PENDING' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED',
+    @Query('projectId') projectId?: string,
+    @Query('propertyId') propertyId?: string,
+    @Query('builderId') builderId?: string,
   ): Promise<
     Response<{
       inquiries: Inquiry[];
@@ -172,6 +193,9 @@ export class InquiryController {
         searchQuery,
         inquiryType,
         status,
+        projectId,
+        propertyId,
+        builderId,
       );
 
       return { data, message: 'Retrieve successfully' };

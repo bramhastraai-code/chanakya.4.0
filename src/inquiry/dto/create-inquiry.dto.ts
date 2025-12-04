@@ -24,6 +24,7 @@ export class CreateInquiryDto {
     description: 'Phone number of the customer',
     required: false,
   })
+  @Transform(({ value }) => value?.trim())
   @IsString()
   @IsOptional()
   phone?: string;

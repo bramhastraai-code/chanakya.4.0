@@ -35,8 +35,8 @@ export class AgentRequirementsController {
   async search(@Query() filters: any) {
     const data = await this.requirementService.search(filters);
     return {
-      success: true,
       data,
+      message: 'Requirements retrieved successfully',
     };
   }
 }

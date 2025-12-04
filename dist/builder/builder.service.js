@@ -17,13 +17,21 @@ const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const user_entity_1 = require("../core/entities/user.entity");
-const builder_profile_entity_1 = require("../profiles/builder/entities/builder-profile.entity");
+const builder_profile_entity_1 = require("./entities/builder-profile.entity");
 const argon = require("argon2");
 const user_role_enum_1 = require("../common/enum/user-role.enum");
+const property_entity_1 = require("../property/entities/property.entity");
+const project_entity_1 = require("../project/entities/project.entity");
+const inquiry_entity_1 = require("../inquiry/entities/inquiry.entity");
+const bounty_entity_1 = require("../bounty/entities/bounty.entity");
 let BuilderService = class BuilderService {
-    constructor(userModel, builderProfileModel) {
+    constructor(userModel, builderProfileModel, propertyModel, projectModel, inquiryModel, bountyModel) {
         this.userModel = userModel;
         this.builderProfileModel = builderProfileModel;
+        this.propertyModel = propertyModel;
+        this.projectModel = projectModel;
+        this.inquiryModel = inquiryModel;
+        this.bountyModel = bountyModel;
     }
     async create(createBuilderDto) {
         const existingUser = await this.userModel.findOne({
@@ -190,13 +198,172 @@ let BuilderService = class BuilderService {
         }
         return profile;
     }
+    async updateProfile(userId, dto) {
+        const profile = await this.builderProfileModel.findOne({ userId });
+        if (!profile) {
+            throw new common_1.NotFoundException('Builder profile not found');
+        }
+        Object.assign(profile, dto);
+        await profile.save();
+        return profile;
+    }
+    async updateSocialLinks(userId, dto) {
+        const profile = await this.builderProfileModel.findOne({ userId });
+        if (!profile) {
+            throw new common_1.NotFoundException('Builder profile not found');
+        }
+        if (!profile.socialLinks) {
+            profile.socialLinks = {};
+        }
+        profile.socialLinks = { ...profile.socialLinks, ...dto };
+        await profile.save();
+        return { socialLinks: profile.socialLinks };
+    }
+    async updateCompanyLogo(userId, logoUrl) {
+        const profile = await this.builderProfileModel.findOneAndUpdate({ userId }, { companyLogo: logoUrl }, { new: true });
+        if (!profile) {
+            throw new common_1.NotFoundException('Builder profile not found');
+        }
+        return { companyLogo: profile.companyLogo };
+    }
+    async getStatistics(userId) {
+        const profile = await this.builderProfileModel.findOne({ userId }).exec();
+        if (!profile) {
+            throw new common_1.NotFoundException('Builder profile not found');
+        }
+        return {
+            totalProjects: profile.totalProjects,
+            ongoingProjects: profile.ongoingProjects,
+            completedProjects: profile.completedProjects,
+            rating: profile.rating,
+            isVerified: profile.isVerified,
+        };
+    }
+    async getBuilderProperties(builderId, page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const builderObjectId = new mongoose_2.Types.ObjectId(builderId);
+        const [properties, total] = await Promise.all([
+            this.propertyModel
+                .find({ builder: builderObjectId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .populate('project', 'title')
+                .lean()
+                .exec(),
+            this.propertyModel.countDocuments({ builder: builderObjectId }),
+        ]);
+        return {
+            properties,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+    async getBuilderProjects(builderId, page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const builderObjectId = new mongoose_2.Types.ObjectId(builderId);
+        const [projects, total] = await Promise.all([
+            this.projectModel
+                .find({ builder: builderObjectId })
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .lean()
+                .exec(),
+            this.projectModel.countDocuments({ builder: builderObjectId }),
+        ]);
+        return {
+            projects,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+    async getBuilderInquiries(builderId, page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const builderObjectId = new mongoose_2.Types.ObjectId(builderId);
+        const [builderProjects, builderProperties] = await Promise.all([
+            this.projectModel.find({ builder: builderObjectId }).distinct('_id'),
+            this.propertyModel.find({ builder: builderObjectId }).distinct('_id'),
+        ]);
+        const query = {
+            $or: [
+                { projectId: { $in: builderProjects } },
+                { propertyId: { $in: builderProperties } },
+            ],
+        };
+        const [inquiries, total] = await Promise.all([
+            this.inquiryModel
+                .find(query)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .populate('projectId', 'title')
+                .populate('propertyId', 'title')
+                .lean()
+                .exec(),
+            this.inquiryModel.countDocuments(query),
+        ]);
+        return {
+            inquiries,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
+    async getBuilderBounties(builderId, page = 1, limit = 10) {
+        const skip = (page - 1) * limit;
+        const builderObjectId = new mongoose_2.Types.ObjectId(builderId);
+        const builderProjects = await this.projectModel
+            .find({ builder: builderObjectId })
+            .distinct('_id');
+        const query = { project: { $in: builderProjects } };
+        const [bounties, total] = await Promise.all([
+            this.bountyModel
+                .find(query)
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
+                .populate('project', 'title location')
+                .lean()
+                .exec(),
+            this.bountyModel.countDocuments(query),
+        ]);
+        return {
+            bounties,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
+    }
 };
 exports.BuilderService = BuilderService;
 exports.BuilderService = BuilderService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(user_entity_1.User.name)),
     __param(1, (0, mongoose_1.InjectModel)(builder_profile_entity_1.BuilderProfile.name)),
+    __param(2, (0, mongoose_1.InjectModel)(property_entity_1.Property.name)),
+    __param(3, (0, mongoose_1.InjectModel)(project_entity_1.Project.name)),
+    __param(4, (0, mongoose_1.InjectModel)(inquiry_entity_1.Inquiry.name)),
+    __param(5, (0, mongoose_1.InjectModel)(bounty_entity_1.Bounty.name)),
     __metadata("design:paramtypes", [mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model,
+        mongoose_2.Model,
         mongoose_2.Model])
 ], BuilderService);
 //# sourceMappingURL=builder.service.js.map

@@ -9,6 +9,7 @@ import {
 import { WalletService } from './wallet.service';
 import { AddMoneyDto } from './dto/add-money.dto';
 import { WithdrawMoneyDto } from './dto/withdraw-money.dto';
+import { VerifyPaymentDto } from './dto/verify-payment.dto';
 import { jwtGuard } from 'src/core/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -16,7 +17,7 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
 import { TransactionType } from './enum/transaction.enum';
 
-@ApiTags('Agent')
+@ApiTags('Agent Wallet')
 @ApiBearerAuth()
 @Controller('agent/wallet')
 @UseGuards(jwtGuard, RolesGuard)
@@ -29,10 +30,7 @@ export class WalletController {
   @ApiResponse({ status: 200, description: 'Balance retrieved successfully' })
   async getBalance(@CurrentUser() user: any) {
     const data = await this.walletService.getBalance(user.userId);
-    return {
-      success: true,
-      data,
-    };
+    return { data, message: 'Balance retrieved successfully' };
   }
 
   @Get('transactions')
@@ -62,26 +60,52 @@ export class WalletController {
       dateFrom,
       dateTo,
     );
-    return {
-      success: true,
-      data,
-    };
+    return { data, message: 'Transaction history retrieved successfully' };
   }
 
   @Post('add-money')
-  @ApiOperation({ summary: 'Add money to wallet' })
-  @ApiResponse({ status: 201, description: 'Payment initiated successfully' })
+  @ApiOperation({
+    summary: 'Add money to wallet via Razorpay',
+    description: 'Initiate Razorpay payment order to add money to wallet',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Payment order created successfully',
+  })
   async addMoney(@Body() addMoneyDto: AddMoneyDto, @CurrentUser() user: any) {
     const data = await this.walletService.addMoney(user.userId, addMoneyDto);
     return {
-      success: true,
-      message: 'Payment initiated',
       data,
+      message: 'Razorpay order created. Complete payment to add money.',
+    };
+  }
+
+  @Post('verify-payment')
+  @ApiOperation({
+    summary: 'Verify Razorpay payment',
+    description:
+      'Verify payment signature and credit amount to wallet after successful payment',
+  })
+  @ApiResponse({ status: 200, description: 'Payment verified and credited' })
+  async verifyPayment(
+    @Body() verifyPaymentDto: VerifyPaymentDto,
+    @CurrentUser() user: any,
+  ) {
+    const data = await this.walletService.verifyAndCreditPayment(
+      user.userId,
+      verifyPaymentDto,
+    );
+    return {
+      data,
+      message: 'Payment verified and amount credited to wallet',
     };
   }
 
   @Post('withdraw')
-  @ApiOperation({ summary: 'Withdraw money from wallet' })
+  @ApiOperation({
+    summary: 'Request wallet withdrawal',
+    description: 'Submit withdrawal request for admin approval',
+  })
   @ApiResponse({
     status: 201,
     description: 'Withdrawal request submitted successfully',
@@ -95,9 +119,8 @@ export class WalletController {
       withdrawMoneyDto,
     );
     return {
-      success: true,
-      message: 'Withdrawal request submitted',
       data,
+      message: 'Withdrawal request submitted for admin approval',
     };
   }
 }

@@ -8,22 +8,22 @@ import { Otp, OtpSchema } from './entities/otp.entity';
 import {
   AgentProfile,
   AgentProfileSchema,
-} from 'src/profiles/agent/entities/agent-profile.entity';
+} from '../agent/entities/agent-profile.entity';
 import {
   BuilderProfile,
   BuilderProfileSchema,
-} from 'src/profiles/builder/entities/builder-profile.entity';
+} from '../builder/entities/builder-profile.entity';
 import {
   UserProfile,
   UserProfileSchema,
-} from 'src/profiles/customer/entities/customer-profile.entity';
+} from 'src/customer/entities/customer-profile.entity';
 import {
   SuperAdminProfile,
   SuperAdminProfileSchema,
-} from 'src/profiles/super-admin/entities/super-admin-profile.entity';
+} from 'src/super-admin/entities/super-admin-profile.entity';
 
-import { UnifiedAuthService } from './auth/unified-auth.service';
-import { UnifiedAuthController } from './auth/unified-auth.controller';
+import { AuthService } from './auth/auth.service';
+import { AuthController } from './auth/auth.controller';
 import { ProfileFactory } from './services/profile-factory.service';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
@@ -49,13 +49,8 @@ import { BrevoEmailService } from 'src/common/services/brevo-email.service';
       inject: [ConfigService],
     }),
   ],
-  controllers: [UnifiedAuthController],
-  providers: [
-    UnifiedAuthService,
-    ProfileFactory,
-    JwtStrategy,
-    BrevoEmailService,
-  ],
-  exports: [UnifiedAuthService, ProfileFactory, BrevoEmailService],
+  controllers: [AuthController],
+  providers: [AuthService, ProfileFactory, JwtStrategy, BrevoEmailService],
+  exports: [AuthService, ProfileFactory, BrevoEmailService],
 })
 export class CoreModule {}

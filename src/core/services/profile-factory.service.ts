@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { UserRole } from 'src/common/enum/user-role.enum';
-import { AgentProfile } from 'src/profiles/agent/entities/agent-profile.entity';
-import { BuilderProfile } from 'src/profiles/builder/entities/builder-profile.entity';
-import { UserProfile } from 'src/profiles/customer/entities/customer-profile.entity';
-import { SuperAdminProfile } from 'src/profiles/super-admin/entities/super-admin-profile.entity';
+import { AgentProfile } from '../../agent/entities/agent-profile.entity';
+import { BuilderProfile } from '../../builder/entities/builder-profile.entity';
+import { UserProfile } from 'src/customer/entities/customer-profile.entity';
+import { SuperAdminProfile } from 'src/super-admin/entities/super-admin-profile.entity';
 
 @Injectable()
 export class ProfileFactory {

@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { ProjectService } from './project.service';
 import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -10,6 +11,7 @@ import { ProjectDetailDto } from './dto/project-detail.dto';
 import { Status } from 'src/common/enum/status.enum';
 export declare class ProjectController {
     private readonly projectService;
+    private readonly logger;
     constructor(projectService: ProjectService);
     create(createProjectDto: CreateProjectDto, user: any): Promise<Response<Project>>;
     getProjectsByCreator(user: any, pageSize: string, pageNumber: string, searchQuery?: string, status?: string): Promise<Response<{
@@ -20,9 +22,8 @@ export declare class ProjectController {
         pageNumber: number;
     }>>;
     getProjectsWithActiveBounties(): Promise<{
-        success: boolean;
-        message: string;
         data: Project[];
+        message: string;
     }>;
     findAll(pageSize: string, pageNumber: string, sortBy?: string, sortOrder?: 'asc' | 'desc', searchQuery?: string, status?: Status): Promise<Response<{
         projects: Project[];
@@ -36,7 +37,7 @@ export declare class ProjectController {
     remove(id: string): Promise<Response<Project>>;
     projectList(): Promise<{
         data: {
-            value: import("mongoose").Types.ObjectId;
+            value: Types.ObjectId;
             label: string;
         }[];
         message: string;
@@ -62,7 +63,7 @@ export declare class ProjectController {
     }>;
     getProjectsByBuilder(builderId: string): Promise<{
         data: (import("mongoose").Document<unknown, {}, Project, {}, {}> & Project & Required<{
-            _id: import("mongoose").Types.ObjectId;
+            _id: Types.ObjectId;
         }> & {
             __v: number;
         })[];

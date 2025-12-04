@@ -47,8 +47,8 @@ export class AdminLeadsController {
   async getAllLeads(@Query() filters: any) {
     const data = await this.leadService.findAll(filters);
     return {
-      success: true,
       data,
+      message: 'Leads retrieved successfully',
     };
   }
 
@@ -63,8 +63,8 @@ export class AdminLeadsController {
       assignedTo: null,
     });
     return {
-      success: true,
       data,
+      message: 'Unassigned leads retrieved successfully',
     };
   }
 
@@ -77,8 +77,8 @@ export class AdminLeadsController {
   async getStats() {
     const data = await this.leadService.getAdminStats();
     return {
-      success: true,
       data,
+      message: 'Statistics retrieved successfully',
     };
   }
 
@@ -88,8 +88,8 @@ export class AdminLeadsController {
   async findOne(@Param('id') id: string) {
     const data = await this.leadService.findOne(id);
     return {
-      success: true,
       data,
+      message: 'Lead details retrieved successfully',
     };
   }
 
@@ -108,9 +108,8 @@ export class AdminLeadsController {
       user.userId,
     );
     return {
-      success: true,
-      message: 'Lead assigned successfully',
       data,
+      message: 'Lead assigned successfully',
     };
   }
 }

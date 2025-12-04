@@ -12,6 +12,7 @@ import {
   IsUrl,
   IsArray,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateAgentDto {
   @ApiProperty({ example: 'Jane Doe' })
@@ -20,11 +21,13 @@ export class CreateAgentDto {
   name: string;
 
   @ApiProperty({ example: 'agent@example.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
   @ApiProperty({ example: '+919876543211' })
+  @Transform(({ value }) => value?.trim())
   @IsPhoneNumber('IN')
   @IsNotEmpty()
   phoneNumber: string;

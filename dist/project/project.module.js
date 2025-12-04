@@ -16,6 +16,7 @@ const bounty_entity_1 = require("../bounty/entities/bounty.entity");
 const project_controller_1 = require("./project.controller");
 const project_service_1 = require("./project.service");
 const property_entity_1 = require("../property/entities/property.entity");
+const bookmarked_property_entity_1 = require("../property/entities/bookmarked-property.entity");
 const property_service_1 = require("../property/property.service");
 const s3_service_1 = require("../s3/s3.service");
 let ProjectModule = class ProjectModule {
@@ -27,6 +28,7 @@ exports.ProjectModule = ProjectModule = __decorate([
             mongoose_1.MongooseModule.forFeature([
                 { name: project_entity_1.Project.name, schema: project_entity_1.ProjectSchema },
                 { name: property_entity_1.Property.name, schema: property_entity_1.PropertySchema },
+                { name: bookmarked_property_entity_1.BookmarkedProperty.name, schema: bookmarked_property_entity_1.BookmarkedPropertySchema },
                 { name: amenity_entity_1.Amenity.name, schema: amenity_entity_1.AmenitySchema },
                 { name: user_entity_1.User.name, schema: user_entity_1.UserSchema },
                 { name: bounty_entity_1.Bounty.name, schema: bounty_entity_1.BountySchema },

@@ -11,114 +11,94 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var AmenityService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AmenityService = void 0;
 const common_1 = require("@nestjs/common");
 const mongoose_1 = require("@nestjs/mongoose");
 const mongoose_2 = require("mongoose");
 const amenity_entity_1 = require("./entities/amenity.entity");
-let AmenityService = class AmenityService {
+let AmenityService = AmenityService_1 = class AmenityService {
     constructor(amenityModel) {
         this.amenityModel = amenityModel;
+        this.logger = new common_1.Logger(AmenityService_1.name);
     }
     async create(createAmenityDto) {
-        try {
-            console.count('issie1');
-            const checkAmenity = await this.amenityModel.findOne({
-                name: createAmenityDto.name,
-            });
-            if (checkAmenity) {
-                throw new common_1.ConflictException('amenity is already available');
-            }
-            console.log('amenity service create ', createAmenityDto);
-            const createdAmenity = new this.amenityModel(createAmenityDto);
-            return await createdAmenity.save();
+        this.logger.log(`Creating amenity: ${createAmenityDto.name}`);
+        const existingAmenity = await this.amenityModel.findOne({
+            name: createAmenityDto.name,
+        });
+        if (existingAmenity) {
+            throw new common_1.ConflictException(`Amenity with name '${createAmenityDto.name}' already exists`);
         }
-        catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while creating the amenity.');
-        }
+        const createdAmenity = new this.amenityModel(createAmenityDto);
+        return await createdAmenity.save();
     }
     async update(id, updateAmenityDto) {
-        try {
-            const updatedAmenity = await this.amenityModel
-                .findByIdAndUpdate(id, updateAmenityDto, {
-                new: true,
-                runValidators: true,
-            })
-                .exec();
-            if (!updatedAmenity) {
-                throw new common_1.NotFoundException('Amenity not found');
-            }
-            return updatedAmenity;
+        this.logger.log(`Updating amenity with ID: ${id}`);
+        const updatedAmenity = await this.amenityModel
+            .findByIdAndUpdate(id, updateAmenityDto, {
+            new: true,
+            runValidators: true,
+        })
+            .exec();
+        if (!updatedAmenity) {
+            throw new common_1.NotFoundException(`Amenity with ID '${id}' not found`);
         }
-        catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while updating the amenity.');
-        }
+        return updatedAmenity;
     }
     async findAll(pageSize, pageNumber, sortBy = 'name', sortOrder = 'asc', searchQuery) {
-        try {
-            const size = parseInt(pageSize, 10) || 10;
-            const page = parseInt(pageNumber, 10) || 1;
-            const skip = (page - 1) * size;
-            const query = {};
-            if (searchQuery) {
-                query.$or = [{ name: { $regex: searchQuery, $options: 'i' } }];
-            }
-            const totalAmenities = await this.amenityModel.countDocuments(query);
-            const totalPages = Math.ceil(totalAmenities / size);
-            const amenities = await this.amenityModel
-                .find(query)
-                .skip(skip)
-                .limit(size)
-                .sort({ [sortBy]: sortOrder })
-                .exec();
-            return {
-                amenities,
-                totalPages,
-                totalAmenities,
-                pageSize: size,
-                pageNumber: page,
-            };
+        const size = parseInt(pageSize, 10) || 10;
+        const page = parseInt(pageNumber, 10) || 1;
+        const skip = (page - 1) * size;
+        const query = {};
+        if (searchQuery) {
+            query.$or = [{ name: { $regex: searchQuery, $options: 'i' } }];
         }
-        catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while retrieving amenities.');
-        }
+        this.logger.log(`Fetching amenities - Page: ${page}, Size: ${size}, Search: ${searchQuery || 'none'}`);
+        const totalAmenities = await this.amenityModel.countDocuments(query);
+        const totalPages = Math.ceil(totalAmenities / size);
+        const amenities = await this.amenityModel
+            .find(query)
+            .skip(skip)
+            .limit(size)
+            .sort({ [sortBy]: sortOrder })
+            .exec();
+        return {
+            amenities,
+            totalPages,
+            totalAmenities,
+            pageSize: size,
+            pageNumber: page,
+        };
     }
     async findOne(id) {
-        try {
-            const amenity = await this.amenityModel.findById(id).exec();
-            if (!amenity) {
-                throw new common_1.NotFoundException('Amenity not found');
-            }
-            return amenity;
+        this.logger.log(`Fetching amenity with ID: ${id}`);
+        const amenity = await this.amenityModel.findById(id).exec();
+        if (!amenity) {
+            throw new common_1.NotFoundException(`Amenity with ID '${id}' not found`);
         }
-        catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while retrieving the amenity.');
-        }
+        return amenity;
     }
     async remove(id) {
-        try {
-            const result = await this.amenityModel.deleteOne({ _id: id }).exec();
-            if (result.deletedCount === 0) {
-                throw new common_1.NotFoundException('Amenity not found');
-            }
-            return result;
+        this.logger.log(`Deleting amenity with ID: ${id}`);
+        const result = await this.amenityModel.deleteOne({ _id: id }).exec();
+        if (result.deletedCount === 0) {
+            throw new common_1.NotFoundException(`Amenity with ID '${id}' not found`);
         }
-        catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while deleting the amenity.');
-        }
+        return result;
     }
     async AmenityList() {
+        this.logger.log('Fetching amenity list');
         const amenities = await this.amenityModel.find().exec();
-        const data = amenities.map((amenity) => ({
-            value: amenity._id,
+        return amenities.map((amenity) => ({
+            value: amenity._id.toString(),
             label: amenity.name,
         }));
-        return data;
     }
 };
 exports.AmenityService = AmenityService;
-exports.AmenityService = AmenityService = __decorate([
+exports.AmenityService = AmenityService = AmenityService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, mongoose_1.InjectModel)(amenity_entity_1.Amenity.name)),
     __metadata("design:paramtypes", [mongoose_2.Model])

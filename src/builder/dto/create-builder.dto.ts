@@ -11,6 +11,7 @@ import {
   IsBoolean,
   IsUrl,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateBuilderDto {
   @ApiProperty({ example: 'John Doe' })
@@ -19,11 +20,13 @@ export class CreateBuilderDto {
   name: string;
 
   @ApiProperty({ example: 'builder@example.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsNotEmpty()
   email: string;
 
   @ApiProperty({ example: '+919876543210' })
+  @Transform(({ value }) => value?.trim())
   @IsPhoneNumber('IN')
   @IsNotEmpty()
   phoneNumber: string;
@@ -79,11 +82,13 @@ export class CreateBuilderDto {
   contactPerson?: string;
 
   @ApiPropertyOptional({ example: 'contact@abc.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsOptional()
   contactEmail?: string;
 
-  @ApiPropertyOptional({ example: '+919876543211' })
+  @ApiPropertyOptional({ example: '+919876543210' })
+  @Transform(({ value }) => value?.trim())
   @IsPhoneNumber('IN')
   @IsOptional()
   contactPhone?: string;

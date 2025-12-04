@@ -4,6 +4,7 @@
 /build
 /documentation
 /dist
+/dist/*
 
 # Logs
 logs

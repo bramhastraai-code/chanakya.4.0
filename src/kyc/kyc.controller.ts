@@ -42,8 +42,8 @@ export class AgentKycController {
   async getStatus(@CurrentUser() user: any) {
     const data = await this.kycService.getStatus(user.userId);
     return {
-      success: true,
       data,
+      message: 'KYC status retrieved successfully',
     };
   }
 
@@ -56,10 +56,9 @@ export class AgentKycController {
   async submit(@Body() submitKycDto: SubmitKycDto, @CurrentUser() user: any) {
     const data = await this.kycService.submitKyc(user.userId, submitKycDto);
     return {
-      success: true,
+      data,
       message:
         'KYC documents submitted successfully. Admin will review them shortly.',
-      data,
     };
   }
 
@@ -72,9 +71,8 @@ export class AgentKycController {
   async update(@Body() updateKycDto: UpdateKycDto, @CurrentUser() user: any) {
     const data = await this.kycService.updateKyc(user.userId, updateKycDto);
     return {
-      success: true,
-      message: 'KYC updated successfully.',
       data,
+      message: 'KYC updated successfully.',
     };
   }
 }
@@ -99,8 +97,8 @@ export class AdminKycController {
   async getSubmissions(@Query() filters: any) {
     const data = await this.kycService.getPendingSubmissions(filters);
     return {
-      success: true,
       data,
+      message: 'Submissions retrieved successfully',
     };
   }
 
@@ -113,8 +111,8 @@ export class AdminKycController {
   async getSubmission(@Param('id') id: string) {
     const data = await this.kycService.getSubmission(id);
     return {
-      success: true,
       data,
+      message: 'Submission details retrieved successfully',
     };
   }
 
@@ -133,9 +131,8 @@ export class AdminKycController {
       dto.rejectionReason,
     );
     return {
-      success: true,
-      message: dto.approved ? 'KYC approved' : 'KYC rejected',
       data,
+      message: dto.approved ? 'KYC approved' : 'KYC rejected',
     };
   }
 }

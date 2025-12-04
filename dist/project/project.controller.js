@@ -11,14 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var ProjectController_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProjectController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
+const mongoose_1 = require("mongoose");
 const project_service_1 = require("./project.service");
 const project_entity_1 = require("./entities/project.entity");
 const create_project_dto_1 = require("./dto/create-project.dto");
 const project_enum_1 = require("./enum/project.enum");
+const common_2 = require("@nestjs/common");
 const ProjectCategory_dto_1 = require("./dto/ProjectCategory.dto");
 const featuredProject_dto_1 = require("./dto/featuredProject.dto");
 const update_project_dto_1 = require("./dto/update-project.dto");
@@ -29,13 +32,18 @@ const roles_guard_1 = require("../common/guards/roles.guard");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const user_role_enum_1 = require("../common/enum/user-role.enum");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
-let ProjectController = class ProjectController {
+let ProjectController = ProjectController_1 = class ProjectController {
     constructor(projectService) {
         this.projectService = projectService;
+        this.logger = new common_2.Logger(ProjectController_1.name);
     }
     async create(createProjectDto, user) {
-        createProjectDto.createdBy = user.userId;
-        createProjectDto.updatedBy = user.userId;
+        const userObjectId = new mongoose_1.Types.ObjectId(user.userId);
+        createProjectDto.createdBy = userObjectId.toString();
+        createProjectDto.updatedBy = userObjectId.toString();
+        if (user.role === user_role_enum_1.UserRole.BUILDER) {
+            createProjectDto.builder = userObjectId.toString();
+        }
         const data = await this.projectService.create(createProjectDto);
         return { data, message: 'created successfully' };
     }
@@ -46,9 +54,8 @@ let ProjectController = class ProjectController {
     async getProjectsWithActiveBounties() {
         const projects = await this.projectService.findProjectsWithActiveBounties();
         return {
-            success: true,
-            message: 'Projects with active bounties retrieved successfully.',
             data: projects,
+            message: 'Projects with active bounties retrieved successfully.',
         };
     }
     async findAll(pageSize, pageNumber, sortBy = 'createdAt', sortOrder = 'asc', searchQuery, status) {
@@ -67,7 +74,11 @@ let ProjectController = class ProjectController {
         };
     }
     async update(id, updateProjectDto, user) {
-        updateProjectDto.updatedBy = user.userId;
+        const userObjectId = new mongoose_1.Types.ObjectId(user.userId);
+        updateProjectDto.updatedBy = userObjectId.toString();
+        if (user.role === user_role_enum_1.UserRole.BUILDER) {
+            updateProjectDto.builder = userObjectId.toString();
+        }
         const data = await this.projectService.update(id, updateProjectDto);
         return { data, message: 'updated successfully' };
     }
@@ -94,9 +105,9 @@ let ProjectController = class ProjectController {
     }
     async getProjectsByAffordability(getProjectByAffordabilityDto) {
         const { affordability, city } = getProjectByAffordabilityDto;
-        console.log(affordability);
+        this.logger.log(`Getting projects by affordability: ${affordability}, city: ${city}`);
         const data = await this.projectService.getProjectsByAffordability(affordability, city);
-        console.log(data);
+        this.logger.log(`Retrieved ${data.length} projects`);
         return { data, message: 'retrieve successfully' };
     }
     async getProjectDetail(id) {
@@ -138,8 +149,12 @@ let ProjectController = class ProjectController {
         return { data, message: 'retrieved successfully' };
     }
     async createBuilderProject(createProjectDto, user) {
-        createProjectDto.createdBy = user.userId;
-        createProjectDto.updatedBy = user.userId;
+        const userObjectId = new mongoose_1.Types.ObjectId(user.userId);
+        createProjectDto.createdBy = userObjectId.toString();
+        createProjectDto.updatedBy = userObjectId.toString();
+        if (user.role === user_role_enum_1.UserRole.BUILDER) {
+            createProjectDto.builder = userObjectId.toString();
+        }
         const data = await this.projectService.create(createProjectDto);
         return { data, message: 'Project created successfully' };
     }
@@ -153,7 +168,11 @@ let ProjectController = class ProjectController {
         }
     }
     async updateProject(projectId, updateProjectDto, user) {
-        updateProjectDto.updatedBy = user.userId;
+        const userObjectId = new mongoose_1.Types.ObjectId(user.userId);
+        updateProjectDto.updatedBy = userObjectId.toString();
+        if (user.role === user_role_enum_1.UserRole.BUILDER) {
+            updateProjectDto.builder = userObjectId.toString();
+        }
         const data = await this.projectService.update(projectId, updateProjectDto);
         return { data, message: 'Project updated successfully' };
     }
@@ -701,7 +720,7 @@ __decorate([
     __metadata("design:paramtypes", [String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "getPublicProjects", null);
-exports.ProjectController = ProjectController = __decorate([
+exports.ProjectController = ProjectController = ProjectController_1 = __decorate([
     (0, swagger_1.ApiTags)('projects'),
     (0, common_1.Controller)('projects'),
     __metadata("design:paramtypes", [project_service_1.ProjectService])

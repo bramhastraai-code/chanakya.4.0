@@ -24,7 +24,7 @@ export class NotificationService {
   ) {
     try {
       const user = await this.userModel.findById(userId).select('fcmToken');
-      console.log(
+      this.logger.log(
         `Sending notification to user ${userId} with FCM token: ${user?.fcmToken}`,
       );
       if (!user || !user.fcmToken) {

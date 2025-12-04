@@ -204,4 +204,304 @@ export class WalletV1Service {
 
     throw new BadRequestException('Invalid transaction type for adjustment');
   }
+
+  /**
+   * Admin: Deposit money to user wallet
+   */
+  async adminDeposit(
+    userId: string,
+    amount: number,
+    description: string,
+    adminId: string,
+    propertyId?: string,
+    bountyId?: string,
+  ) {
+    const userObjectId = new Types.ObjectId(userId);
+
+    return this.credit(
+      userObjectId,
+      amount,
+      TransactionType.DEPOSIT,
+      description,
+      {
+        adminId,
+        propertyId,
+        bountyId,
+        depositedBy: 'admin',
+      },
+    );
+  }
+
+  /**
+   * Get pending withdrawal requests
+   */
+  async getPendingWithdrawals(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+
+    const [transactions, total] = await Promise.all([
+      this.transactionModel
+        .find({
+          type: TransactionType.WITHDRAWAL,
+          status: TransactionStatus.PENDING,
+        })
+        .populate('userId', 'name email phoneNumber')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.transactionModel.countDocuments({
+        type: TransactionType.WITHDRAWAL,
+        status: TransactionStatus.PENDING,
+      }),
+    ]);
+
+    return {
+      withdrawals: transactions,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Get all withdrawal requests with filters
+   */
+  async getWithdrawals(filters: any) {
+    const { page = 1, limit = 20, status, userId } = filters;
+    const skip = (page - 1) * limit;
+
+    const query: any = { type: TransactionType.WITHDRAWAL };
+    if (status) query.status = status;
+    if (userId) query.userId = new Types.ObjectId(userId);
+
+    const [transactions, total] = await Promise.all([
+      this.transactionModel
+        .find(query)
+        .populate('userId', 'name email phoneNumber')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.transactionModel.countDocuments(query),
+    ]);
+
+    return {
+      withdrawals: transactions,
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
+   * Admin: Approve withdrawal request
+   */
+  async approveWithdrawal(
+    transactionId: string,
+    adminId: string,
+    remarks?: string,
+    payoutId?: string,
+  ) {
+    const transaction = await this.transactionModel.findById(transactionId);
+
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    if (transaction.type !== TransactionType.WITHDRAWAL) {
+      throw new BadRequestException('Not a withdrawal transaction');
+    }
+
+    if (transaction.status !== TransactionStatus.PENDING) {
+      throw new BadRequestException(
+        `Withdrawal is already ${transaction.status}`,
+      );
+    }
+
+    // Update transaction status
+    transaction.status = TransactionStatus.APPROVED;
+    transaction.metadata = {
+      ...transaction.metadata,
+      approvedBy: adminId,
+      approvedAt: new Date(),
+      remarks,
+      payoutId,
+    };
+    await transaction.save();
+
+    // TODO: Integrate Razorpay Payout API here
+    // const payout = await this.razorpayService.createPayout({
+    //   account_number: transaction.metadata.bankAccount.accountNumber,
+    //   amount: transaction.amount * 100, // Convert to paise
+    //   currency: 'INR',
+    //   mode: 'IMPS',
+    //   purpose: 'payout',
+    //   fund_account: {
+    //     account_type: 'bank_account',
+    //     bank_account: {
+    //       name: transaction.metadata.bankAccount.accountHolderName,
+    //       ifsc: transaction.metadata.bankAccount.ifscCode,
+    //       account_number: transaction.metadata.bankAccount.accountNumber,
+    //     },
+    //   },
+    // });
+
+    return transaction;
+  }
+
+  /**
+   * Admin: Reject withdrawal request
+   */
+  async rejectWithdrawal(
+    transactionId: string,
+    adminId: string,
+    remarks?: string,
+  ) {
+    const transaction = await this.transactionModel.findById(transactionId);
+
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    if (transaction.type !== TransactionType.WITHDRAWAL) {
+      throw new BadRequestException('Not a withdrawal transaction');
+    }
+
+    if (transaction.status !== TransactionStatus.PENDING) {
+      throw new BadRequestException(
+        `Withdrawal is already ${transaction.status}`,
+      );
+    }
+
+    // Update transaction status
+    transaction.status = TransactionStatus.FAILED;
+    transaction.metadata = {
+      ...transaction.metadata,
+      rejectedBy: adminId,
+      rejectedAt: new Date(),
+      remarks,
+    };
+    await transaction.save();
+
+    // Refund amount to wallet
+    const wallet = await this.getWallet(transaction.user as any);
+    wallet.balance += transaction.amount;
+    await wallet.save();
+
+    return {
+      transaction,
+      refundedAmount: transaction.amount,
+      newBalance: wallet.balance,
+    };
+  }
+
+  /**
+   * Admin: Mark withdrawal as completed
+   */
+  async completeWithdrawal(
+    transactionId: string,
+    adminId: string,
+    payoutId?: string,
+    remarks?: string,
+  ) {
+    const transaction = await this.transactionModel.findById(transactionId);
+
+    if (!transaction) {
+      throw new NotFoundException('Transaction not found');
+    }
+
+    if (transaction.type !== TransactionType.WITHDRAWAL) {
+      throw new BadRequestException('Not a withdrawal transaction');
+    }
+
+    if (
+      ![TransactionStatus.PENDING, TransactionStatus.APPROVED].includes(
+        transaction.status,
+      )
+    ) {
+      throw new BadRequestException(
+        `Cannot complete withdrawal with status: ${transaction.status}`,
+      );
+    }
+
+    // Update transaction status
+    transaction.status = TransactionStatus.COMPLETED;
+    transaction.metadata = {
+      ...transaction.metadata,
+      completedBy: adminId,
+      completedAt: new Date(),
+      payoutId,
+      remarks,
+    };
+    await transaction.save();
+
+    return transaction;
+  }
+
+  /**
+   * Get wallet statistics
+   */
+  async getWalletStatistics() {
+    const [
+      totalWallets,
+      totalBalance,
+      totalPendingWithdrawals,
+      totalCompletedWithdrawals,
+      totalDeposits,
+    ] = await Promise.all([
+      this.walletModel.countDocuments(),
+      this.walletModel.aggregate([
+        { $group: { _id: null, total: { $sum: '$balance' } } },
+      ]),
+      this.transactionModel.aggregate([
+        {
+          $match: {
+            type: TransactionType.WITHDRAWAL,
+            status: TransactionStatus.PENDING,
+          },
+        },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]),
+      this.transactionModel.aggregate([
+        {
+          $match: {
+            type: TransactionType.WITHDRAWAL,
+            status: TransactionStatus.COMPLETED,
+          },
+        },
+        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+      ]),
+      this.transactionModel.aggregate([
+        {
+          $match: {
+            type: TransactionType.DEPOSIT,
+            status: TransactionStatus.COMPLETED,
+          },
+        },
+        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+      ]),
+    ]);
+
+    return {
+      totalWallets,
+      totalBalance: totalBalance[0]?.total || 0,
+      pendingWithdrawals: {
+        amount: totalPendingWithdrawals[0]?.total || 0,
+      },
+      completedWithdrawals: {
+        amount: totalCompletedWithdrawals[0]?.total || 0,
+        count: totalCompletedWithdrawals[0]?.count || 0,
+      },
+      totalDeposits: {
+        amount: totalDeposits[0]?.total || 0,
+        count: totalDeposits[0]?.count || 0,
+      },
+    };
+  }
 }

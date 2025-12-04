@@ -6,7 +6,7 @@ import { User, UserSchema } from 'src/core/entities/user.entity';
 import {
   AgentProfile,
   AgentProfileSchema,
-} from 'src/profiles/agent/entities/agent-profile.entity';
+} from './entities/agent-profile.entity';
 
 import { S3Module } from 'src/s3/s3.module';
 import {
@@ -20,7 +20,9 @@ import {
 import {
   AgentStats,
   AgentStatsSchema,
-} from 'src/dashboard/entities/agent-stats.entity';
+} from './entities/agent-stats.entity';
+import { Property, PropertySchema } from 'src/property/entities/property.entity';
+import { Project, ProjectSchema } from 'src/project/entities/project.entity';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import {
       { name: SubscriptionPlan.name, schema: SubscriptionPlanSchema },
       { name: AgentSubscription.name, schema: AgentSubscriptionSchema },
       { name: AgentStats.name, schema: AgentStatsSchema },
+      { name: Property.name, schema: PropertySchema },
+      { name: Project.name, schema: ProjectSchema },
     ]),
     S3Module,
   ],

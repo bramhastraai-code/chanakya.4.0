@@ -14,6 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BuilderAdminController = exports.BuilderController = void 0;
 const common_1 = require("@nestjs/common");
+const platform_express_1 = require("@nestjs/platform-express");
 const builder_service_1 = require("./builder.service");
 const create_builder_dto_1 = require("./dto/create-builder.dto");
 const update_builder_dto_1 = require("./dto/update-builder.dto");
@@ -23,16 +24,32 @@ const roles_guard_1 = require("../common/guards/roles.guard");
 const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const user_role_enum_1 = require("../common/enum/user-role.enum");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
+const s3_service_1 = require("../s3/s3.service");
 let BuilderController = class BuilderController {
-    constructor(builderService) {
+    constructor(builderService, s3Service) {
         this.builderService = builderService;
+        this.s3Service = s3Service;
     }
     async getProfile(user) {
         const data = await this.builderService.getProfile(user.userId);
-        return {
-            success: true,
-            data,
-        };
+        return { data, message: 'Profile retrieved successfully' };
+    }
+    async updateProfile(user, dto) {
+        const data = await this.builderService.updateProfile(user.userId, dto);
+        return { data, message: 'Profile updated successfully' };
+    }
+    async updateSocialLinks(user, dto) {
+        const data = await this.builderService.updateSocialLinks(user.userId, dto);
+        return { data, message: 'Social links updated successfully' };
+    }
+    async uploadLogo(user, file) {
+        const imageResult = await this.s3Service.uploadFile(file, 'builder-logos');
+        const data = await this.builderService.updateCompanyLogo(user.userId, imageResult.url);
+        return { data, message: 'Logo uploaded successfully' };
+    }
+    async getStatistics(user) {
+        const data = await this.builderService.getStatistics(user.userId);
+        return { data, message: 'Statistics retrieved successfully' };
     }
 };
 exports.BuilderController = BuilderController;
@@ -46,12 +63,54 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], BuilderController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.Put)('profile'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update builder profile' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], BuilderController.prototype, "updateProfile", null);
+__decorate([
+    (0, common_1.Put)('profile/social-links'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update social media links' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], BuilderController.prototype, "updateSocialLinks", null);
+__decorate([
+    (0, common_1.Post)('profile/logo'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER),
+    (0, swagger_1.ApiOperation)({ summary: 'Upload company logo' }),
+    (0, swagger_1.ApiConsumes)('multipart/form-data'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('logo')),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], BuilderController.prototype, "uploadLogo", null);
+__decorate([
+    (0, common_1.Get)('profile/statistics'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.BUILDER),
+    (0, swagger_1.ApiOperation)({ summary: 'Get builder statistics' }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], BuilderController.prototype, "getStatistics", null);
 exports.BuilderController = BuilderController = __decorate([
     (0, swagger_1.ApiTags)('Builder'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, common_1.Controller)('builder'),
     (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
-    __metadata("design:paramtypes", [builder_service_1.BuilderService])
+    __metadata("design:paramtypes", [builder_service_1.BuilderService,
+        s3_service_1.S3Service])
 ], BuilderController);
 let BuilderAdminController = class BuilderAdminController {
     constructor(builderService) {
@@ -71,6 +130,34 @@ let BuilderAdminController = class BuilderAdminController {
     }
     remove(id) {
         return this.builderService.remove(id);
+    }
+    async getBuilderProperties(id, page = 1, limit = 10) {
+        const data = await this.builderService.getBuilderProperties(id, page, limit);
+        return {
+            data,
+            message: 'Builder properties retrieved successfully',
+        };
+    }
+    async getBuilderProjects(id, page = 1, limit = 10) {
+        const data = await this.builderService.getBuilderProjects(id, page, limit);
+        return {
+            data,
+            message: 'Builder projects retrieved successfully',
+        };
+    }
+    async getBuilderInquiries(id, page = 1, limit = 10) {
+        const data = await this.builderService.getBuilderInquiries(id, page, limit);
+        return {
+            data,
+            message: 'Builder inquiries retrieved successfully',
+        };
+    }
+    async getBuilderBounties(id, page = 1, limit = 10) {
+        const data = await this.builderService.getBuilderBounties(id, page, limit);
+        return {
+            data,
+            message: 'Builder bounties retrieved successfully',
+        };
     }
 };
 exports.BuilderAdminController = BuilderAdminController;
@@ -132,6 +219,60 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], BuilderAdminController.prototype, "remove", null);
+__decorate([
+    (0, common_1.Get)('builder/:id/properties'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all properties by builder ID' }),
+    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], BuilderAdminController.prototype, "getBuilderProperties", null);
+__decorate([
+    (0, common_1.Get)('builder/:id/projects'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all projects by builder ID' }),
+    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], BuilderAdminController.prototype, "getBuilderProjects", null);
+__decorate([
+    (0, common_1.Get)('builder/:id/inquiries'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get all inquiries for builder properties/projects',
+    }),
+    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], BuilderAdminController.prototype, "getBuilderInquiries", null);
+__decorate([
+    (0, common_1.Get)('builder/:id/bounties'),
+    (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all bounties for builder projects' }),
+    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
+    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Query)('page')),
+    __param(2, (0, common_1.Query)('limit')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], BuilderAdminController.prototype, "getBuilderBounties", null);
 exports.BuilderAdminController = BuilderAdminController = __decorate([
     (0, swagger_1.ApiTags)('Builder by Admin'),
     (0, swagger_1.ApiBearerAuth)(),

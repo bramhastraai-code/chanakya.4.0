@@ -1,6 +1,7 @@
 import {
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,6 +17,8 @@ import { BountyStatus } from 'src/bounty/enum/bounty.enum';
 
 @Injectable()
 export class ProjectService {
+  private readonly logger = new Logger(ProjectService.name);
+
   constructor(
     @InjectModel(Project.name) private projectModel: Model<Project>,
     @InjectModel(Bounty.name) private bountyModel: Model<Bounty>,
@@ -53,7 +56,7 @@ export class ProjectService {
           { description: { $regex: searchQuery, $options: 'i' } },
         ];
       }
-      if (status !== 'all') {
+      if (status && status !== 'all') {
         query.status = status;
       }
 
@@ -64,7 +67,7 @@ export class ProjectService {
         .find(query)
         .skip(skip)
         .limit(size)
-        .sort({ [sortBy]: sortOrder ? -1 : -1 })
+        .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
         .populate({ path: 'builder', strictPopulate: false })
         .populate({ path: 'amenities', strictPopulate: false })
         .populate({ path: 'facilities', strictPopulate: false })
@@ -80,7 +83,8 @@ export class ProjectService {
         pageNumber: page,
       };
     } catch (error) {
-      throw error;
+      this.logger.error(`Error in findAll: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Failed to retrieve projects');
     }
   }
 
@@ -138,7 +142,13 @@ export class ProjectService {
         pageNumber: page,
       };
     } catch (error) {
-      throw error;
+      this.logger.error(
+        `Error in findProjectsByCreator: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to retrieve projects by creator',
+      );
     }
   }
 
@@ -179,7 +189,7 @@ export class ProjectService {
 
   async remove(_id: string): Promise<any> {
     const result = await this.projectModel.findByIdAndDelete(_id).exec();
-    console.log(result);
+    this.logger.log(`Project deleted: ${_id}`);
 
     if (!result) {
       throw new NotFoundException(`Project with ID ${_id} not found`);
@@ -216,11 +226,19 @@ export class ProjectService {
       if (!projects.length) {
         throw new NotFoundException('No projects found for the given category');
       }
-      console.log('getProjectsByCategory', projects[0]._id);
+      this.logger.log(
+        `Retrieved ${projects.length} projects by category, first project ID: ${projects[0]._id}`,
+      );
 
       return projects;
     } catch (error) {
-      throw error;
+      this.logger.error(
+        `Error in getProjectsByCategory: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to retrieve projects by category',
+      );
     }
   }
   async getProjectsByAffordability(
@@ -228,7 +246,9 @@ export class ProjectService {
     city?: string,
   ): Promise<any[]> {
     try {
-      console.log('affordability controller', city, affordability);
+      this.logger.log(
+        `Getting projects by affordability - City: ${city}, Affordability: ${affordability}`,
+      );
 
       const filter: any = { status: Status.ACTIVE };
       if (affordability) {
@@ -248,7 +268,7 @@ export class ProjectService {
         .populate({ path: 'executiveUser', strictPopulate: false })
         .sort({ featured: -1 })
         .exec();
-      console.log('getProjectsByAffordability', projects);
+      this.logger.log(`Retrieved ${projects.length} projects by affordability`);
 
       if (!projects.length) {
         throw new NotFoundException('No projects found for the given criteria');
@@ -256,7 +276,13 @@ export class ProjectService {
 
       return projects;
     } catch (error) {
-      throw error;
+      this.logger.error(
+        `Error in getProjectsByAffordability: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to retrieve projects by affordability',
+      );
     }
   }
 
@@ -278,7 +304,7 @@ export class ProjectService {
     const property = await this.propertyService.getPropertiesByProjectId(
       project._id.toString(),
     );
-    console.log('property', project._id, property);
+    this.logger.log(`Retrieved properties for project ${project._id}`);
 
     project.properties = property;
     return {
@@ -300,7 +326,7 @@ export class ProjectService {
 
     // If no projects are found, return an empty array
     if (!projects.length) {
-      console.log(`No active projects found in city: ${city}`);
+      this.logger.log(`No active projects found in city: ${city}`);
       return [];
     }
     return projects;
@@ -383,8 +409,13 @@ export class ProjectService {
         })),
       }));
     } catch (error) {
-      console.error('Error in getFormattedProjects:', error.message);
-      throw error;
+      this.logger.error(
+        `Error in getFormattedProjects: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to retrieve formatted projects',
+      );
     }
   }
   async getUniqueCities(): Promise<string[]> {
@@ -481,7 +512,7 @@ export class ProjectService {
       },
     ]);
 
-    console.log('data', data);
+    this.logger.log(`Retrieved builder projects, count: ${data.length}`);
     return { data, message: 'Builder Projects Fetched Successfully' };
   }
 
@@ -509,7 +540,13 @@ export class ProjectService {
 
       return projects;
     } catch (error) {
-      throw error;
+      this.logger.error(
+        `Error in getProjectsByKeyword: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to search projects by keyword',
+      );
     }
   }
 

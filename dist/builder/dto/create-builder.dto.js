@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateBuilderDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
+const class_transformer_1 = require("class-transformer");
 class CreateBuilderDto {
 }
 exports.CreateBuilderDto = CreateBuilderDto;
@@ -23,12 +24,14 @@ __decorate([
 ], CreateBuilderDto.prototype, "name", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ example: 'builder@example.com' }),
+    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateBuilderDto.prototype, "email", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ example: '+919876543210' }),
+    (0, class_transformer_1.Transform)(({ value }) => value?.trim()),
     (0, class_validator_1.IsPhoneNumber)('IN'),
     (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
@@ -86,12 +89,14 @@ __decorate([
 ], CreateBuilderDto.prototype, "contactPerson", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({ example: 'contact@abc.com' }),
+    (0, class_transformer_1.Transform)(({ value }) => value?.toLowerCase().trim()),
     (0, class_validator_1.IsEmail)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateBuilderDto.prototype, "contactEmail", void 0);
 __decorate([
-    (0, swagger_1.ApiPropertyOptional)({ example: '+919876543211' }),
+    (0, swagger_1.ApiPropertyOptional)({ example: '+919876543210' }),
+    (0, class_transformer_1.Transform)(({ value }) => value?.trim()),
     (0, class_validator_1.IsPhoneNumber)('IN'),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)

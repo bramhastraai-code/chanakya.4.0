@@ -42,9 +42,8 @@ export class UserRequirementsController {
   async create(@CurrentUser() user: any, @Body() dto: CreateRequirementDto) {
     const data = await this.requirementService.create(user.userId, dto);
     return {
-      success: true,
-      message: 'Requirement posted successfully. We will find matches for you.',
       data,
+      message: 'Requirement posted successfully. We will find matches for you.',
     };
   }
 
@@ -64,8 +63,8 @@ export class UserRequirementsController {
       status,
     );
     return {
-      success: true,
       data,
+      message: 'Requirements retrieved successfully',
     };
   }
 
@@ -75,8 +74,8 @@ export class UserRequirementsController {
   async getMatches(@CurrentUser() user: any, @Param('id') id: string) {
     const data = await this.requirementService.getMatches(id, user.userId);
     return {
-      success: true,
       data,
+      message: 'Matches retrieved successfully',
     };
   }
 
@@ -90,9 +89,8 @@ export class UserRequirementsController {
   ) {
     const data = await this.requirementService.update(id, user.userId, dto);
     return {
-      success: true,
-      message: 'Requirement updated successfully',
       data,
+      message: 'Requirement updated successfully',
     };
   }
 
@@ -102,8 +100,8 @@ export class UserRequirementsController {
   async delete(@CurrentUser() user: any, @Param('id') id: string) {
     const data = await this.requirementService.delete(id, user.userId);
     return {
-      success: true,
-      ...data,
+      data,
+      message: 'Requirement deleted successfully',
     };
   }
 }

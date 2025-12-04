@@ -36,8 +36,8 @@ export class SubscriptionController {
     const data = await this.subscriptionService.getAllPlans();
 
     return {
-      success: true,
       data,
+      message: 'Plans retrieved successfully',
     };
   }
 
@@ -50,8 +50,8 @@ export class SubscriptionController {
     );
 
     return {
-      success: true,
       data,
+      message: 'Current subscription retrieved successfully',
     };
   }
 
@@ -71,9 +71,8 @@ export class SubscriptionController {
     );
 
     return {
-      success: true,
-      message: 'Subscription purchased successfully',
       data,
+      message: 'Subscription purchased successfully',
     };
   }
 
@@ -86,8 +85,8 @@ export class SubscriptionController {
     );
 
     return {
-      success: true,
       data,
+      message: 'Commission tracking retrieved successfully',
     };
   }
 
@@ -100,8 +99,8 @@ export class SubscriptionController {
     );
 
     return {
-      success: true,
       data,
+      message: 'Benefits retrieved successfully',
     };
   }
 
@@ -115,9 +114,8 @@ export class SubscriptionController {
     const data = await this.subscriptionService.cancelSubscription(user.userId);
 
     return {
-      success: true,
-      message: 'Subscription cancelled successfully',
       data,
+      message: 'Subscription cancelled successfully',
     };
   }
 }
@@ -138,7 +136,7 @@ export class AdminSubscriptionController {
     const data = await this.subscriptionService.seedPlans();
 
     return {
-      success: true,
+      data: null,
       message: data.message,
     };
   }

@@ -1,10 +1,11 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { S3 } from 'aws-sdk';
 import * as sharp from 'sharp';
 
 @Injectable()
 export class S3Service {
+  private readonly logger = new Logger(S3Service.name);
   private readonly s3: S3;
   private readonly bucketName: string;
 
@@ -101,11 +102,12 @@ export class S3Service {
       Bucket: this.bucketName,
       Key: key,
     };
-    console.log('delete s3 file params', params);
+    this.logger.log(`Deleting S3 file with params: ${JSON.stringify(params)}`);
     try {
       await this.s3.deleteObject(params).promise();
     } catch (error) {
-      throw error;
+      this.logger.error(`Failed to delete S3 file: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Failed to delete file from S3');
     }
   }
 

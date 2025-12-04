@@ -33,7 +33,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     return {
-      userId: user._id,
+      userId: user._id.toString(), // Ensure ID is returned as string
       email: user.email,
       role: user.role,
     };

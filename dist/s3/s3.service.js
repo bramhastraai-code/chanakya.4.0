@@ -8,13 +8,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var S3Service_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.S3Service = void 0;
 const common_1 = require("@nestjs/common");
 const AWS = require("aws-sdk");
 const sharp = require("sharp");
-let S3Service = class S3Service {
+let S3Service = S3Service_1 = class S3Service {
     constructor() {
+        this.logger = new common_1.Logger(S3Service_1.name);
         this.s3 = new AWS.S3({
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -80,12 +82,13 @@ let S3Service = class S3Service {
             Bucket: this.bucketName,
             Key: key,
         };
-        console.log('delete s3 file params', params);
+        this.logger.log(`Deleting S3 file with params: ${JSON.stringify(params)}`);
         try {
             await this.s3.deleteObject(params).promise();
         }
         catch (error) {
-            throw error;
+            this.logger.error(`Failed to delete S3 file: ${error.message}`, error.stack);
+            throw new common_1.InternalServerErrorException('Failed to delete file from S3');
         }
     }
     async uploadVideo(file, folder) {
@@ -124,7 +127,7 @@ let S3Service = class S3Service {
     }
 };
 exports.S3Service = S3Service;
-exports.S3Service = S3Service = __decorate([
+exports.S3Service = S3Service = S3Service_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], S3Service);

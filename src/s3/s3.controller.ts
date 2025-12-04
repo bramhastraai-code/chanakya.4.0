@@ -24,10 +24,13 @@ import {
 import { UploadFileDto } from './dto/uploadfile.s3.dto';
 import { UploadFilesDto } from './dto/UploadFiles.s3.dto';
 import { Response } from 'src/common/interceptor/response.interface';
+import { Logger } from '@nestjs/common';
 
 @ApiTags('S3')
 @Controller('s3')
 export class S3Controller {
+  private readonly logger = new Logger(S3Controller.name);
+
   constructor(private readonly s3Service: S3Service) {}
 
   @Post('upload')
@@ -125,7 +128,7 @@ export class S3Controller {
   async deleteFile(@Param('key') key: string) {
     // NestJS automatically decodes URL parameters, so key should already be decoded
     // Just use the key directly
-    console.log('Received key:', key);
+    this.logger.log(`Deleting file with key: ${key}`);
     const data = await this.s3Service.deleteFile(key);
     return { data, message: 'File deleted successfully' };
   }

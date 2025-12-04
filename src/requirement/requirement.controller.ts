@@ -64,8 +64,8 @@ export class AgentRequirementController {
       status,
     );
     return {
-      success: true,
       data,
+      message: 'Requirements retrieved successfully',
     };
   }
 
@@ -75,8 +75,8 @@ export class AgentRequirementController {
   async findOne(@Param('id') id: string) {
     const data = await this.requirementService.findOne(id);
     return {
-      success: true,
       data,
+      message: 'Requirement details retrieved successfully',
     };
   }
 
@@ -92,9 +92,8 @@ export class AgentRequirementController {
       createRequirementDto,
     );
     return {
-      success: true,
-      message: 'Requirement created successfully',
       data,
+      message: 'Requirement created successfully',
     };
   }
 
@@ -107,9 +106,8 @@ export class AgentRequirementController {
   ) {
     const data = await this.requirementService.update(id, updateRequirementDto);
     return {
-      success: true,
-      message: 'Requirement updated successfully',
       data,
+      message: 'Requirement updated successfully',
     };
   }
 
@@ -119,7 +117,7 @@ export class AgentRequirementController {
   async remove(@Param('id') id: string) {
     await this.requirementService.remove(id);
     return {
-      success: true,
+      data: null,
       message: 'Requirement deleted successfully',
     };
   }
@@ -146,9 +144,8 @@ export class UserRequirementController {
       createRequirementDto,
     );
     return {
-      success: true,
-      message: 'Requirement created successfully',
       data,
+      message: 'Requirement created successfully',
     };
   }
 
@@ -161,9 +158,8 @@ export class UserRequirementController {
   ) {
     const data = await this.requirementService.update(id, updateRequirementDto);
     return {
-      success: true,
-      message: 'Requirement updated successfully',
       data,
+      message: 'Requirement updated successfully',
     };
   }
 
@@ -173,7 +169,7 @@ export class UserRequirementController {
   async remove(@Param('id') id: string) {
     await this.requirementService.remove(id);
     return {
-      success: true,
+      data: null,
       message: 'Requirement deleted successfully',
     };
   }

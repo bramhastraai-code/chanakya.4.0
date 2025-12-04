@@ -8,6 +8,7 @@ import {
   IsEmail,
   Min,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { LeadStatus } from '../../enum/lead-status.enum';
 
 export class CreateLeadDto {
@@ -16,10 +17,12 @@ export class CreateLeadDto {
   customerName: string;
 
   @ApiProperty({ example: '+919876543210' })
+  @Transform(({ value }) => value?.trim())
   @IsPhoneNumber()
   customerPhone: string;
 
   @ApiPropertyOptional({ example: 'john@example.com' })
+  @Transform(({ value }) => value?.toLowerCase().trim())
   @IsEmail()
   @IsOptional()
   customerEmail?: string;

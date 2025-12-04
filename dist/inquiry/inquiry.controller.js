@@ -44,9 +44,9 @@ let InquiryController = class InquiryController {
             throw new common_1.InternalServerErrorException('An error occurred while updating the inquiry.');
         }
     }
-    async findAll(pageSize = '10', pageNumber = '1', sortBy = 'createdAt', sortOrder = 'desc', searchQuery, inquiryType, status) {
+    async findAll(pageSize = '10', pageNumber = '1', sortBy = 'createdAt', sortOrder = 'desc', searchQuery, inquiryType, status, projectId, propertyId, builderId) {
         try {
-            const data = await this.inquiryService.findAll(pageSize, pageNumber, sortBy, sortOrder, searchQuery, inquiryType, status);
+            const data = await this.inquiryService.findAll(pageSize, pageNumber, sortBy, sortOrder, searchQuery, inquiryType, status, projectId, propertyId, builderId);
             return { data, message: 'Retrieve successfully' };
         }
         catch (error) {
@@ -163,6 +163,24 @@ __decorate([
         enum: ['PENDING', 'IN_PROGRESS', 'RESOLVED', 'CLOSED'],
         description: 'Filter by inquiry status',
     }),
+    (0, swagger_1.ApiQuery)({
+        name: 'projectId',
+        type: String,
+        required: false,
+        description: 'Filter inquiries by project ID',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'propertyId',
+        type: String,
+        required: false,
+        description: 'Filter inquiries by property ID',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'builderId',
+        type: String,
+        required: false,
+        description: 'Filter inquiries by builder ID (via project/property)',
+    }),
     (0, swagger_1.ApiOkResponse)({
         description: 'List of inquiries retrieved successfully',
         type: [inquiry_entity_1.Inquiry],
@@ -177,8 +195,11 @@ __decorate([
     __param(4, (0, common_1.Query)('searchQuery')),
     __param(5, (0, common_1.Query)('inquiryType')),
     __param(6, (0, common_1.Query)('status')),
+    __param(7, (0, common_1.Query)('projectId')),
+    __param(8, (0, common_1.Query)('propertyId')),
+    __param(9, (0, common_1.Query)('builderId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], InquiryController.prototype, "findAll", null);
 __decorate([
