@@ -60,6 +60,13 @@ export class Lead {
   @Prop()
   assignedAt?: Date;
 
+  // Project and Builder association (from property)
+  @Prop({ type: Types.ObjectId, ref: 'Project' })
+  projectId?: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  builderId?: Types.ObjectId;
+
   @Prop()
   createdAt: Date;
 
@@ -73,5 +80,7 @@ export const LeadSchema = SchemaFactory.createForClass(Lead);
 LeadSchema.index({ assignedTo: 1, status: 1 });
 LeadSchema.index({ property: 1 });
 LeadSchema.index({ customerPhone: 1 });
+LeadSchema.index({ projectId: 1, status: 1 });
+LeadSchema.index({ builderId: 1, status: 1 });
 LeadSchema.index({ createdAt: -1 });
 LeadSchema.index({ createdBy: 1 });

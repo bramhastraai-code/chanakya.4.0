@@ -33,6 +33,7 @@ const wallet_module_1 = require("./wallet/wallet.module");
 const kyc_module_1 = require("./kyc/kyc.module");
 const subscription_module_1 = require("./subscription/subscription.module");
 const agent_module_1 = require("./agent/agent.module");
+const offers_module_1 = require("./offers/offers.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -76,6 +77,7 @@ exports.AppModule = AppModule = __decorate([
             schedule_1.ScheduleModule.forRoot(),
             firebase_module_1.FirebaseModule,
             notification_module_1.NotificationModule,
+            offers_module_1.OffersModule,
         ],
     })
 ], AppModule);

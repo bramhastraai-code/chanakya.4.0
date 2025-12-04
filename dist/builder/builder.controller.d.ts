@@ -1,12 +1,15 @@
 import { BuilderService } from './builder.service';
+import { AgentBuilderAssociationService } from '../agent/services/agent-builder-association.service';
 import { CreateBuilderDto } from './dto/create-builder.dto';
 import { UpdateBuilderDto } from './dto/update-builder.dto';
+import { AddAgentDto, BulkAddAgentsDto } from './dto/add-agent.dto';
 import { UserRole } from 'src/common/enum/user-role.enum';
 import { S3Service } from 'src/s3/s3.service';
 export declare class BuilderController {
     private readonly builderService;
     private readonly s3Service;
-    constructor(builderService: BuilderService, s3Service: S3Service);
+    private readonly associationService;
+    constructor(builderService: BuilderService, s3Service: S3Service, associationService: AgentBuilderAssociationService);
     getProfile(user: any): Promise<{
         data: import("mongoose").FlattenMaps<import("./entities/builder-profile.entity").BuilderProfile> & Required<{
             _id: import("mongoose").Types.ObjectId;
@@ -47,6 +50,62 @@ export declare class BuilderController {
             completedProjects: number;
             rating: number;
             isVerified: boolean;
+        };
+        message: string;
+    }>;
+    addAgent(user: any, body: AddAgentDto): Promise<{
+        data: import("mongoose").Document<unknown, {}, import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation, {}, {}> & import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation & Required<{
+            _id: import("mongoose").Types.ObjectId;
+        }> & {
+            __v: number;
+        };
+        message: string;
+    }>;
+    bulkAddAgents(user: any, body: BulkAddAgentsDto): Promise<{
+        data: {
+            successful: number;
+            failed: number;
+            results: PromiseSettledResult<import("mongoose").Document<unknown, {}, import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation, {}, {}> & import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation & Required<{
+                _id: import("mongoose").Types.ObjectId;
+            }> & {
+                __v: number;
+            }>[];
+        };
+        message: string;
+    }>;
+    getBuilderAgents(user: any, projectId?: string): Promise<{
+        data: (import("mongoose").Document<unknown, {}, import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation, {}, {}> & import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation & Required<{
+            _id: import("mongoose").Types.ObjectId;
+        }> & {
+            __v: number;
+        })[];
+        message: string;
+    }>;
+    getProjectAgents(user: any, projectId: string): Promise<{
+        data: (import("mongoose").Document<unknown, {}, import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation, {}, {}> & import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation & Required<{
+            _id: import("mongoose").Types.ObjectId;
+        }> & {
+            __v: number;
+        })[];
+        message: string;
+    }>;
+    removeAgent(user: any, associationId: string): Promise<{
+        data: import("mongoose").Document<unknown, {}, import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation, {}, {}> & import("../agent/entities/agent-builder-association.entity").AgentBuilderAssociation & Required<{
+            _id: import("mongoose").Types.ObjectId;
+        }> & {
+            __v: number;
+        };
+        message: string;
+    }>;
+    getBuilderRequirements(user: any, page?: number, limit?: number, status?: string): Promise<{
+        data: {
+            message: string;
+        };
+        message: string;
+    }>;
+    getBuilderLeads(user: any, page?: number, limit?: number, status?: string): Promise<{
+        data: {
+            message: string;
         };
         message: string;
     }>;

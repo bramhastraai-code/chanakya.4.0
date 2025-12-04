@@ -417,22 +417,52 @@ export class AgentPropertyController {
   constructor(private readonly propertyService: PropertyService) {}
 
   @Get()
-  @ApiOperation({ summary: "Get agent's properties" })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'status', required: false, enum: Status })
-  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiOperation({
+    summary: "Get builder's properties",
+    description:
+      'Retrieve all properties owned by the authenticated builder with advanced filtering, sorting, and pagination',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 20)',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: Status,
+    description: 'Filter by property status',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search by property title or location',
+  })
   @ApiQuery({
     name: 'sortBy',
     required: false,
     enum: ['price', 'createdAt', 'views'],
+    description: 'Field to sort by (default: createdAt)',
   })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'] })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    enum: ['asc', 'desc'],
+    description: 'Sort order (default: desc)',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Properties retrieved successfully',
+    description: 'Properties retrieved successfully with pagination',
   })
-  async getMyProperties(
+  async getBuilderProperties(
     @CurrentUser() user: any,
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 20,
@@ -647,20 +677,50 @@ export class BuilderPropertyController {
   constructor(private readonly propertyService: PropertyService) {}
 
   @Get()
-  @ApiOperation({ summary: "Get builder's properties" })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'status', required: false, enum: Status })
-  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiOperation({
+    summary: "Get builder's properties",
+    description:
+      'Retrieve all properties owned by the authenticated builder with advanced filtering, sorting, and pagination',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'Page number (default: 1)',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'Items per page (default: 20)',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    enum: Status,
+    description: 'Filter by property status',
+  })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Search by property title or location',
+  })
   @ApiQuery({
     name: 'sortBy',
     required: false,
     enum: ['price', 'createdAt', 'views'],
+    description: 'Field to sort by (default: createdAt)',
   })
-  @ApiQuery({ name: 'sortOrder', required: false, enum: ['asc', 'desc'] })
+  @ApiQuery({
+    name: 'sortOrder',
+    required: false,
+    enum: ['asc', 'desc'],
+    description: 'Sort order (default: desc)',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Properties retrieved successfully',
+    description: 'Properties retrieved successfully with pagination',
   })
   async getBuilderProperties(
     @CurrentUser() user: any,
@@ -688,8 +748,16 @@ export class BuilderPropertyController {
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create new property' })
-  @ApiResponse({ status: 201, description: 'Property created successfully' })
+  @ApiOperation({
+    summary: 'Create new property',
+    description:
+      'Builder creates a new property listing with complete details including amenities, pricing, and media',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Property created successfully with active status',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid property data' })
   async create(
     @Body() createPropertyDto: CreatePropertyDto,
     @CurrentUser() user: any,

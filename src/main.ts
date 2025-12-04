@@ -10,10 +10,10 @@ import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
+
   // Global exception filter for consistent error handling
   app.useGlobalFilters(new HttpExceptionFilter());
-  
+
   // Global validation pipe with detailed error messages
   app.useGlobalPipes(
     new ValidationPipe({

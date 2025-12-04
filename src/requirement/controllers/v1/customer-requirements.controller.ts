@@ -37,8 +37,12 @@ export class UserRequirementsController {
   constructor(private readonly requirementService: RequirementV1Service) {}
 
   @Post()
-  @ApiOperation({ summary: 'Post a new property requirement' })
-  @ApiResponse({ status: 201, description: 'Requirement posted successfully' })
+  @ApiOperation({ 
+    summary: 'Post a new property requirement',
+    description: 'Customer creates a property requirement specifying their buying/renting needs, budget, and preferences'
+  })
+  @ApiResponse({ status: 201, description: 'Requirement posted and agents will be matched automatically' })
+  @ApiResponse({ status: 400, description: 'Invalid requirement data' })
   async create(@CurrentUser() user: any, @Body() dto: CreateRequirementDto) {
     const data = await this.requirementService.create(user.userId, dto);
     return {
@@ -48,11 +52,14 @@ export class UserRequirementsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get my requirements' })
-  @ApiQuery({ name: 'status', enum: RequirementStatus, required: false })
+  @ApiOperation({ 
+    summary: 'Get my requirements',
+    description: 'Retrieve all property requirements posted by the customer with optional status filtering'
+  })
+  @ApiQuery({ name: 'status', enum: RequirementStatus, required: false, description: 'Filter by requirement status (open, in-progress, closed)' })
   @ApiResponse({
     status: 200,
-    description: 'Requirements retrieved successfully',
+    description: 'Customer requirements retrieved with matched properties count',
   })
   async getMyRequirements(
     @CurrentUser() user: any,
@@ -69,8 +76,12 @@ export class UserRequirementsController {
   }
 
   @Get(':id/matches')
-  @ApiOperation({ summary: 'Get matched properties for a requirement' })
-  @ApiResponse({ status: 200, description: 'Matches retrieved successfully' })
+  @ApiOperation({ 
+    summary: 'Get matched properties for a requirement',
+    description: 'View AI-matched properties that fit the customer requirement criteria including location, budget, and specifications'
+  })
+  @ApiResponse({ status: 200, description: 'Matched properties retrieved with similarity scores' })
+  @ApiResponse({ status: 404, description: 'Requirement not found' })
   async getMatches(@CurrentUser() user: any, @Param('id') id: string) {
     const data = await this.requirementService.getMatches(id, user.userId);
     return {
@@ -80,8 +91,12 @@ export class UserRequirementsController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Update requirement' })
-  @ApiResponse({ status: 200, description: 'Requirement updated successfully' })
+  @ApiOperation({ 
+    summary: 'Update requirement',
+    description: 'Modify property requirement details including budget, location, or specifications. Triggers re-matching with properties'
+  })
+  @ApiResponse({ status: 200, description: 'Requirement updated and new matches found' })
+  @ApiResponse({ status: 403, description: 'Can only update your own requirements' })
   async update(
     @CurrentUser() user: any,
     @Param('id') id: string,
@@ -95,8 +110,12 @@ export class UserRequirementsController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete requirement' })
-  @ApiResponse({ status: 200, description: 'Requirement deleted successfully' })
+  @ApiOperation({ 
+    summary: 'Delete requirement',
+    description: 'Permanently remove property requirement. Active agents working on this requirement will be notified'
+  })
+  @ApiResponse({ status: 200, description: 'Requirement deleted and agents notified' })
+  @ApiResponse({ status: 403, description: 'Can only delete your own requirements' })
   async delete(@CurrentUser() user: any, @Param('id') id: string) {
     const data = await this.requirementService.delete(id, user.userId);
     return {

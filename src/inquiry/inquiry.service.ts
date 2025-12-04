@@ -98,17 +98,17 @@ export class InquiryService {
     // Filter by builderId - find projects/properties by builder, then filter inquiries
     if (builderId) {
       const builderObjectId = new Types.ObjectId(builderId);
-      
+
       // Find all projects by this builder
       const builderProjects = await this.projectModel
         .find({ builder: builderObjectId })
         .distinct('_id');
-      
+
       // Find all properties by this builder
       const builderProperties = await this.propertyModel
         .find({ builder: builderObjectId })
         .distinct('_id');
-      
+
       // Filter inquiries that reference these projects or properties
       query.$or = [
         { projectId: { $in: builderProjects } },

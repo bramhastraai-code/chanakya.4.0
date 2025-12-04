@@ -43,8 +43,7 @@ export class UserProfile extends Document {
   updatedAt: Date;
 }
 
-export const UserProfileSchema =
-  SchemaFactory.createForClass(UserProfile);
+export const UserProfileSchema = SchemaFactory.createForClass(UserProfile);
 
 // Indexes
 UserProfileSchema.index({ userId: 1 });

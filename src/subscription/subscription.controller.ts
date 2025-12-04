@@ -30,8 +30,15 @@ export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}
 
   @Get('plans')
-  @ApiOperation({ summary: 'Get all subscription plans' })
-  @ApiResponse({ status: 200, description: 'Plans retrieved successfully' })
+  @ApiOperation({
+    summary: 'Get all subscription plans',
+    description:
+      'Retrieve list of available subscription plans with pricing and features',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Subscription plans retrieved successfully',
+  })
   async getPlans() {
     const data = await this.subscriptionService.getAllPlans();
 
@@ -42,8 +49,15 @@ export class SubscriptionController {
   }
 
   @Get('current')
-  @ApiOperation({ summary: 'Get current active subscription' })
-  @ApiResponse({ status: 200, description: 'Current subscription retrieved' })
+  @ApiOperation({
+    summary: 'Get current active subscription',
+    description:
+      'Retrieve details of agent current subscription plan including expiry and benefits',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Current subscription details retrieved successfully',
+  })
   async getCurrentSubscription(@CurrentUser() user: any) {
     const data = await this.subscriptionService.getCurrentSubscription(
       user.userId,
@@ -56,11 +70,17 @@ export class SubscriptionController {
   }
 
   @Post('purchase')
-  @ApiOperation({ summary: 'Purchase subscription plan' })
+  @ApiOperation({
+    summary: 'Purchase subscription plan',
+    description:
+      'Purchase or upgrade to a subscription plan to unlock premium features and benefits',
+  })
   @ApiResponse({
     status: 201,
-    description: 'Subscription purchased successfully',
+    description:
+      'Subscription purchased successfully and activated immediately',
   })
+  @ApiResponse({ status: 400, description: 'Invalid plan or payment details' })
   async purchaseSubscription(
     @Body() purchaseDto: PurchaseSubscriptionDto,
     @CurrentUser() user: any,

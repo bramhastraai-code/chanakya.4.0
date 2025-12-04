@@ -15,8 +15,7 @@ import { AdminWalletController } from './controllers/v1/admin-wallet.controller'
     ConfigModule,
     RazorpayModule.forRoot({
       key_id: process.env.RAZORPAY_KEY_ID || 'rzp_live_2FhwIdAriDpU2J',
-      key_secret:
-        process.env.RAZORPAY_KEY_SECRET || 'GjfwZCuhU933hSd4Eh1QX5da',
+      key_secret: process.env.RAZORPAY_KEY_SECRET || 'GjfwZCuhU933hSd4Eh1QX5da',
     }),
     MongooseModule.forFeature([
       { name: Wallet.name, schema: WalletSchema },

@@ -20,7 +20,8 @@ export class BookmarkedProperty {
   updatedAt: Date;
 }
 
-export const BookmarkedPropertySchema = SchemaFactory.createForClass(BookmarkedProperty);
+export const BookmarkedPropertySchema =
+  SchemaFactory.createForClass(BookmarkedProperty);
 
 // Indexes
 BookmarkedPropertySchema.index({ agent: 1, property: 1 }, { unique: true });

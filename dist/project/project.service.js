@@ -215,6 +215,42 @@ let ProjectService = ProjectService_1 = class ProjectService {
             throw new common_1.InternalServerErrorException('Failed to retrieve projects by affordability');
         }
     }
+    async getProjectsByType(type, city, pageSize = 20, pageNumber = 1) {
+        try {
+            this.logger.log(`Getting projects by type - Type: ${type}, City: ${city}`);
+            const filter = { status: status_enum_1.Status.ACTIVE, projectType: type };
+            if (city) {
+                filter.city = { $regex: city, $options: 'i' };
+            }
+            const skip = (pageNumber - 1) * pageSize;
+            const totalProjects = await this.projectModel.countDocuments(filter);
+            const totalPages = Math.ceil(totalProjects / pageSize);
+            const projects = await this.projectModel
+                .find(filter)
+                .skip(skip)
+                .limit(pageSize)
+                .populate({ path: 'builder', strictPopulate: false })
+                .populate({ path: 'amenities', strictPopulate: false })
+                .populate({ path: 'facilities', strictPopulate: false })
+                .populate({ path: 'createdBy', strictPopulate: false })
+                .populate({ path: 'updatedBy', strictPopulate: false })
+                .populate({ path: 'executiveUser', strictPopulate: false })
+                .sort({ createdAt: -1 })
+                .exec();
+            this.logger.log(`Retrieved ${projects.length} projects by type`);
+            return {
+                projects,
+                totalProjects,
+                totalPages,
+                pageSize,
+                pageNumber,
+            };
+        }
+        catch (error) {
+            this.logger.error(`Error in getProjectsByType: ${error.message}`, error.stack);
+            throw new common_1.InternalServerErrorException('Failed to retrieve projects by type');
+        }
+    }
     async getProjectDetail(projectId) {
         const project = await this.projectModel
             .findById(projectId)

@@ -28,6 +28,7 @@ import { WalletModule } from './wallet/wallet.module';
 import { KycModule } from './kyc/kyc.module';
 import { SubscriptionModule } from './subscription/subscription.module';
 import { AgentModule } from './agent/agent.module';
+import { OffersModule } from './offers/offers.module';
 
 @Module({
   imports: [
@@ -78,6 +79,7 @@ import { AgentModule } from './agent/agent.module';
     ScheduleModule.forRoot(),
     FirebaseModule,
     NotificationModule,
+    OffersModule,
   ],
 })
 export class AppModule {}

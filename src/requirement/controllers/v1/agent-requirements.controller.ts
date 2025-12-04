@@ -21,16 +21,19 @@ export class AgentRequirementsController {
   constructor(private readonly requirementService: RequirementV1Service) {}
 
   @Get('search')
-  @ApiOperation({ summary: 'Search customer requirements (leads)' })
-  @ApiQuery({ name: 'location', required: false })
-  @ApiQuery({ name: 'propertyType', required: false })
-  @ApiQuery({ name: 'minBudget', required: false, type: Number })
-  @ApiQuery({ name: 'maxBudget', required: false, type: Number })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 20 })
+  @ApiOperation({ 
+    summary: 'Search customer requirements (leads)',
+    description: 'Agent searches for buyer/renter requirements matching their expertise and available properties with advanced filtering'
+  })
+  @ApiQuery({ name: 'location', required: false, description: 'Filter by preferred location (city, area, locality)' })
+  @ApiQuery({ name: 'propertyType', required: false, description: 'Filter by property type (apartment, villa, plot, etc.)' })
+  @ApiQuery({ name: 'minBudget', required: false, type: Number, description: 'Minimum budget in INR' })
+  @ApiQuery({ name: 'maxBudget', required: false, type: Number, description: 'Maximum budget in INR' })
+  @ApiQuery({ name: 'page', required: false, example: 1, description: 'Page number for pagination' })
+  @ApiQuery({ name: 'limit', required: false, example: 20, description: 'Items per page' })
   @ApiResponse({
     status: 200,
-    description: 'Requirements retrieved successfully',
+    description: 'Customer requirements retrieved with matching criteria',
   })
   async search(@Query() filters: any) {
     const data = await this.requirementService.search(filters);

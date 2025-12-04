@@ -15,9 +15,9 @@ import {
 import { BountySubmission } from './entities/bounty-submission.entity';
 import { BountyStatus, SubmissionStatus } from './enum/bounty.enum';
 import { WalletService } from 'src/wallet/wallet.service';
-import { TransactionType } from 'src/wallet/enum/transaction.enum';
 import { Project } from 'src/project/entities/project.entity';
 import { UserRole } from 'src/common/enum/user-role.enum';
+import { AgentBuilderAssociationService } from '../agent/services/agent-builder-association.service';
 
 @Injectable()
 export class BountyService {
@@ -27,6 +27,7 @@ export class BountyService {
     private submissionModel: Model<BountySubmission>,
     @InjectModel(Project.name) private projectModel: Model<Project>,
     private readonly walletService: WalletService,
+    private readonly associationService: AgentBuilderAssociationService,
   ) {}
 
   /**
@@ -162,7 +163,7 @@ export class BountyService {
   }
 
   /**
-   * Get active bounties
+   * Get active bounties (all - public access)
    */
   async findAllActive(projectId?: string) {
     const query: any = { status: BountyStatus.ACTIVE };
@@ -171,9 +172,62 @@ export class BountyService {
     }
     return this.bountyModel
       .find(query)
-      .populate('project', 'title location')
+      .populate('project', 'projectName location builder thumbnail')
       .sort({ createdAt: -1 })
       .exec();
+  }
+
+  /**
+   * Get bounties visible to an agent (only for associated builders/projects)
+   */
+  async findAllForAgent(agentId: string, filters: any = {}) {
+    const { status = BountyStatus.ACTIVE, page = 1, limit = 20 } = filters;
+
+    // Get agent's associated projects
+    const associations =
+      await this.associationService.getAgentAssociations(agentId);
+    const projectIds = associations.map((a: any) => a.projectId);
+
+    if (projectIds.length === 0) {
+      return {
+        bounties: [],
+        pagination: {
+          total: 0,
+          page: Number(page),
+          limit: Number(limit),
+          totalPages: 0,
+        },
+      };
+    }
+
+    const query: any = {
+      project: { $in: projectIds },
+      status,
+    };
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [bounties, total] = await Promise.all([
+      this.bountyModel
+        .find(query)
+        .populate('project', 'projectName location builder thumbnail')
+        .populate('createdBy', 'name companyName')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit))
+        .exec(),
+      this.bountyModel.countDocuments(query),
+    ]);
+
+    return {
+      bounties,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        totalPages: Math.ceil(total / Number(limit)),
+      },
+    };
   }
 
   /**

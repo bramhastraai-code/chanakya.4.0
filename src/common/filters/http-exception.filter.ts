@@ -39,7 +39,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       // Handle standard JavaScript errors (e.g., MongoDB errors, validation errors)
       message = exception.message;
       errorCode = 'SERVER_ERROR';
-      
+
       // Log the full error with stack trace for debugging
       this.logger.error(
         `Unhandled Error: ${exception.message}`,

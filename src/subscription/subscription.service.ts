@@ -1,10 +1,17 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { SubscriptionPlan } from './entities/subscription-plan.entity';
 import { AgentSubscription } from './entities/agent-subscription.entity';
 import { PurchaseSubscriptionDto } from './dto/purchase-subscription.dto';
-import { SubscriptionStatus, SubscriptionPlanType } from './enum/subscription.enum';
+import {
+  SubscriptionStatus,
+  SubscriptionPlanType,
+} from './enum/subscription.enum';
 
 @Injectable()
 export class SubscriptionService {

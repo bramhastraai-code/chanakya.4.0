@@ -89,11 +89,12 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)({
         description: 'The type of the project',
-        example: 'Residential',
-        required: false,
+        example: project_enum_2.ProjectType.NEW,
+        enum: project_enum_2.ProjectType,
+        required: true,
     }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(project_enum_2.ProjectType),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "projectType", void 0);
 __decorate([

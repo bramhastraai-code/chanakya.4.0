@@ -106,16 +106,22 @@ __decorate([
     (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
     (0, roles_decorator_1.Roles)(user_role_enum_1.UserRole.ADMIN),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create a new amenity (admin only)' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create a new amenity (admin only)',
+        description: 'Admin creates a new amenity/facility that can be associated with properties and projects',
+    }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.CREATED,
         description: 'Amenity created successfully',
         type: amenity_entity_1.Amenity,
     }),
-    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.BAD_REQUEST, description: 'Invalid input' }),
+    (0, swagger_1.ApiResponse)({
+        status: common_1.HttpStatus.BAD_REQUEST,
+        description: 'Invalid input data',
+    }),
     (0, swagger_1.ApiResponse)({
         status: common_1.HttpStatus.FORBIDDEN,
-        description: 'Forbidden - admin only',
+        description: 'Forbidden - Admin access required',
     }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),

@@ -42,7 +42,7 @@ __decorate([
     __metadata("design:type", user_entity_1.User)
 ], Project.prototype, "builder", void 0);
 __decorate([
-    (0, mongoose_1.Prop)({ required: true }),
+    (0, mongoose_1.Prop)({ required: true, enum: project_enum_2.ProjectType }),
     __metadata("design:type", String)
 ], Project.prototype, "projectType", void 0);
 __decorate([

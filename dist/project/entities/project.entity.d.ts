@@ -5,13 +5,13 @@ import { ProjectAffordability, ProjectCategory } from '../enum/project.enum';
 import { Status } from 'src/common/enum/status.enum';
 import { BHKConfiguration, OfferVariant, TagVariant } from 'src/property/enum/property.enum';
 import { Property } from 'src/property/entities/property.entity';
-import { ProjectStatus } from '../project.enum';
+import { ProjectStatus, ProjectType } from '../project.enum';
 export declare class Project extends Document {
     projectName: string;
     thumbnail: string;
     description: string;
     builder: User;
-    projectType: string;
+    projectType: ProjectType;
     projectCategory: ProjectCategory;
     projectAffordability: ProjectAffordability;
     projectStatus?: ProjectStatus;

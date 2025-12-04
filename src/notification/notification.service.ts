@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Notification, NotificationDocument } from './entities/notification.entity';
+import {
+  Notification,
+  NotificationDocument,
+} from './entities/notification.entity';
 import { NotificationType } from './enum/notification-type.enum';
 
 @Injectable()
@@ -148,10 +151,7 @@ export class NotificationService {
     );
   }
 
-  async notifyKycRejected(
-    userId: string,
-    reason: string,
-  ): Promise<void> {
+  async notifyKycRejected(userId: string, reason: string): Promise<void> {
     await this.create(
       userId,
       NotificationType.KYC_REJECTED,

@@ -9,82 +9,125 @@ import {
   Min,
   IsObject,
   IsDate,
+  IsBoolean,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { BountyType, BountyStatus } from '../enum/bounty.enum';
 
 export class CreateBountyDto {
-  @ApiProperty({ example: 'Refer a User - Earn ₹500' })
+  @ApiProperty({
+    description: 'Title of the bounty program',
+    example: 'Refer a User - Earn ₹500',
+  })
   @IsString()
   title: string;
 
   @ApiProperty({
-    example: 'Refer a friend looking to buy property and earn rewards.',
+    description: 'Detailed description of the bounty program and how to earn',
+    example:
+      'Refer a friend looking to buy property and earn rewards. Lead must visit site and show genuine interest.',
   })
   @IsString()
   description: string;
 
-  @ApiProperty({ example: 500 })
+  @ApiProperty({
+    description: 'Reward amount in INR',
+    example: 500,
+    minimum: 0,
+  })
   @IsNumber()
   @Min(0)
   rewardAmount: number;
 
-  @ApiProperty({ enum: BountyType, example: BountyType.LEAD_REFERRAL })
+  @ApiProperty({
+    description: 'Type of bounty program',
+    enum: BountyType,
+    example: BountyType.LEAD_REFERRAL,
+  })
   @IsEnum(BountyType)
   type: BountyType;
 
   @ApiPropertyOptional({
-    example: ['Lead must be valid', 'Lead must visit site'],
+    description: 'List of requirements/conditions to fulfill the bounty',
+    example: [
+      'Lead must be valid',
+      'Lead must visit site',
+      'Lead should show genuine interest',
+    ],
+    type: [String],
   })
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   requirements?: string[];
 
-  @ApiPropertyOptional({ 
+  @ApiPropertyOptional({
+    description:
+      'Expiry date and time of the bounty program in ISO 8601 format',
     example: '2025-12-31T23:59:59.000Z',
-    description: 'Expiry date in ISO 8601 format' 
   })
   @IsOptional()
   @Type(() => Date)
   @IsDate()
   expiryDate?: Date;
 
-  @ApiProperty({ example: '507f1f77bcf86cd799439011' })
+  @ApiProperty({
+    description: 'Project ID this bounty is associated with',
+    example: '507f1f77bcf86cd799439011',
+  })
   @IsString()
   projectId: string;
 }
 
 export class UpdateBountyDto {
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Updated title of the bounty program',
+    example: 'Refer a User - Earn ₹1000',
+  })
   @IsString()
   @IsOptional()
   title?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Updated description',
+    example: 'Updated reward structure for referrals',
+  })
   @IsString()
   @IsOptional()
   description?: string;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Updated reward amount in INR',
+    example: 1000,
+    minimum: 0,
+  })
   @IsNumber()
   @Min(0)
   @IsOptional()
   rewardAmount?: number;
 
-  @ApiPropertyOptional({ enum: BountyStatus })
+  @ApiPropertyOptional({
+    description: 'Update bounty status',
+    enum: BountyStatus,
+    example: BountyStatus.ACTIVE,
+  })
   @IsEnum(BountyStatus)
   @IsOptional()
   status?: BountyStatus;
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    description: 'Updated requirements list',
+    example: ['Lead must be verified', 'Lead must complete site visit'],
+    type: [String],
+  })
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
   requirements?: string[];
 
   @ApiPropertyOptional({
-    description: 'Expiry date in ISO 8601 format'
+    description: 'Updated expiry date in ISO 8601 format',
+    example: '2026-06-30T23:59:59.000Z',
   })
   @IsOptional()
   @Type(() => Date)
@@ -93,15 +136,22 @@ export class UpdateBountyDto {
 }
 
 export class SubmitBountyDto {
-  @ApiProperty({ example: 'bounty_id' })
+  @ApiProperty({
+    description: 'Bounty program ID to submit for',
+    example: '507f1f77bcf86cd799439011',
+  })
   @IsString()
   bountyId: string;
 
   @ApiProperty({
+    description:
+      'Submission data containing required information (lead details, proof, etc.)',
     example: {
       name: 'John Doe',
       phone: '+919876543210',
-      notes: 'Interested in 3BHK',
+      email: 'john@example.com',
+      notes: 'Interested in 3BHK apartments, budget 50-60 lakhs',
+      visitDate: '2025-12-10',
     },
   })
   @IsObject()
@@ -109,10 +159,17 @@ export class SubmitBountyDto {
 }
 
 export class ReviewSubmissionDto {
-  @ApiProperty({ example: true })
+  @ApiProperty({
+    description: 'Whether to approve or reject the submission',
+    example: true,
+  })
+  @IsBoolean()
   approved: boolean;
 
-  @ApiPropertyOptional({ example: 'Valid lead, verified.' })
+  @ApiPropertyOptional({
+    description: 'Feedback or reason for approval/rejection',
+    example: 'Valid lead, verified and scheduled for site visit.',
+  })
   @IsString()
   @IsOptional()
   feedback?: string;

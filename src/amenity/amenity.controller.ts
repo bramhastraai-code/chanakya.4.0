@@ -44,16 +44,23 @@ export class AmenityController {
   @UseGuards(jwtGuard, RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Create a new amenity (admin only)' })
+  @ApiOperation({
+    summary: 'Create a new amenity (admin only)',
+    description:
+      'Admin creates a new amenity/facility that can be associated with properties and projects',
+  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Amenity created successfully',
     type: Amenity,
   })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Invalid input' })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data',
+  })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
-    description: 'Forbidden - admin only',
+    description: 'Forbidden - Admin access required',
   })
   async create(
     @Body() createAmenityDto: CreateAmenityDto,

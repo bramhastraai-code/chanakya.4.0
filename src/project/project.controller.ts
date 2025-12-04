@@ -29,6 +29,7 @@ import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
+import { ProjectType } from './project.enum';
 import { Logger } from '@nestjs/common';
 import {
   GetProjectByAffordabilityDto,
@@ -388,13 +389,65 @@ export class ProjectController {
     @Query() getProjectByAffordabilityDto: GetProjectByAffordabilityDto,
   ): Promise<Response<FeaturedProjectDto[]>> {
     const { affordability, city } = getProjectByAffordabilityDto;
-    this.logger.log(`Getting projects by affordability: ${affordability}, city: ${city}`);
+    this.logger.log(
+      `Getting projects by affordability: ${affordability}, city: ${city}`,
+    );
 
     const data = await this.projectService.getProjectsByAffordability(
       affordability,
       city,
     );
     this.logger.log(`Retrieved ${data.length} projects`);
+
+    return { data, message: 'retrieve successfully' };
+  }
+
+  @Get('by-type')
+  @ApiOperation({ summary: 'Get projects by type' })
+  @ApiQuery({
+    name: 'type',
+    enum: ProjectType,
+    required: true,
+    description: 'Project type: new, rental, or resale',
+  })
+  @ApiQuery({
+    name: 'city',
+    type: String,
+    required: false,
+    description: 'Filter by city name',
+  })
+  @ApiQuery({
+    name: 'pageSize',
+    type: Number,
+    required: false,
+    description: 'Number of items per page',
+  })
+  @ApiQuery({
+    name: 'pageNumber',
+    type: Number,
+    required: false,
+    description: 'Page number',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of projects by type.',
+    type: [FeaturedProjectDto],
+  })
+  async getProjectsByType(
+    @Query('type') type: ProjectType,
+    @Query('city') city?: string,
+    @Query('pageSize') pageSize: number = 20,
+    @Query('pageNumber') pageNumber: number = 1,
+  ): Promise<Response<any>> {
+    this.logger.log(`Getting projects by type: ${type}, city: ${city}`);
+
+    const data = await this.projectService.getProjectsByType(
+      type,
+      city,
+      pageSize,
+      pageNumber,
+    );
+    this.logger.log(`Retrieved ${data.projects.length} projects`);
 
     return { data, message: 'retrieve successfully' };
   }

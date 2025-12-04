@@ -6,7 +6,12 @@ export type SubscriptionPlanDocument = SubscriptionPlan & Document;
 
 @Schema({ timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } })
 export class SubscriptionPlan {
-  @Prop({ type: String, enum: SubscriptionPlanType, required: true, unique: true })
+  @Prop({
+    type: String,
+    enum: SubscriptionPlanType,
+    required: true,
+    unique: true,
+  })
   name: SubscriptionPlanType;
 
   @Prop({ required: true })
@@ -49,7 +54,8 @@ export class SubscriptionPlan {
   updatedAt: Date;
 }
 
-export const SubscriptionPlanSchema = SchemaFactory.createForClass(SubscriptionPlan);
+export const SubscriptionPlanSchema =
+  SchemaFactory.createForClass(SubscriptionPlan);
 
 // Indexes
 SubscriptionPlanSchema.index({ name: 1 });

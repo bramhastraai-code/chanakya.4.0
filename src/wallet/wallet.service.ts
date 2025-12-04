@@ -6,7 +6,10 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Wallet, WalletDocument } from './entities/wallet.entity';
-import { Transaction, TransactionDocument } from './entities/transaction.entity';
+import {
+  Transaction,
+  TransactionDocument,
+} from './entities/transaction.entity';
 import { TransactionType, TransactionStatus } from './enum/transaction.enum';
 import { AddMoneyDto } from './dto/add-money.dto';
 import { WithdrawMoneyDto } from './dto/withdraw-money.dto';

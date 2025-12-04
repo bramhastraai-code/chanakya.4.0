@@ -9,6 +9,7 @@ import { BountyService } from './bounty.service';
 import { BountyController } from './bounty.controller';
 import { WalletModule } from '../wallet/wallet.module';
 import { Project, ProjectSchema } from '../project/entities/project.entity';
+import { AgentModule } from '../agent/agent.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { Project, ProjectSchema } from '../project/entities/project.entity';
       { name: Project.name, schema: ProjectSchema },
     ]),
     WalletModule,
+    AgentModule,
   ],
   controllers: [BountyController],
   providers: [BountyService],

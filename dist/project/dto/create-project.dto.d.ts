@@ -3,7 +3,7 @@ import { ProjectAffordability, ProjectCategory } from '../enum/project.enum';
 import { OfferDto, TagDto } from 'src/property/dto/create-property.dto';
 import { Status } from 'src/common/enum/status.enum';
 import { BHKConfiguration } from 'src/property/enum/property.enum';
-import { ProjectStatus } from '../project.enum';
+import { ProjectStatus, ProjectType } from '../project.enum';
 declare class NearbyDto {
     resource: string;
     distance: string;
@@ -14,7 +14,7 @@ export declare class CreateProjectDto {
     description: string;
     thumbnail: string;
     builder: string;
-    projectType?: string;
+    projectType: ProjectType;
     quickBuy?: boolean;
     projectCategory: ProjectCategory;
     projectAffordability: ProjectAffordability;

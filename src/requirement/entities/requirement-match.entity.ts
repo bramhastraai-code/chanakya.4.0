@@ -23,7 +23,8 @@ export class RequirementMatch {
   matchDetails?: Record<string, any>;
 }
 
-export const RequirementMatchSchema = SchemaFactory.createForClass(RequirementMatch);
+export const RequirementMatchSchema =
+  SchemaFactory.createForClass(RequirementMatch);
 
 // Indexes
 RequirementMatchSchema.index({ requirement: 1, matchScore: -1 });

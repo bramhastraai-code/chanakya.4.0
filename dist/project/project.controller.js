@@ -21,6 +21,7 @@ const project_service_1 = require("./project.service");
 const project_entity_1 = require("./entities/project.entity");
 const create_project_dto_1 = require("./dto/create-project.dto");
 const project_enum_1 = require("./enum/project.enum");
+const project_enum_2 = require("./project.enum");
 const common_2 = require("@nestjs/common");
 const ProjectCategory_dto_1 = require("./dto/ProjectCategory.dto");
 const featuredProject_dto_1 = require("./dto/featuredProject.dto");
@@ -108,6 +109,12 @@ let ProjectController = ProjectController_1 = class ProjectController {
         this.logger.log(`Getting projects by affordability: ${affordability}, city: ${city}`);
         const data = await this.projectService.getProjectsByAffordability(affordability, city);
         this.logger.log(`Retrieved ${data.length} projects`);
+        return { data, message: 'retrieve successfully' };
+    }
+    async getProjectsByType(type, city, pageSize = 20, pageNumber = 1) {
+        this.logger.log(`Getting projects by type: ${type}, city: ${city}`);
+        const data = await this.projectService.getProjectsByType(type, city, pageSize, pageNumber);
+        this.logger.log(`Retrieved ${data.projects.length} projects`);
         return { data, message: 'retrieve successfully' };
     }
     async getProjectDetail(id) {
@@ -457,6 +464,46 @@ __decorate([
     __metadata("design:paramtypes", [ProjectCategory_dto_1.GetProjectByAffordabilityDto]),
     __metadata("design:returntype", Promise)
 ], ProjectController.prototype, "getProjectsByAffordability", null);
+__decorate([
+    (0, common_1.Get)('by-type'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get projects by type' }),
+    (0, swagger_1.ApiQuery)({
+        name: 'type',
+        enum: project_enum_2.ProjectType,
+        required: true,
+        description: 'Project type: new, rental, or resale',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'city',
+        type: String,
+        required: false,
+        description: 'Filter by city name',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'pageSize',
+        type: Number,
+        required: false,
+        description: 'Number of items per page',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'pageNumber',
+        type: Number,
+        required: false,
+        description: 'Page number',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 200,
+        description: 'List of projects by type.',
+        type: [featuredProject_dto_1.FeaturedProjectDto],
+    }),
+    __param(0, (0, common_1.Query)('type')),
+    __param(1, (0, common_1.Query)('city')),
+    __param(2, (0, common_1.Query)('pageSize')),
+    __param(3, (0, common_1.Query)('pageNumber')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], ProjectController.prototype, "getProjectsByType", null);
 __decorate([
     (0, common_1.Get)('project-detail/:id'),
     (0, swagger_1.ApiOperation)({ summary: 'Get project details by ID' }),

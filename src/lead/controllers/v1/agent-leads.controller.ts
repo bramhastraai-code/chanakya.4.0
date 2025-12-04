@@ -35,12 +35,39 @@ export class AgentLeadsController {
   constructor(private readonly leadService: LeadV1Service) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get my assigned leads' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 20 })
-  @ApiQuery({ name: 'status', enum: LeadStatus, required: false })
-  @ApiQuery({ name: 'isQualified', type: Boolean, required: false })
-  @ApiResponse({ status: 200, description: 'Leads retrieved successfully' })
+  @ApiOperation({
+    summary: 'Get my assigned leads',
+    description:
+      'Retrieve all leads assigned to the authenticated agent with filtering and pagination',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    example: 1,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    example: 20,
+    description: 'Items per page',
+  })
+  @ApiQuery({
+    name: 'status',
+    enum: LeadStatus,
+    required: false,
+    description: 'Filter by lead status',
+  })
+  @ApiQuery({
+    name: 'isQualified',
+    type: Boolean,
+    required: false,
+    description: 'Filter by qualification status',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Leads retrieved successfully with pagination',
+  })
   async getMyLeads(@CurrentUser() user: any, @Query() filters: any) {
     const data = await this.leadService.findByAgent(user.userId, filters);
     return {
@@ -95,9 +122,16 @@ export class AgentLeadsController {
   }
 
   @Post(':id/activities')
-  @ApiOperation({ summary: 'Add activity to lead (call, meeting, note, etc.)' })
+  @ApiOperation({
+    summary: 'Add activity to lead (call, meeting, note, etc.)',
+    description:
+      'Log an activity or interaction with the lead for tracking and follow-up',
+  })
   @ApiBody({ type: AddActivityDto })
-  @ApiResponse({ status: 201, description: 'Activity added successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Activity logged successfully in lead timeline',
+  })
   async addActivity(
     @CurrentUser() user: any,
     @Param('id') id: string,

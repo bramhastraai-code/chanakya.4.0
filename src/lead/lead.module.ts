@@ -11,6 +11,7 @@ import { LeadV1Service } from './services/lead-v1.service';
 import { UserLeadsController } from './controllers/v1/customer-leads.controller';
 import { AgentLeadsController } from './controllers/v1/agent-leads.controller';
 import { AdminLeadsController } from './controllers/v1/admin-leads.controller';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { AdminLeadsController } from './controllers/v1/admin-leads.controller';
       { name: Lead.name, schema: LeadSchema },
       { name: LeadActivity.name, schema: LeadActivitySchema },
     ]),
+    CommonModule,
   ],
   controllers: [
     LeadController,

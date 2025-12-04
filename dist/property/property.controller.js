@@ -410,7 +410,7 @@ let AgentPropertyController = class AgentPropertyController {
     constructor(propertyService) {
         this.propertyService = propertyService;
     }
-    async getMyProperties(user, page = 1, limit = 20, status, search, sortBy = 'createdAt', sortOrder = 'desc') {
+    async getBuilderProperties(user, page = 1, limit = 20, status, search, sortBy = 'createdAt', sortOrder = 'desc') {
         const data = await this.propertyService.findAgentProperties(user.userId, page, limit, status, search, sortBy, sortOrder);
         return {
             data,
@@ -502,20 +502,49 @@ let AgentPropertyController = class AgentPropertyController {
 exports.AgentPropertyController = AgentPropertyController;
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: "Get agent's properties" }),
-    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'status', required: false, enum: status_enum_1.Status }),
-    (0, swagger_1.ApiQuery)({ name: 'search', required: false, type: String }),
+    (0, swagger_1.ApiOperation)({
+        summary: "Get builder's properties",
+        description: 'Retrieve all properties owned by the authenticated builder with advanced filtering, sorting, and pagination',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'page',
+        required: false,
+        type: Number,
+        description: 'Page number (default: 1)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'limit',
+        required: false,
+        type: Number,
+        description: 'Items per page (default: 20)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'status',
+        required: false,
+        enum: status_enum_1.Status,
+        description: 'Filter by property status',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'search',
+        required: false,
+        type: String,
+        description: 'Search by property title or location',
+    }),
     (0, swagger_1.ApiQuery)({
         name: 'sortBy',
         required: false,
         enum: ['price', 'createdAt', 'views'],
+        description: 'Field to sort by (default: createdAt)',
     }),
-    (0, swagger_1.ApiQuery)({ name: 'sortOrder', required: false, enum: ['asc', 'desc'] }),
+    (0, swagger_1.ApiQuery)({
+        name: 'sortOrder',
+        required: false,
+        enum: ['asc', 'desc'],
+        description: 'Sort order (default: desc)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        description: 'Properties retrieved successfully',
+        description: 'Properties retrieved successfully with pagination',
     }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __param(1, (0, common_1.Query)('page')),
@@ -527,7 +556,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Number, Number, String, String, String, String]),
     __metadata("design:returntype", Promise)
-], AgentPropertyController.prototype, "getMyProperties", null);
+], AgentPropertyController.prototype, "getBuilderProperties", null);
 __decorate([
     (0, common_1.Get)('statistics'),
     (0, swagger_1.ApiOperation)({ summary: 'Get my property statistics' }),
@@ -671,20 +700,49 @@ let BuilderPropertyController = class BuilderPropertyController {
 exports.BuilderPropertyController = BuilderPropertyController;
 __decorate([
     (0, common_1.Get)(),
-    (0, swagger_1.ApiOperation)({ summary: "Get builder's properties" }),
-    (0, swagger_1.ApiQuery)({ name: 'page', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'limit', required: false, type: Number }),
-    (0, swagger_1.ApiQuery)({ name: 'status', required: false, enum: status_enum_1.Status }),
-    (0, swagger_1.ApiQuery)({ name: 'search', required: false, type: String }),
+    (0, swagger_1.ApiOperation)({
+        summary: "Get builder's properties",
+        description: 'Retrieve all properties owned by the authenticated builder with advanced filtering, sorting, and pagination',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'page',
+        required: false,
+        type: Number,
+        description: 'Page number (default: 1)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'limit',
+        required: false,
+        type: Number,
+        description: 'Items per page (default: 20)',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'status',
+        required: false,
+        enum: status_enum_1.Status,
+        description: 'Filter by property status',
+    }),
+    (0, swagger_1.ApiQuery)({
+        name: 'search',
+        required: false,
+        type: String,
+        description: 'Search by property title or location',
+    }),
     (0, swagger_1.ApiQuery)({
         name: 'sortBy',
         required: false,
         enum: ['price', 'createdAt', 'views'],
+        description: 'Field to sort by (default: createdAt)',
     }),
-    (0, swagger_1.ApiQuery)({ name: 'sortOrder', required: false, enum: ['asc', 'desc'] }),
+    (0, swagger_1.ApiQuery)({
+        name: 'sortOrder',
+        required: false,
+        enum: ['asc', 'desc'],
+        description: 'Sort order (default: desc)',
+    }),
     (0, swagger_1.ApiResponse)({
         status: 200,
-        description: 'Properties retrieved successfully',
+        description: 'Properties retrieved successfully with pagination',
     }),
     __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __param(1, (0, common_1.Query)('page')),
@@ -699,8 +757,15 @@ __decorate([
 ], BuilderPropertyController.prototype, "getBuilderProperties", null);
 __decorate([
     (0, common_1.Post)(),
-    (0, swagger_1.ApiOperation)({ summary: 'Create new property' }),
-    (0, swagger_1.ApiResponse)({ status: 201, description: 'Property created successfully' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Create new property',
+        description: 'Builder creates a new property listing with complete details including amenities, pricing, and media',
+    }),
+    (0, swagger_1.ApiResponse)({
+        status: 201,
+        description: 'Property created successfully with active status',
+    }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid property data' }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),

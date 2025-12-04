@@ -89,6 +89,25 @@ export class AgentProfile extends Document {
   @Prop({ type: [String], default: [] })
   serviceAreas: string[];
 
+  // Builder & Project Associations
+  @Prop({
+    type: [
+      {
+        builderId: { type: Types.ObjectId, ref: 'User' },
+        projectId: { type: Types.ObjectId, ref: 'Project' },
+        isActive: { type: Boolean, default: true },
+        joinedAt: { type: Date, default: Date.now },
+      },
+    ],
+    default: [],
+  })
+  builderAssociations?: Array<{
+    builderId: Types.ObjectId;
+    projectId: Types.ObjectId;
+    isActive: boolean;
+    joinedAt: Date;
+  }>;
+
   @Prop()
   createdAt: Date;
 

@@ -21,7 +21,7 @@ import { ProjectAffordability, ProjectCategory } from '../enum/project.enum';
 import { OfferDto, TagDto } from 'src/property/dto/create-property.dto';
 import { Status } from 'src/common/enum/status.enum';
 import { BHKConfiguration } from 'src/property/enum/property.enum';
-import { ProjectStatus } from '../project.enum';
+import { ProjectStatus, ProjectType } from '../project.enum';
 
 class NearbyDto {
   @ApiProperty({ description: 'Resource name', example: 'Hospital' })
@@ -79,12 +79,13 @@ export class CreateProjectDto {
 
   @ApiProperty({
     description: 'The type of the project',
-    example: 'Residential',
-    required: false,
+    example: ProjectType.NEW,
+    enum: ProjectType,
+    required: true,
   })
-  @IsString()
-  @IsOptional()
-  projectType?: string;
+  @IsEnum(ProjectType)
+  @IsNotEmpty()
+  projectType: ProjectType;
 
   @ApiProperty({
     required: false,

@@ -23,10 +23,15 @@ export class AgentWalletController {
   constructor(private readonly walletService: WalletService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get wallet balance and stats' })
+  @ApiOperation({
+    summary: 'Get wallet balance and stats',
+    description:
+      'Retrieve current wallet balance, pending earnings, and lifetime earnings for the agent',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Wallet details retrieved successfully',
+    description:
+      'Wallet details retrieved successfully including balance and earnings',
   })
   async getWallet(@CurrentUser() user: any) {
     const data = await this.walletService.getOrCreateWallet(user.userId);
@@ -37,13 +42,32 @@ export class AgentWalletController {
   }
 
   @Get('transactions')
-  @ApiOperation({ summary: 'Get transaction history' })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 20 })
-  @ApiQuery({ name: 'type', enum: TransactionType, required: false })
+  @ApiOperation({
+    summary: 'Get transaction history',
+    description:
+      'Retrieve complete transaction history with filtering by type and date range',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    example: 1,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    example: 20,
+    description: 'Items per page',
+  })
+  @ApiQuery({
+    name: 'type',
+    enum: TransactionType,
+    required: false,
+    description: 'Filter by transaction type',
+  })
   @ApiResponse({
     status: 200,
-    description: 'Transactions retrieved successfully',
+    description: 'Transaction history retrieved successfully with pagination',
   })
   async getTransactions(@CurrentUser() user: any, @Query() filters: any) {
     const data = await this.walletService.getTransactionsWithFilters(

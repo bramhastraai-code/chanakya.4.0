@@ -2,6 +2,7 @@ import { Model } from 'mongoose';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Project } from './entities/project.entity';
 import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
+import { ProjectType } from './project.enum';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PropertyService } from 'src/property/property.service';
 import { Status } from 'src/common/enum/status.enum';
@@ -36,6 +37,13 @@ export declare class ProjectService {
     }[]>;
     getProjectsByCategory(category?: ProjectCategory): Promise<any[]>;
     getProjectsByAffordability(affordability?: ProjectAffordability, city?: string): Promise<any[]>;
+    getProjectsByType(type: ProjectType, city?: string, pageSize?: number, pageNumber?: number): Promise<{
+        projects: any[];
+        totalPages: number;
+        totalProjects: number;
+        pageSize: number;
+        pageNumber: number;
+    }>;
     getProjectDetail(projectId: string): Promise<any>;
     getProjectsByCity(city: string): Promise<Project[]>;
     getFormattedProjects(): Promise<any[]>;

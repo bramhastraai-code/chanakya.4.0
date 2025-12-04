@@ -9,6 +9,7 @@ import { Model } from 'mongoose';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Project } from './entities/project.entity';
 import { ProjectAffordability, ProjectCategory } from './enum/project.enum';
+import { ProjectType } from './project.enum';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { PropertyService } from 'src/property/property.service';
 import { Status } from 'src/common/enum/status.enum';
@@ -282,6 +283,65 @@ export class ProjectService {
       );
       throw new InternalServerErrorException(
         'Failed to retrieve projects by affordability',
+      );
+    }
+  }
+
+  async getProjectsByType(
+    type: ProjectType,
+    city?: string,
+    pageSize: number = 20,
+    pageNumber: number = 1,
+  ): Promise<{
+    projects: any[];
+    totalPages: number;
+    totalProjects: number;
+    pageSize: number;
+    pageNumber: number;
+  }> {
+    try {
+      this.logger.log(
+        `Getting projects by type - Type: ${type}, City: ${city}`,
+      );
+
+      const filter: any = { status: Status.ACTIVE, projectType: type };
+      if (city) {
+        filter.city = { $regex: city, $options: 'i' };
+      }
+
+      const skip = (pageNumber - 1) * pageSize;
+      const totalProjects = await this.projectModel.countDocuments(filter);
+      const totalPages = Math.ceil(totalProjects / pageSize);
+
+      const projects = await this.projectModel
+        .find(filter)
+        .skip(skip)
+        .limit(pageSize)
+        .populate({ path: 'builder', strictPopulate: false })
+        .populate({ path: 'amenities', strictPopulate: false })
+        .populate({ path: 'facilities', strictPopulate: false })
+        .populate({ path: 'createdBy', strictPopulate: false })
+        .populate({ path: 'updatedBy', strictPopulate: false })
+        .populate({ path: 'executiveUser', strictPopulate: false })
+        .sort({ createdAt: -1 })
+        .exec();
+
+      this.logger.log(`Retrieved ${projects.length} projects by type`);
+
+      return {
+        projects,
+        totalProjects,
+        totalPages,
+        pageSize,
+        pageNumber,
+      };
+    } catch (error) {
+      this.logger.error(
+        `Error in getProjectsByType: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Failed to retrieve projects by type',
       );
     }
   }

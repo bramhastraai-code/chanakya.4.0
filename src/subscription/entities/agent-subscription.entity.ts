@@ -20,7 +20,11 @@ export class AgentSubscription {
   @Prop({ required: true })
   endDate: Date;
 
-  @Prop({ type: String, enum: SubscriptionStatus, default: SubscriptionStatus.ACTIVE })
+  @Prop({
+    type: String,
+    enum: SubscriptionStatus,
+    default: SubscriptionStatus.ACTIVE,
+  })
   status: SubscriptionStatus;
 
   @Prop()
@@ -45,7 +49,8 @@ export class AgentSubscription {
   updatedAt: Date;
 }
 
-export const AgentSubscriptionSchema = SchemaFactory.createForClass(AgentSubscription);
+export const AgentSubscriptionSchema =
+  SchemaFactory.createForClass(AgentSubscription);
 
 // Indexes
 AgentSubscriptionSchema.index({ agent: 1, status: 1 });

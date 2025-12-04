@@ -475,7 +475,9 @@ export class WalletV1Service {
             status: TransactionStatus.COMPLETED,
           },
         },
-        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+        {
+          $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } },
+        },
       ]),
       this.transactionModel.aggregate([
         {
@@ -484,7 +486,9 @@ export class WalletV1Service {
             status: TransactionStatus.COMPLETED,
           },
         },
-        { $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } } },
+        {
+          $group: { _id: null, total: { $sum: '$amount' }, count: { $sum: 1 } },
+        },
       ]),
     ]);
 

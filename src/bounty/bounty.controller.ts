@@ -44,8 +44,19 @@ export class BountyController {
   @Post('manage')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.BUILDER)
-  @ApiOperation({ summary: 'Create a new bounty program' })
-  @ApiResponse({ status: 201, description: 'Bounty created successfully' })
+  @ApiOperation({
+    summary: 'Create a new bounty program',
+    description:
+      'Create a bounty/reward program for agents. Builder can only create for their own projects.',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Bounty program created successfully with active status',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Builder can only create for own projects',
+  })
   async create(@CurrentUser() user: any, @Body() dto: CreateBountyDto) {
     const data = await this.bountyService.create(user, dto);
     return {
@@ -57,13 +68,45 @@ export class BountyController {
   @Get('manage')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN, UserRole.BUILDER)
-  @ApiOperation({ summary: 'Get all bounties with filters' })
-  @ApiQuery({ name: 'projectId', required: false, type: String })
-  @ApiQuery({ name: 'builderId', required: false, type: String })
-  @ApiQuery({ name: 'status', required: false, type: String })
-  @ApiQuery({ name: 'page', required: false, example: 1 })
-  @ApiQuery({ name: 'limit', required: false, example: 20 })
-  @ApiResponse({ status: 200, description: 'Bounties retrieved successfully' })
+  @ApiOperation({
+    summary: 'Get all bounties with filters',
+    description:
+      'Retrieve all bounty programs with optional filtering. Builders see only their project bounties.',
+  })
+  @ApiQuery({
+    name: 'projectId',
+    required: false,
+    type: String,
+    description: 'Filter by specific project',
+  })
+  @ApiQuery({
+    name: 'builderId',
+    required: false,
+    type: String,
+    description: 'Filter by builder (Admin only)',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: String,
+    description: 'Filter by bounty status',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    example: 1,
+    description: 'Page number for pagination',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    example: 20,
+    description: 'Items per page',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Bounties retrieved successfully with pagination',
+  })
   async getAllBounties(@Query() filters: any) {
     const data = await this.bountyService.findAll(filters);
     return {
@@ -165,7 +208,45 @@ export class BountyController {
   // --- User/Agent Endpoints ---
 
   @Get('agent')
-  @ApiOperation({ summary: 'List active bounty programs' })
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.AGENT)
+  @ApiOperation({
+    summary: 'List bounties from associated builders/projects only',
+    description:
+      'Agents can only view bounty programs from builders and projects they are associated with',
+  })
+  @ApiQuery({
+    name: 'status',
+    required: false,
+    type: String,
+    description: 'Filter by status (default: active)',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    example: 1,
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    example: 20,
+    description: 'Items per page',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Bounties from associated projects retrieved successfully',
+  })
+  async getAgentBounties(@CurrentUser() user: any, @Query() filters: any) {
+    const data = await this.bountyService.findAllForAgent(user.userId, filters);
+    return {
+      data,
+      message: 'Bounties retrieved successfully',
+    };
+  }
+
+  @Get('public')
+  @ApiOperation({ summary: 'List all active bounty programs (public)' })
   @ApiQuery({ name: 'projectId', required: false, type: String })
   @ApiResponse({
     status: 200,

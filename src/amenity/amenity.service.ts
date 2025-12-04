@@ -24,7 +24,7 @@ export class AmenityService {
     const existingAmenity = await this.amenityModel.findOne({
       name: createAmenityDto.name,
     });
-    
+
     if (existingAmenity) {
       throw new ConflictException(
         `Amenity with name '${createAmenityDto.name}' already exists`,
@@ -47,11 +47,11 @@ export class AmenityService {
         runValidators: true,
       })
       .exec();
-      
+
     if (!updatedAmenity) {
       throw new NotFoundException(`Amenity with ID '${id}' not found`);
     }
-    
+
     return updatedAmenity;
   }
 
@@ -104,11 +104,11 @@ export class AmenityService {
     this.logger.log(`Fetching amenity with ID: ${id}`);
 
     const amenity = await this.amenityModel.findById(id).exec();
-    
+
     if (!amenity) {
       throw new NotFoundException(`Amenity with ID '${id}' not found`);
     }
-    
+
     return amenity;
   }
 
@@ -116,11 +116,11 @@ export class AmenityService {
     this.logger.log(`Deleting amenity with ID: ${id}`);
 
     const result = await this.amenityModel.deleteOne({ _id: id }).exec();
-    
+
     if (result.deletedCount === 0) {
       throw new NotFoundException(`Amenity with ID '${id}' not found`);
     }
-    
+
     return result;
   }
 
@@ -128,7 +128,7 @@ export class AmenityService {
     this.logger.log('Fetching amenity list');
 
     const amenities = await this.amenityModel.find().exec();
-    
+
     return amenities.map((amenity) => ({
       value: amenity._id.toString(),
       label: amenity.name,

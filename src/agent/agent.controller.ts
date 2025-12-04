@@ -22,9 +22,12 @@ import {
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AgentService } from './agent.service';
+import { AgentBuilderAssociationService } from './services/agent-builder-association.service';
 
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
+import { CreateAssociationDto } from './dto/create-association.dto';
+import { UpdateAssociationDto } from './dto/update-association.dto';
 import { jwtGuard } from 'src/core/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -46,6 +49,7 @@ export class AgentController {
   constructor(
     private readonly agentService: AgentService,
     private readonly s3Service: S3Service,
+    private readonly associationService: AgentBuilderAssociationService,
   ) {}
 
   // --- Admin Endpoints ---
@@ -284,6 +288,100 @@ export class AgentController {
     return {
       data,
       message: 'Subscription purchased successfully',
+    };
+  }
+
+  // ==================== Builder-Agent Association Endpoints ====================
+
+  @Post('associations')
+  @Roles(UserRole.AGENT)
+  @ApiOperation({
+    summary: 'Create builder-agent association for project',
+    description:
+      'Associate an agent with a builder and project to enable access to builder-specific content',
+  })
+  @ApiResponse({ status: 201, description: 'Association created successfully' })
+  async createAssociation(
+    @CurrentUser() user: any,
+    @Body() body: CreateAssociationDto,
+  ) {
+    const data = await this.associationService.createAssociation(
+      user.userId,
+      body.builderId,
+      body.projectId,
+      body.invitedBy,
+    );
+    return {
+      data,
+      message: 'Association created successfully',
+    };
+  }
+
+  @Get('associations')
+  @Roles(UserRole.AGENT)
+  @ApiOperation({ summary: 'Get agent builder associations' })
+  @ApiQuery({
+    name: 'builderId',
+    required: false,
+    description: 'Filter by builder',
+  })
+  @ApiResponse({ status: 200, description: 'Associations retrieved' })
+  async getAgentAssociations(
+    @CurrentUser() user: any,
+    @Query('builderId') builderId?: string,
+  ) {
+    const data = builderId
+      ? await this.associationService.getAgentProjectsUnderBuilder(
+          user.userId,
+          builderId,
+        )
+      : await this.associationService.getAgentAssociations(user.userId);
+    return {
+      data,
+      message: 'Associations retrieved successfully',
+    };
+  }
+
+  @Delete('associations/:id')
+  @Roles(UserRole.AGENT)
+  @ApiOperation({ summary: 'Remove builder-agent association' })
+  @ApiParam({ name: 'id', description: 'Association ID' })
+  @ApiResponse({ status: 200, description: 'Association removed' })
+  async removeAssociation(
+    @CurrentUser() user: any,
+    @Param('id') associationId: string,
+  ) {
+    const data =
+      await this.associationService.removeAssociationById(associationId);
+    return {
+      data,
+      message: 'Association removed successfully',
+    };
+  }
+
+  @Get('associations/check')
+  @Roles(UserRole.AGENT)
+  @ApiOperation({
+    summary: 'Check if agent is associated with builder/project',
+  })
+  @ApiQuery({ name: 'builderId', required: true })
+  @ApiQuery({ name: 'projectId', required: true })
+  @ApiResponse({ status: 200, description: 'Association status' })
+  async checkAssociation(
+    @CurrentUser() user: any,
+    @Query('builderId') builderId: string,
+    @Query('projectId') projectId: string,
+  ) {
+    const data = await this.associationService.isAgentAssociated(
+      user.userId,
+      builderId,
+      projectId,
+    );
+    return {
+      data: { isAssociated: data },
+      message: data
+        ? 'Agent is associated with this project'
+        : 'Agent is not associated',
     };
   }
 }

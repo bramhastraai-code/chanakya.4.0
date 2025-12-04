@@ -1,4 +1,9 @@
-import { Injectable, CanActivate, ExecutionContext, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  Logger,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { UserRole } from '../enum/user-role.enum';
@@ -26,18 +31,18 @@ export class RolesGuard implements CanActivate {
       return false;
     }
 
-    this.logger.log(
-      `User role: ${user.role}, Type: ${typeof user.role}`,
-    );
+    this.logger.log(`User role: ${user.role}, Type: ${typeof user.role}`);
     this.logger.log(`Required roles: ${requiredRoles}`);
     this.logger.log(
-      `Comparison results: ${JSON.stringify(requiredRoles.map((role) => ({
-        role,
-        type: typeof role,
-        matches: user.role === role,
-        strictMatch: user.role === role,
-        looseMatch: String(user.role) === String(role),
-      })))}`,
+      `Comparison results: ${JSON.stringify(
+        requiredRoles.map((role) => ({
+          role,
+          type: typeof role,
+          matches: user.role === role,
+          strictMatch: user.role === role,
+          looseMatch: String(user.role) === String(role),
+        })),
+      )}`,
     );
 
     const hasRole = requiredRoles.some((role) => user.role === role);

@@ -4,6 +4,7 @@ import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { Response } from 'src/common/interceptor/response.interface';
 import { ProjectCategory } from './enum/project.enum';
+import { ProjectType } from './project.enum';
 import { GetProjectByAffordabilityDto, GetProjectByCategoryDto } from './dto/ProjectCategory.dto';
 import { FeaturedProjectDto } from './dto/featuredProject.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -44,6 +45,7 @@ export declare class ProjectController {
     }>;
     getProjectsByCategory(getProjectByCategoryDto: GetProjectByCategoryDto): Promise<Response<FeaturedProjectDto[]>>;
     getProjectsByAffordability(getProjectByAffordabilityDto: GetProjectByAffordabilityDto): Promise<Response<FeaturedProjectDto[]>>;
+    getProjectsByType(type: ProjectType, city?: string, pageSize?: number, pageNumber?: number): Promise<Response<any>>;
     getProjectDetail(id: string): Promise<Response<ProjectDetailDto>>;
     getProjectsByCity(city: string): Promise<{
         data: Project[];

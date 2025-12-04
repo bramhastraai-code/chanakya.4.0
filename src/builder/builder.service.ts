@@ -283,7 +283,11 @@ export class BuilderService {
     };
   }
 
-  async getBuilderProperties(builderId: string, page: number = 1, limit: number = 10) {
+  async getBuilderProperties(
+    builderId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
     const skip = (page - 1) * limit;
     const builderObjectId = new Types.ObjectId(builderId);
 
@@ -310,7 +314,11 @@ export class BuilderService {
     };
   }
 
-  async getBuilderProjects(builderId: string, page: number = 1, limit: number = 10) {
+  async getBuilderProjects(
+    builderId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
     const skip = (page - 1) * limit;
     const builderObjectId = new Types.ObjectId(builderId);
 
@@ -336,7 +344,11 @@ export class BuilderService {
     };
   }
 
-  async getBuilderInquiries(builderId: string, page: number = 1, limit: number = 10) {
+  async getBuilderInquiries(
+    builderId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
     const skip = (page - 1) * limit;
     const builderObjectId = new Types.ObjectId(builderId);
 
@@ -378,7 +390,11 @@ export class BuilderService {
     };
   }
 
-  async getBuilderBounties(builderId: string, page: number = 1, limit: number = 10) {
+  async getBuilderBounties(
+    builderId: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
     const skip = (page - 1) * limit;
     const builderObjectId = new Types.ObjectId(builderId);
 

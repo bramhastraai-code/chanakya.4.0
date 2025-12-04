@@ -78,7 +78,7 @@ export declare class UserPropertyController {
 export declare class AgentPropertyController {
     private readonly propertyService;
     constructor(propertyService: PropertyService);
-    getMyProperties(user: any, page?: number, limit?: number, status?: Status, search?: string, sortBy?: string, sortOrder?: 'asc' | 'desc'): Promise<{
+    getBuilderProperties(user: any, page?: number, limit?: number, status?: Status, search?: string, sortBy?: string, sortOrder?: 'asc' | 'desc'): Promise<{
         data: {
             properties: (import("mongoose").Document<unknown, {}, Property, {}, {}> & Property & Required<{
                 _id: Types.ObjectId;

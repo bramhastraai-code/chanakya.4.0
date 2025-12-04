@@ -11,7 +11,7 @@ import {
   TagVariant,
 } from 'src/property/enum/property.enum';
 import { Property } from 'src/property/entities/property.entity';
-import { ProjectStatus } from '../project.enum';
+import { ProjectStatus, ProjectType } from '../project.enum';
 
 @Schema({ timestamps: true })
 export class Project extends Document {
@@ -32,8 +32,8 @@ export class Project extends Document {
   })
   builder: User;
 
-  @Prop({ required: true })
-  projectType: string;
+  @Prop({ required: true, enum: ProjectType })
+  projectType: ProjectType;
 
   @Prop({
     default: ProjectCategory.NEWLY_ADDED,

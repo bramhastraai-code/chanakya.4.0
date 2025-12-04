@@ -15,12 +15,14 @@ import {
 } from './dto/v1/lead.dto';
 import { LeadStatus } from './enum/lead-status.enum';
 import { UserRole } from 'src/common/enum/user-role.enum';
+import { VisibilityService } from '../common/services/visibility.service';
 
 @Injectable()
 export class LeadService {
   constructor(
     @InjectModel(Lead.name) private leadModel: Model<Lead>,
     @InjectModel(LeadActivity.name) private activityModel: Model<LeadActivity>,
+    private visibilityService: VisibilityService,
   ) {}
 
   /**
@@ -374,5 +376,88 @@ export class LeadService {
       performedBy: userId,
       metadata,
     });
+  }
+
+  /**
+   * Get leads visible to an agent (assigned + builder's projects)
+   */
+  async findAllForAgent(
+    agentId: string,
+    filters: {
+      page?: number;
+      limit?: number;
+      status?: LeadStatus;
+      isQualified?: boolean;
+      source?: string;
+      dateFrom?: string;
+      dateTo?: string;
+    } = {},
+  ) {
+    const { page = 1, limit = 20, ...queryFilters } = filters;
+    const leads = await this.visibilityService.getVisibleLeadsForAgent(
+      agentId,
+      queryFilters,
+    );
+
+    const skip = (page - 1) * limit;
+    const total = leads.length;
+    const paginatedLeads = leads.slice(skip, skip + limit);
+
+    return {
+      leads: paginatedLeads,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+        itemsPerPage: limit,
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1,
+      },
+    };
+  }
+
+  /**
+   * Get leads visible to a builder (their projects)
+   */
+  async findAllForBuilder(
+    builderId: string,
+    filters: {
+      page?: number;
+      limit?: number;
+      status?: LeadStatus;
+      isQualified?: boolean;
+      source?: string;
+      dateFrom?: string;
+      dateTo?: string;
+    } = {},
+  ) {
+    const { page = 1, limit = 20, ...queryFilters } = filters;
+    const leads = await this.visibilityService.getVisibleLeadsForBuilder(
+      builderId,
+      queryFilters,
+    );
+
+    const skip = (page - 1) * limit;
+    const total = leads.length;
+    const paginatedLeads = leads.slice(skip, skip + limit);
+
+    return {
+      leads: paginatedLeads,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+        itemsPerPage: limit,
+        hasNext: page < Math.ceil(total / limit),
+        hasPrev: page > 1,
+      },
+    };
+  }
+
+  /**
+   * Check if an agent can view a specific lead
+   */
+  async canAgentViewLead(agentId: string, leadId: string): Promise<boolean> {
+    return this.visibilityService.canAgentViewLead(agentId, leadId);
   }
 }
