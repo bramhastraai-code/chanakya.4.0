@@ -80,7 +80,12 @@ export class BountyService {
     const [bounties, total] = await Promise.all([
       this.bountyModel
         .find(query)
-        .populate('project', 'title location builder')
+        .populate({
+          path: 'project',
+          populate: {
+            path: 'builder',
+          },
+        })
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(Number(limit))
@@ -103,9 +108,14 @@ export class BountyService {
    * Get single bounty by ID
    */
   async findOne(id: string) {
-    const bounty = await this.bountyModel
-      .findById(id)
-      .populate('project', 'title location builder');
+    const bounty = await this.bountyModel.findById(id).populate({
+      path: 'project',
+      select: 'title location builder',
+      populate: {
+        path: 'builder',
+        select: 'companyName email phone location',
+      },
+    });
 
     if (!bounty) {
       throw new NotFoundException('Bounty not found');
@@ -172,7 +182,14 @@ export class BountyService {
     }
     return this.bountyModel
       .find(query)
-      .populate('project', 'projectName location builder thumbnail')
+      .populate({
+        path: 'project',
+        select: 'projectName location builder thumbnail',
+        populate: {
+          path: 'builder',
+          select: 'companyName email phone location',
+        },
+      })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -210,7 +227,14 @@ export class BountyService {
     const [bounties, total] = await Promise.all([
       this.bountyModel
         .find(query)
-        .populate('project', 'projectName location builder thumbnail')
+        .populate({
+          path: 'project',
+          select: 'projectName location builder thumbnail',
+          populate: {
+            path: 'builder',
+            select: 'companyName email phone location',
+          },
+        })
         .populate('createdBy', 'name companyName')
         .sort({ createdAt: -1 })
         .skip(skip)
