@@ -27,11 +27,15 @@ const roles_decorator_1 = require("../common/decorators/roles.decorator");
 const user_role_enum_1 = require("../common/enum/user-role.enum");
 const current_user_decorator_1 = require("../common/decorators/current-user.decorator");
 const s3_service_1 = require("../s3/s3.service");
+const requirement_service_1 = require("../requirement/requirement.service");
+const lead_service_1 = require("../lead/lead.service");
 let BuilderController = class BuilderController {
-    constructor(builderService, s3Service, associationService) {
+    constructor(builderService, s3Service, associationService, requirementService, leadService) {
         this.builderService = builderService;
         this.s3Service = s3Service;
         this.associationService = associationService;
+        this.requirementService = requirementService;
+        this.leadService = leadService;
     }
     async getProfile(user) {
         const data = await this.builderService.getProfile(user.userId);
@@ -90,18 +94,24 @@ let BuilderController = class BuilderController {
         };
     }
     async getBuilderRequirements(user, page, limit, status) {
+        const data = await this.requirementService.findAllForBuilder(user.userId, {
+            page,
+            limit,
+            status: status,
+        });
         return {
-            data: {
-                message: 'Requirements endpoint - integrate with RequirementService.findAllForBuilder',
-            },
+            data,
             message: 'Requirements retrieved successfully',
         };
     }
     async getBuilderLeads(user, page, limit, status) {
+        const data = await this.leadService.findAllForBuilder(user.userId, {
+            page,
+            limit,
+            status: status,
+        });
         return {
-            data: {
-                message: 'Leads endpoint - integrate with LeadService.findAllForBuilder',
-            },
+            data,
             message: 'Leads retrieved successfully',
         };
     }
@@ -337,26 +347,33 @@ exports.BuilderController = BuilderController = __decorate([
     (0, common_1.UseGuards)(jwt_guard_1.jwtGuard, roles_guard_1.RolesGuard),
     __metadata("design:paramtypes", [builder_service_1.BuilderService,
         s3_service_1.S3Service,
-        agent_builder_association_service_1.AgentBuilderAssociationService])
+        agent_builder_association_service_1.AgentBuilderAssociationService,
+        requirement_service_1.RequirementService,
+        lead_service_1.LeadService])
 ], BuilderController);
 let BuilderAdminController = class BuilderAdminController {
     constructor(builderService) {
         this.builderService = builderService;
     }
-    create(createBuilderDto) {
-        return this.builderService.create(createBuilderDto);
+    async create(createBuilderDto) {
+        const data = await this.builderService.create(createBuilderDto);
+        return { data, message: 'Builder created successfully' };
     }
-    findAll(page = 1, limit = 10, search, sort, order, isActive) {
-        return this.builderService.findAll(page, limit, search, sort, order, isActive !== undefined ? { isActive } : undefined);
+    async findAll(page = 1, limit = 10, search, sort, order, isActive) {
+        const data = await this.builderService.findAll(page, limit, search, sort, order, isActive !== undefined ? { isActive } : undefined);
+        return { data, message: 'Builders retrieved successfully' };
     }
-    findOne(id) {
-        return this.builderService.findOne(id);
+    async findOne(id) {
+        const data = await this.builderService.findOne(id);
+        return { data, message: 'Builder retrieved successfully' };
     }
-    update(id, updateBuilderDto) {
-        return this.builderService.update(id, updateBuilderDto);
+    async update(id, updateBuilderDto) {
+        const data = await this.builderService.update(id, updateBuilderDto);
+        return { data, message: 'Builder updated successfully' };
     }
-    remove(id) {
-        return this.builderService.remove(id);
+    async remove(id) {
+        const data = await this.builderService.remove(id);
+        return { data, message: 'Builder deleted successfully' };
     }
     async getBuilderProperties(id, page = 1, limit = 10) {
         const data = await this.builderService.getBuilderProperties(id, page, limit);
@@ -400,7 +417,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_builder_dto_1.CreateBuilderDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], BuilderAdminController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
@@ -457,7 +474,7 @@ __decorate([
     __param(5, (0, common_1.Query)('isActive')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Number, String, String, String, Boolean]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], BuilderAdminController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('builder/:id'),
@@ -466,7 +483,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], BuilderAdminController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)('builder/:id'),
@@ -476,7 +493,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_builder_dto_1.UpdateBuilderDto]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], BuilderAdminController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)('builder/:id'),
@@ -485,7 +502,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], BuilderAdminController.prototype, "remove", null);
 __decorate([
     (0, common_1.Get)('builder/:id/properties'),

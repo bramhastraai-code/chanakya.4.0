@@ -19,6 +19,8 @@ import { Inquiry, InquirySchema } from 'src/inquiry/entities/inquiry.entity';
 import { Bounty, BountySchema } from 'src/bounty/entities/bounty.entity';
 import { S3Service } from 'src/s3/s3.service';
 import { AgentModule } from 'src/agent/agent.module';
+import { RequirementModule } from 'src/requirement/requirement.module';
+import { LeadModule } from 'src/lead/lead.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { AgentModule } from 'src/agent/agent.module';
       { name: Bounty.name, schema: BountySchema },
     ]),
     AgentModule,
+    RequirementModule,
+    LeadModule,
   ],
   controllers: [BuilderController, BuilderAdminController],
   providers: [BuilderService, S3Service],

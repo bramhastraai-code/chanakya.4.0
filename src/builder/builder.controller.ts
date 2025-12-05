@@ -32,6 +32,8 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { UserRole } from 'src/common/enum/user-role.enum';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { S3Service } from 'src/s3/s3.service';
+import { RequirementService } from 'src/requirement/requirement.service';
+import { LeadService } from 'src/lead/lead.service';
 
 @ApiTags('Builder')
 @ApiBearerAuth()
@@ -42,6 +44,8 @@ export class BuilderController {
     private readonly builderService: BuilderService,
     private readonly s3Service: S3Service,
     private readonly associationService: AgentBuilderAssociationService,
+    private readonly requirementService: RequirementService,
+    private readonly leadService: LeadService,
   ) {}
 
   @Get('profile')
@@ -267,13 +271,13 @@ export class BuilderController {
     @Query('limit') limit?: number,
     @Query('status') status?: string,
   ) {
-    // Note: This requires RequirementService to be injected
-    // For now, return placeholder
+    const data = await this.requirementService.findAllForBuilder(user.userId, {
+      page,
+      limit,
+      status: status as any,
+    });
     return {
-      data: {
-        message:
-          'Requirements endpoint - integrate with RequirementService.findAllForBuilder',
-      },
+      data,
       message: 'Requirements retrieved successfully',
     };
   }
@@ -313,13 +317,13 @@ export class BuilderController {
     @Query('limit') limit?: number,
     @Query('status') status?: string,
   ) {
-    // Note: This requires LeadService to be injected
-    // For now, return placeholder
+    const data = await this.leadService.findAllForBuilder(user.userId, {
+      page,
+      limit,
+      status: status as any,
+    });
     return {
-      data: {
-        message:
-          'Leads endpoint - integrate with LeadService.findAllForBuilder',
-      },
+      data,
       message: 'Leads retrieved successfully',
     };
   }
@@ -341,8 +345,9 @@ export class BuilderAdminController {
   })
   @ApiResponse({ status: 201, description: 'Builder created successfully' })
   @ApiResponse({ status: 400, description: 'Invalid input data' })
-  create(@Body() createBuilderDto: CreateBuilderDto) {
-    return this.builderService.create(createBuilderDto);
+  async create(@Body() createBuilderDto: CreateBuilderDto) {
+    const data = await this.builderService.create(createBuilderDto);
+    return { data, message: 'Builder created successfully' };
   }
 
   @Get()
@@ -392,7 +397,7 @@ export class BuilderAdminController {
     status: 200,
     description: 'Builders retrieved successfully with pagination',
   })
-  findAll(
+  async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @Query('search') search?: string,
@@ -400,7 +405,7 @@ export class BuilderAdminController {
     @Query('order') order?: 'asc' | 'desc',
     @Query('isActive') isActive?: boolean,
   ) {
-    return this.builderService.findAll(
+    const data = await this.builderService.findAll(
       page,
       limit,
       search,
@@ -408,27 +413,34 @@ export class BuilderAdminController {
       order,
       isActive !== undefined ? { isActive } : undefined,
     );
+    return { data, message: 'Builders retrieved successfully' };
   }
 
   @Get('builder/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get a builder by ID' })
-  findOne(@Param('id') id: string) {
-    return this.builderService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const data = await this.builderService.findOne(id);
+    return { data, message: 'Builder retrieved successfully' };
   }
 
   @Patch('builder/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update a builder' })
-  update(@Param('id') id: string, @Body() updateBuilderDto: UpdateBuilderDto) {
-    return this.builderService.update(id, updateBuilderDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateBuilderDto: UpdateBuilderDto,
+  ) {
+    const data = await this.builderService.update(id, updateBuilderDto);
+    return { data, message: 'Builder updated successfully' };
   }
 
   @Delete('builder/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete a builder' })
-  remove(@Param('id') id: string) {
-    return this.builderService.remove(id);
+  async remove(@Param('id') id: string) {
+    const data = await this.builderService.remove(id);
+    return { data, message: 'Builder deleted successfully' };
   }
 
   @Get('builder/:id/properties')

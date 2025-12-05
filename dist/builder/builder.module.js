@@ -19,6 +19,8 @@ const inquiry_entity_1 = require("../inquiry/entities/inquiry.entity");
 const bounty_entity_1 = require("../bounty/entities/bounty.entity");
 const s3_service_1 = require("../s3/s3.service");
 const agent_module_1 = require("../agent/agent.module");
+const requirement_module_1 = require("../requirement/requirement.module");
+const lead_module_1 = require("../lead/lead.module");
 let BuilderModule = class BuilderModule {
 };
 exports.BuilderModule = BuilderModule;
@@ -34,6 +36,8 @@ exports.BuilderModule = BuilderModule = __decorate([
                 { name: bounty_entity_1.Bounty.name, schema: bounty_entity_1.BountySchema },
             ]),
             agent_module_1.AgentModule,
+            requirement_module_1.RequirementModule,
+            lead_module_1.LeadModule,
         ],
         controllers: [builder_controller_1.BuilderController, builder_controller_1.BuilderAdminController],
         providers: [builder_service_1.BuilderService, s3_service_1.S3Service],
