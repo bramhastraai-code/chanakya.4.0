@@ -71,7 +71,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
         }
         catch (error) {
             this.logger.error(`Error in findAll: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to retrieve projects');
+            throw error;
         }
     }
     async findProjectsByCreator(creatorId, pageSize, pageNumber, searchQuery, status) {
@@ -112,7 +112,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
         }
         catch (error) {
             this.logger.error(`Error in findProjectsByCreator: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to retrieve projects by creator');
+            throw error;
         }
     }
     async findOne(id) {
@@ -181,7 +181,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
         }
         catch (error) {
             this.logger.error(`Error in getProjectsByCategory: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to retrieve projects by category');
+            throw error;
         }
     }
     async getProjectsByAffordability(affordability, city) {
@@ -212,7 +212,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
         }
         catch (error) {
             this.logger.error(`Error in getProjectsByAffordability: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to retrieve projects by affordability');
+            throw error;
         }
     }
     async getProjectsByType(type, city, pageSize = 20, pageNumber = 1) {
@@ -248,7 +248,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
         }
         catch (error) {
             this.logger.error(`Error in getProjectsByType: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to retrieve projects by type');
+            throw error;
         }
     }
     async getProjectDetail(projectId) {
@@ -360,7 +360,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
         }
         catch (error) {
             this.logger.error(`Error in getFormattedProjects: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to retrieve formatted projects');
+            throw error;
         }
     }
     async getUniqueCities() {
@@ -369,7 +369,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
             return cities;
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while retrieving unique cities.');
+            throw error;
         }
     }
     async getCityPropertyCount() {
@@ -473,7 +473,7 @@ let ProjectService = ProjectService_1 = class ProjectService {
         }
         catch (error) {
             this.logger.error(`Error in getProjectsByKeyword: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to search projects by keyword');
+            throw error;
         }
     }
     async searchProjects(keyword) {

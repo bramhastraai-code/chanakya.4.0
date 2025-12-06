@@ -8,7 +8,6 @@ import {
   Query,
   HttpStatus,
   NotFoundException,
-  InternalServerErrorException,
   Patch,
 } from '@nestjs/common';
 import {
@@ -75,9 +74,7 @@ export class InquiryController {
       }
       return updatedInquiry;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while updating the inquiry.',
-      );
+      throw error;
     }
   }
 

@@ -83,7 +83,7 @@ let PropertyController = PropertyController_1 = class PropertyController {
             return { data, message: 'Property updated successfully' };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while updating the property.');
+            throw error;
         }
     }
     async remove(id) {

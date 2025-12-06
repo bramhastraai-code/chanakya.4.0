@@ -41,7 +41,7 @@ let InquiryController = class InquiryController {
             return updatedInquiry;
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while updating the inquiry.');
+            throw error;
         }
     }
     async findAll(pageSize = '10', pageNumber = '1', sortBy = 'createdAt', sortOrder = 'desc', searchQuery, inquiryType, status, projectId, propertyId, builderId) {

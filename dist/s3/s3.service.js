@@ -65,7 +65,8 @@ let S3Service = S3Service_1 = class S3Service {
             return { url: data.Location, key: data.Key };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Error uploading file to S3 with watermark', error.message);
+            this.logger.error(`Error uploading file to S3 with watermark: ${error.message}`, error.stack);
+            throw error;
         }
     }
     async uploadFiles(files, folder) {
@@ -74,7 +75,8 @@ let S3Service = S3Service_1 = class S3Service {
             return await Promise.all(uploadPromises);
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Error uploading multiple files to S3 with watermark', error.message);
+            this.logger.error(`Error uploading multiple files to S3 with watermark: ${error.message}`, error.stack);
+            throw error;
         }
     }
     async deleteFile(key) {
@@ -88,7 +90,7 @@ let S3Service = S3Service_1 = class S3Service {
         }
         catch (error) {
             this.logger.error(`Failed to delete S3 file: ${error.message}`, error.stack);
-            throw new common_1.InternalServerErrorException('Failed to delete file from S3');
+            throw error;
         }
     }
     async uploadVideo(file, folder) {
@@ -105,7 +107,8 @@ let S3Service = S3Service_1 = class S3Service {
             return { url: data.Location, key: data.Key };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Error uploading video to S3', error.message);
+            this.logger.error(`Error uploading video to S3: ${error.message}`, error.stack);
+            throw error;
         }
     }
     async uploadPDF(file, folder) {
@@ -122,7 +125,8 @@ let S3Service = S3Service_1 = class S3Service {
             return { url: data.Location, key: data.Key };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Error uploading PDF to S3', error.message);
+            this.logger.error(`Error uploading PDF to S3: ${error.message}`, error.stack);
+            throw error;
         }
     }
 };

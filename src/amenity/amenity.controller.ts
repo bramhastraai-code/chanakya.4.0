@@ -8,7 +8,6 @@ import {
   Query,
   HttpStatus,
   NotFoundException,
-  InternalServerErrorException,
   Patch,
   UseGuards,
 } from '@nestjs/common';
@@ -107,9 +106,7 @@ export class AmenityController {
       }
       return updatedAmenity;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while updating the amenity.',
-      );
+      throw error;
     }
   }
 
@@ -189,9 +186,7 @@ export class AmenityController {
 
       return { data, message: 'retrieve successfully' };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving amenities.',
-      );
+      throw error;
     }
   }
 
@@ -214,9 +209,7 @@ export class AmenityController {
       }
       return { data: amenity, message: 'retrieve successfully' };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving the amenity.',
-      );
+      throw error;
     }
   }
 
@@ -237,9 +230,7 @@ export class AmenityController {
         throw new NotFoundException('Amenity not found');
       }
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while deleting the amenity.',
-      );
+      throw error;
     }
   }
 

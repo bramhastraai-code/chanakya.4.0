@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { promises as fsPromises } from 'fs';
 import * as path from 'path';
 
@@ -15,9 +15,7 @@ export class FileService {
     try {
       await fsPromises.mkdir(this.uploadPath, { recursive: true });
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Could not create upload directory',
-      );
+      throw error;
     }
   }
 
@@ -34,10 +32,7 @@ export class FileService {
       await fsPromises.writeFile(filePath, file.buffer); // Save file to disk
       return { url: filePath, filename }; // Return the file path as the URL
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error uploading file to local disk',
-        error.message,
-      );
+      throw error;
     }
   }
 
@@ -49,10 +44,7 @@ export class FileService {
     try {
       return await Promise.all(uploadPromises);
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error uploading multiple files to local disk',
-        error.message,
-      );
+      throw error;
     }
   }
 
@@ -63,10 +55,7 @@ export class FileService {
     try {
       await fsPromises.unlink(filePath); // Delete file from disk
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error deleting file from local disk',
-        error.message,
-      );
+      throw error;
     }
   }
 }

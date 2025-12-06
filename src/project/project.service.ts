@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateProjectDto } from './dto/create-project.dto';
@@ -85,7 +80,7 @@ export class ProjectService {
       };
     } catch (error) {
       this.logger.error(`Error in findAll: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to retrieve projects');
+      throw error;
     }
   }
 
@@ -147,9 +142,7 @@ export class ProjectService {
         `Error in findProjectsByCreator: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        'Failed to retrieve projects by creator',
-      );
+      throw error;
     }
   }
 
@@ -237,9 +230,7 @@ export class ProjectService {
         `Error in getProjectsByCategory: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        'Failed to retrieve projects by category',
-      );
+      throw error;
     }
   }
   async getProjectsByAffordability(
@@ -281,9 +272,7 @@ export class ProjectService {
         `Error in getProjectsByAffordability: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        'Failed to retrieve projects by affordability',
-      );
+      throw error;
     }
   }
 
@@ -340,9 +329,7 @@ export class ProjectService {
         `Error in getProjectsByType: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        'Failed to retrieve projects by type',
-      );
+      throw error;
     }
   }
 
@@ -473,9 +460,7 @@ export class ProjectService {
         `Error in getFormattedProjects: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        'Failed to retrieve formatted projects',
-      );
+      throw error;
     }
   }
   async getUniqueCities(): Promise<string[]> {
@@ -483,9 +468,7 @@ export class ProjectService {
       const cities = await this.projectModel.distinct('city').exec();
       return cities;
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while retrieving unique cities.',
-      );
+      throw error;
     }
   }
   async getCityPropertyCount() {
@@ -604,9 +587,7 @@ export class ProjectService {
         `Error in getProjectsByKeyword: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        'Failed to search projects by keyword',
-      );
+      throw error;
     }
   }
 

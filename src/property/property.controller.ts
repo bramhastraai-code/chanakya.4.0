@@ -6,7 +6,6 @@ import {
   Body,
   NotFoundException,
   Query,
-  InternalServerErrorException,
   UseInterceptors,
   Patch,
   Delete,
@@ -236,9 +235,7 @@ export class PropertyController {
       );
       return { data, message: 'Property updated successfully' };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while updating the property.',
-      );
+      throw error;
     }
   }
 

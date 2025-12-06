@@ -22,7 +22,7 @@ let FileService = class FileService {
             await fs_1.promises.mkdir(this.uploadPath, { recursive: true });
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Could not create upload directory');
+            throw error;
         }
     }
     async uploadFile(file) {
@@ -34,7 +34,7 @@ let FileService = class FileService {
             return { url: filePath, filename };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Error uploading file to local disk', error.message);
+            throw error;
         }
     }
     async uploadFiles(files) {
@@ -43,7 +43,7 @@ let FileService = class FileService {
             return await Promise.all(uploadPromises);
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Error uploading multiple files to local disk', error.message);
+            throw error;
         }
     }
     async deleteFile(filename) {
@@ -52,7 +52,7 @@ let FileService = class FileService {
             await fs_1.promises.unlink(filePath);
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('Error deleting file from local disk', error.message);
+            throw error;
         }
     }
 };

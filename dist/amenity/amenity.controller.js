@@ -49,7 +49,7 @@ let AmenityController = AmenityController_1 = class AmenityController {
             return updatedAmenity;
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while updating the amenity.');
+            throw error;
         }
     }
     async findAll(pageSize, pageNumber, sortBy = 'name', sortOrder = 'asc', searchQuery) {
@@ -61,7 +61,7 @@ let AmenityController = AmenityController_1 = class AmenityController {
             return { data, message: 'retrieve successfully' };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while retrieving amenities.');
+            throw error;
         }
     }
     async findOne(id) {
@@ -73,7 +73,7 @@ let AmenityController = AmenityController_1 = class AmenityController {
             return { data: amenity, message: 'retrieve successfully' };
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while retrieving the amenity.');
+            throw error;
         }
     }
     async remove(id) {
@@ -84,7 +84,7 @@ let AmenityController = AmenityController_1 = class AmenityController {
             }
         }
         catch (error) {
-            throw new common_1.InternalServerErrorException('An error occurred while deleting the amenity.');
+            throw error;
         }
     }
     async amenityList() {

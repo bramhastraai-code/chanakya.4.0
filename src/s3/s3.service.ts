@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as AWS from 'aws-sdk';
 import { S3 } from 'aws-sdk';
 import * as sharp from 'sharp';
@@ -77,10 +73,11 @@ export class S3Service {
       const data = await this.s3.upload(params).promise();
       return { url: data.Location, key: data.Key };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error uploading file to S3 with watermark',
-        error.message,
+      this.logger.error(
+        `Error uploading file to S3 with watermark: ${error.message}`,
+        error.stack,
       );
+      throw error;
     }
   }
 
@@ -93,10 +90,11 @@ export class S3Service {
     try {
       return await Promise.all(uploadPromises);
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error uploading multiple files to S3 with watermark',
-        error.message,
+      this.logger.error(
+        `Error uploading multiple files to S3 with watermark: ${error.message}`,
+        error.stack,
       );
+      throw error;
     }
   }
 
@@ -114,7 +112,7 @@ export class S3Service {
         `Failed to delete S3 file: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException('Failed to delete file from S3');
+      throw error;
     }
   }
 
@@ -136,10 +134,11 @@ export class S3Service {
       const data = await this.s3.upload(params).promise();
       return { url: data.Location, key: data.Key };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error uploading video to S3',
-        error.message,
+      this.logger.error(
+        `Error uploading video to S3: ${error.message}`,
+        error.stack,
       );
+      throw error;
     }
   }
 
@@ -161,10 +160,11 @@ export class S3Service {
       const data = await this.s3.upload(params).promise();
       return { url: data.Location, key: data.Key };
     } catch (error) {
-      throw new InternalServerErrorException(
-        'Error uploading PDF to S3',
-        error.message,
+      this.logger.error(
+        `Error uploading PDF to S3: ${error.message}`,
+        error.stack,
       );
+      throw error;
     }
   }
 }
