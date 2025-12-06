@@ -18,22 +18,9 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true, // Remove unwanted properties
-      forbidNonWhitelisted: true, // Throw error if non-whitelisted properties are present
       transform: true, // Transform payloads to DTO instances
       transformOptions: {
         enableImplicitConversion: true, // Automatically convert types
-      },
-      exceptionFactory: (errors) => {
-        // Return detailed validation errors
-        const messages = errors.map((error) => ({
-          field: error.property,
-          errors: Object.values(error.constraints || {}),
-        }));
-        return {
-          statusCode: 400,
-          message: 'Validation failed',
-          errors: messages,
-        };
       },
     }),
   );

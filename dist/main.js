@@ -13,21 +13,9 @@ async function bootstrap() {
     app.useGlobalFilters(new http_exception_filter_1.HttpExceptionFilter());
     app.useGlobalPipes(new common_1.ValidationPipe({
         whitelist: true,
-        forbidNonWhitelisted: true,
         transform: true,
         transformOptions: {
             enableImplicitConversion: true,
-        },
-        exceptionFactory: (errors) => {
-            const messages = errors.map((error) => ({
-                field: error.property,
-                errors: Object.values(error.constraints || {}),
-            }));
-            return {
-                statusCode: 400,
-                message: 'Validation failed',
-                errors: messages,
-            };
         },
     }));
     app.setGlobalPrefix('v1');
