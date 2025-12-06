@@ -27,7 +27,6 @@ import { AgentBuilderAssociationService } from './services/agent-builder-associa
 import { CreateAgentDto } from './dto/create-agent.dto';
 import { UpdateAgentDto } from './dto/update-agent.dto';
 import { CreateAssociationDto } from './dto/create-association.dto';
-import { UpdateAssociationDto } from './dto/update-association.dto';
 import { jwtGuard } from 'src/core/guards/jwt.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -46,13 +45,7 @@ import {
 @Controller('agent-by-admin')
 @UseGuards(jwtGuard, RolesGuard)
 export class AgentController {
-  constructor(
-    private readonly agentService: AgentService,
-    private readonly s3Service: S3Service,
-    private readonly associationService: AgentBuilderAssociationService,
-  ) {}
-
-  // --- Admin Endpoints ---
+  constructor(private readonly agentService: AgentService) {}
 
   @Post()
   @Roles(UserRole.ADMIN)
@@ -93,7 +86,7 @@ export class AgentController {
     type: String,
     description: 'Filter agents by builder association',
   })
-  findAll(
+  async findAll(
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
     @Query('search') search?: string,
@@ -104,7 +97,7 @@ export class AgentController {
     @Query('propertyId') propertyId?: string,
     @Query('builderId') builderId?: string,
   ) {
-    return this.agentService.findAll(
+    const data = await this.agentService.findAll(
       page,
       limit,
       search,
@@ -114,30 +107,48 @@ export class AgentController {
         ? { isActive, projectId, propertyId, builderId }
         : { projectId, propertyId, builderId },
     );
+    return { data, message: 'Agents retrieved successfully' };
   }
 
   @Get('agent/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get an agent by ID (Admin)' })
-  findOne(@Param('id') id: string) {
-    return this.agentService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    const data = await this.agentService.findOne(id);
+    return { data, message: 'Agent retrieved successfully' };
   }
 
   @Put('agent/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update an agent (Admin)' })
-  update(@Param('id') id: string, @Body() updateAgentDto: UpdateAgentDto) {
-    return this.agentService.update(id, updateAgentDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateAgentDto: UpdateAgentDto,
+  ) {
+    const data = await this.agentService.update(id, updateAgentDto);
+    return { data, message: 'Agent updated successfully' };
   }
 
   @Delete('agent/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete an agent (Admin)' })
-  remove(@Param('id') id: string) {
-    return this.agentService.remove(id);
+  async remove(@Param('id') id: string) {
+    const data = await this.agentService.remove(id);
+    return { data, message: 'Agent deleted successfully' };
   }
+}
 
-  // --- Existing Agent Endpoints ---
+// --- Existing Agent Endpoints ---
+
+@ApiTags('Agent')
+@ApiBearerAuth()
+@Controller('agent')
+export class AgentProfileController {
+  constructor(
+    private readonly agentService: AgentService,
+    private readonly s3Service: S3Service,
+    private readonly associationService: AgentBuilderAssociationService,
+  ) {}
 
   @Get('dashboard/stats')
   @Roles(UserRole.AGENT)

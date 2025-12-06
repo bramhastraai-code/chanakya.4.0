@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { AgentService } from './agent.service';
-import { AgentController } from './agent.controller';
+import { AgentController, AgentProfileController } from './agent.controller';
 import { AgentBuilderAssociationService } from './services/agent-builder-association.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/core/entities/user.entity';
@@ -46,7 +46,7 @@ import { Project, ProjectSchema } from 'src/project/entities/project.entity';
     ]),
     S3Module,
   ],
-  controllers: [AgentController],
+  controllers: [AgentController, AgentProfileController],
   providers: [AgentService, AgentBuilderAssociationService],
   exports: [AgentService, AgentBuilderAssociationService],
 })
