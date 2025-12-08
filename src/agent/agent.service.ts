@@ -293,7 +293,7 @@ export class AgentService {
 
   async getProfile(agentId: string) {
     const profile = await this.agentProfileModel
-      .findOne({ userId: agentId })
+      .findOne({ userId: new Types.ObjectId(agentId) })
       .lean()
       .exec();
     if (!profile) throw new NotFoundException('Agent profile not found');
@@ -301,7 +301,7 @@ export class AgentService {
   }
 
   async updateProfile(agentId: string, updateDto: UpdateProfileDto) {
-    const profile = await this.agentProfileModel.findOne({ userId: agentId });
+    const profile = await this.agentProfileModel.findOne({ userId: new Types.ObjectId(agentId) });
     if (!profile) throw new NotFoundException('Agent profile not found');
 
     if (updateDto.name) profile.name = updateDto.name;
@@ -333,7 +333,7 @@ export class AgentService {
     agentId: string,
     socialLinksDto: UpdateSocialLinksDto,
   ) {
-    const profile = await this.agentProfileModel.findOne({ userId: agentId });
+    const profile = await this.agentProfileModel.findOne({ userId: new Types.ObjectId(agentId) });
     if (!profile) throw new NotFoundException('Agent profile not found');
 
     profile.socialLinks = {
@@ -346,7 +346,7 @@ export class AgentService {
 
   async updateWebsite(agentId: string, websiteDto: UpdateWebsiteDto) {
     const profile = await this.agentProfileModel.findOneAndUpdate(
-      { userId: agentId },
+      { userId: new Types.ObjectId(agentId) },
       { websiteUrl: websiteDto.websiteUrl },
       { new: true },
     );
@@ -358,7 +358,7 @@ export class AgentService {
     agentId: string,
     businessDto: UpdateBusinessInfoDto,
   ) {
-    const profile = await this.agentProfileModel.findOne({ userId: agentId });
+    const profile = await this.agentProfileModel.findOne({ userId: new Types.ObjectId(agentId) });
     if (!profile) throw new NotFoundException('Agent profile not found');
 
     if (businessDto.licenseNumber)
@@ -378,7 +378,7 @@ export class AgentService {
 
   async updateProfileImage(agentId: string, imageUrl: string) {
     const profile = await this.agentProfileModel.findOneAndUpdate(
-      { userId: agentId },
+      { userId: new Types.ObjectId(agentId) },
       { profileImage: imageUrl },
       { new: true },
     );
@@ -388,7 +388,7 @@ export class AgentService {
 
   async getStatistics(agentId: string) {
     const profile = await this.agentProfileModel
-      .findOne({ userId: agentId })
+      .findOne({ userId: new Types.ObjectId(agentId) })
       .exec();
 
     if (!profile) {

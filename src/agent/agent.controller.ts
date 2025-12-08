@@ -143,6 +143,7 @@ export class AgentController {
 @ApiTags('Agent')
 @ApiBearerAuth()
 @Controller('agent')
+@UseGuards(jwtGuard, RolesGuard)
 export class AgentProfileController {
   constructor(
     private readonly agentService: AgentService,
