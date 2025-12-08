@@ -185,9 +185,13 @@ export class KycV1Service {
   /**
    * Get KYC status
    */
-  async getStatus(userId: Types.ObjectId) {
+  async getStatus(userId: Types.ObjectId | string) {
+    // Convert string to ObjectId if needed
+    const userObjectId =
+      typeof userId === 'string' ? new Types.ObjectId(userId) : userId;
+
     const submission = await this.submissionModel
-      .findOne({ userId })
+      .findOne({ userId: userObjectId })
       .sort({ createdAt: -1 });
 
     if (!submission) {

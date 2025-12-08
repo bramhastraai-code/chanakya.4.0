@@ -30,7 +30,7 @@ export class RequirementService {
   ): Promise<RequirementDocument> {
     const requirement = new this.requirementModel({
       ...createRequirementDto,
-      user: userId,
+      userId: new Types.ObjectId(userId),
       status: RequirementStatus.OPEN,
     });
 
@@ -62,7 +62,7 @@ export class RequirementService {
     const [requirements, total] = await Promise.all([
       this.requirementModel
         .find(query)
-        .populate('user', 'name phoneNumber')
+        .populate('userId', 'name phoneNumber')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
@@ -86,7 +86,7 @@ export class RequirementService {
   async findOne(id: string) {
     const requirement = await this.requirementModel
       .findById(id)
-      .populate('user', 'name email phoneNumber')
+      .populate('userId', 'name email phoneNumber')
       .exec();
 
     if (!requirement) {
@@ -248,7 +248,22 @@ export class RequirementService {
     requirement.acceptedBy = new Types.ObjectId(agentId);
     requirement.acceptedAt = new Date();
 
-    return await requirement.save();
+    console.log('Accepting requirement:', {
+      requirementId: requirement._id,
+      agentId,
+      acceptedBy: requirement.acceptedBy,
+      status: requirement.status,
+    });
+
+    const saved = await requirement.save();
+
+    console.log('Saved requirement:', {
+      _id: saved._id,
+      acceptedBy: saved.acceptedBy,
+      status: saved.status,
+    });
+
+    return saved;
   }
 
   /**
@@ -290,11 +305,29 @@ export class RequirementService {
     } = {},
   ) {
     const { page = 1, limit = 20, ...queryFilters } = filters;
+
+    // Build query with explicit filters
     const query: any = {
       acceptedBy: new Types.ObjectId(agentId),
       status: RequirementStatus.ACCEPTED,
-      ...queryFilters,
     };
+
+    // Add optional filters
+    if (queryFilters.propertyType) {
+      query.propertyType = queryFilters.propertyType;
+    }
+    if (queryFilters.transactionType) {
+      query.transactionType = queryFilters.transactionType;
+    }
+    if (queryFilters.location) {
+      query.location = { $regex: queryFilters.location, $options: 'i' };
+    }
+
+    console.log('Query for accepted requirements:', {
+      agentId,
+      agentIdAsObjectId: new Types.ObjectId(agentId),
+      query,
+    });
 
     const skip = (page - 1) * limit;
 
@@ -311,6 +344,12 @@ export class RequirementService {
         .exec(),
       this.requirementModel.countDocuments(query),
     ]);
+
+    console.log('Found requirements:', {
+      count: requirements.length,
+      total,
+      requirementIds: requirements.map((r) => r._id),
+    });
 
     return {
       requirements,
